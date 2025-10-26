@@ -2,6 +2,7 @@ package com.wlf;
 
 import atlantafx.base.theme.*;
 import com.wlf.app.MainController;
+import com.wlf.app.preferences.Language;
 import com.wlf.common.LoginController;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
@@ -39,52 +40,6 @@ public class App extends javafx.application.Application {
         }
     }
 
-    public static void showError(Exception e) {
-        Alert alert = new Alert(Alert.AlertType.WARNING,
-                "An error occurred:"
-                        + System.lineSeparator()
-                        + System.lineSeparator()
-                        + e);
-        alert.showAndWait();
-    }
-
-    public static void showCriticalError(Exception e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR,
-                "A critical error occurred. The application will now shutdown."
-                        + System.lineSeparator()
-                        + System.lineSeparator()
-                        + e);
-        alert.showAndWait();
-        System.exit(-1);
-    }
-
-    /**
-     * Shows a small login window that will store input on accept. Username can be pre-filled.
-     * @param preFillUsername username to pre-fill field with. Will stay empty if null.
-     * @return controller containing the username and password input.
-     * @throws IOException in case the form could not be loaded.
-     */
-    public static LoginController showLoginPopup(String preFillUsername) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("common/login.fxml"));
-        Parent launcherGUI = fxmlLoader.load();
-        Scene scene = new Scene(launcherGUI);
-        Stage stage = new Stage();
-        stage.setTitle("Login");
-        stage.getIcons().add(APP_ICON);
-        stage.setScene(scene);
-
-        LoginController controller = fxmlLoader.getController();
-        controller.setUsername(preFillUsername);
-        controller.setScene(scene);
-        controller.setStage(stage);
-
-        controller.afterInit();
-
-        stage.showAndWait();
-
-        return controller;
-    }
-
     @Override
     public void start(Stage stage) throws IOException {
         MainController controller = appInit(stage);
@@ -118,23 +73,27 @@ public class App extends javafx.application.Application {
         return controller;
     }
 
-    /**
-     * Replaces contents of the main stage with a new scene.
-     * @param scene Scene to fill window.
-     * @param title Window title.
-     * @param iconPath Window and task bar icon
-     * @throws IOException when the form could not be loaded
-     */
-    public static void showWindow(Scene scene, String title, String iconPath) throws IOException {
-        MAINSTAGE.setTitle(title + " v" + getAppVersion());
+    public static void setLanguage(Language language) {
 
-        MAINSTAGE.getIcons().clear();
-        MAINSTAGE.getIcons().add(new Image(Objects.requireNonNull(App.class.getResourceAsStream(iconPath))));
-        // TODO do theming at some point?
-        scene.getStylesheets().add(APP_STYLE);
-        MAINSTAGE.setScene(scene);
+    }
 
-        MAINSTAGE.show();
+    public static void showError(Exception e) {
+        Alert alert = new Alert(Alert.AlertType.WARNING,
+                "An error occurred:"
+                        + System.lineSeparator()
+                        + System.lineSeparator()
+                        + e);
+        alert.showAndWait();
+    }
+
+    public static void showCriticalError(Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR,
+                "A critical error occurred. The application will now shutdown."
+                        + System.lineSeparator()
+                        + System.lineSeparator()
+                        + e);
+        alert.showAndWait();
+        System.exit(-1);
     }
 
     public static String getAppVersion() {

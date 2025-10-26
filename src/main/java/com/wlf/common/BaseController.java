@@ -34,21 +34,8 @@ public abstract class BaseController {
     @Getter @Setter
     private List<OverlayStage<?>> overlays = new ArrayList<>();
 
-    /**
-     * Method to use to get back to the launcher window from any tools started from it.
-     * @param event event for tools to handle consume conditions. Consumed events will prevent the tool from being able
-     *              to switch back to the launcher, e.g. in case of running critical tasks that cannot be aborted.
-     */
     @FXML
-    public final void backToMain(ActionEvent event) {
-        for (Consumer<Event> onBackCallback : onBackCallbacks) {
-            onBackCallback.accept(event);
-        }
-
-        if (!event.isConsumed()) {
-            onBack.run();
-        }
-    }
+    protected abstract void initialize();
 
     /**
      * Called by MainController after FXMLLoader has finished initializing the GUI.

@@ -7,15 +7,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.MainController">
+<BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.ViewController">
     <top>
-        <MenuBar>
-            <Menu text="File">
-                <MenuItem text="Quit">
-
-                </MenuItem>
-            </Menu>
-        </MenuBar>
     </top>
     <center>
         <TabPane side="LEFT">

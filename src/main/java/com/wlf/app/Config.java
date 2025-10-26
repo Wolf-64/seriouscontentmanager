@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wlf.app.preferences.Language;
 import javafx.beans.property.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +36,7 @@ public class Config {
 
     /**  */
     private final BooleanProperty enableDarkMode = new SimpleBooleanProperty();
+    private final ObjectProperty<Language> language = new SimpleObjectProperty<>(Language.ENGLISH);
 
     // not used in UI and only for dev
     @Getter @Setter

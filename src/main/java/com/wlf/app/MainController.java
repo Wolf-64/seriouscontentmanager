@@ -1,7 +1,10 @@
 package com.wlf.app;
 
+import atlantafx.base.theme.Theme;
 import com.wlf.App;
+import com.wlf.app.preferences.Language;
 import com.wlf.common.*;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public final class MainController extends BaseController {
@@ -24,11 +28,18 @@ public final class MainController extends BaseController {
     @FXML
     private VBox splash;
     @FXML
-    private BorderPane content;
+    private BorderPane content, preferences;
+    @FXML
+    private ComboBox<Language> cmbLanguages;
+    @FXML
+    private ComboBox<Theme> cmbThemes;
 
     @FXML
     public void initialize() {
-
+        cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
+        cmbLanguages.getSelectionModel().select(0);
+        cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> App.setLanguage(newValue));
         checkForUpdates();
     }
 
@@ -67,6 +78,12 @@ public final class MainController extends BaseController {
     @Override
     public void afterInit() {
 
+    }
+
+    @FXML
+    private void onShowPreferences() {
+        content.setVisible(false);
+        preferences.setVisible(true);
     }
 
     private void checkInternetConnection() {
