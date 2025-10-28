@@ -22,7 +22,7 @@ public class App extends javafx.application.Application {
     public static Stage MAINSTAGE;
 
     public static String APP_TITLE = "Lightweight FX";
-    public static String APP_STYLE = Utils.getCss("common/default.css");
+    public static String APP_STYLE = "";//Utils.getCss("../common/default.css");
     public static Image APP_ICON = Utils.getImageResource("app/programicon.png");
     public static FrameController FRAME_CONTROLLER;
 
@@ -42,9 +42,8 @@ public class App extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
         FrameController controller = appInit(stage);
-        //controller.loadGUI("app/mainView.fxml");
-
-        Application.setUserAgentStylesheet(AppStyle.Theme.PRIMER_LIGHT.getTheme().getUserAgentStylesheet());
+        controller.afterInit();
+        controller.loadMainGUI("app/mainView.fxml");
     }
 
     private FrameController appInit(Stage stage) throws IOException {
@@ -62,9 +61,9 @@ public class App extends javafx.application.Application {
         stage.getIcons().add(APP_ICON);
         scene.getStylesheets().add(APP_STYLE);
         stage.setScene(scene);
-        stage.centerOnScreen();
 
         stage.show();
+        stage.centerOnScreen();
         return controller;
     }
 

@@ -2,20 +2,17 @@ package com.wlf.app;
 
 import com.wlf.App;
 import com.wlf.common.*;
-import com.wlf.common.util.ErrorHandler;
-import javafx.concurrent.Task;
+import com.wlf.common.util.AsyncFXMLLoader;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
+import org.controlsfx.control.MaskerPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.concurrent.ExecutionException;
 
 public final class FrameController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrameController.class.getSimpleName());
@@ -26,68 +23,45 @@ public final class FrameController extends BaseController {
     @FXML
     private BorderPane content, preferences;
     @FXML
+    private MaskerPane loadingMask;
+
+    public FrameController(){}
+
+
+    @FXML
     @Override
     protected void initialize() {
 
     }
 
-    public void loadGUI(String fxml) throws IOException {
+    public void loadMainGUI(String fxml) throws IOException {
         splash.setVisible(true);
-        Task<Parent> loadTask = new Task<>() {
-            @Override
-            protected Parent call() throws Exception {
-                FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-                // TODO remove when a substantial loading times have been reached
-                Thread.sleep(1000);
-                return loader.load();
-            }
-        };
-
-        loadTask.setOnFailed(ErrorHandler::defaultWorkerStateEventError);
-        loadTask.setOnSucceeded((wse) -> {
-            try {
-                Parent gui = loadTask.get();
-                content.setCenter(gui);
-                splash.setVisible(false);
-            } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error(e.getLocalizedMessage(), e);
-                throw new RuntimeException(e);
-            }
+        AsyncFXMLLoader loader = new AsyncFXMLLoader(fxml);
+        loader.setOnSucceeded((gui) -> {
+            content.setCenter(gui);
+            splash.setVisible(false);
         });
-
-        new Thread(loadTask).start();
+        loader.load();
     }
 
     @Override
     public void afterInit() {
-
+        App.setTheme(getConfiguration().getActiveTheme());
     }
 
     @FXML
     private void showPreferences() {
-        if (preferences.getCenter() != null) {
-            Task<Parent> loadTask = new Task<>() {
-                @Override
-                protected Parent call() throws Exception {
-                    FXMLLoader loader = new FXMLLoader(App.class.getResource("app/preferences.fxml"));
-                    return loader.load();
-                }
-            };
-
-            loadTask.setOnFailed(ErrorHandler::defaultWorkerStateEventError);
-            loadTask.setOnSucceeded((wse) -> {
-                try {
-                    Parent preferencesPane = loadTask.get();
-                    content.setVisible(false);
-                    preferences.setCenter(preferencesPane);
-                    preferences.setVisible(true);
-                } catch (InterruptedException | ExecutionException e) {
-                    LOGGER.error(e.getLocalizedMessage(), e);
-                    throw new RuntimeException(e);
-                }
+        App.MAINSTAGE.centerOnScreen();
+        if (preferences.getCenter() == null) {
+            setLoading(true);
+            AsyncFXMLLoader loader = new AsyncFXMLLoader("app/preferences.fxml");
+            loader.setOnSucceeded((preferencesPane) -> {
+                content.setVisible(false);
+                preferences.setCenter(preferencesPane);
+                preferences.setVisible(true);
+                setLoading(false);
             });
-
-            new Thread(loadTask).start();
+            loader.load();
         } else {
             content.setVisible(false);
             preferences.setVisible(true);
@@ -100,10 +74,14 @@ public final class FrameController extends BaseController {
         preferences.setVisible(false);
     }
 
+    public void setLoading(boolean value) {
+        loadingMask.setVisible(value);
+    }
+
     private void checkInternetConnection() {
         InetAddress address = null;
         try {
-            address = InetAddress.getByName("www.confluence.dedalus.com");
+            address = InetAddress.getByName("google.com");
 
             //setEnableWifiIcon(!address.isReachable(5000));
         } catch (IOException e) {
