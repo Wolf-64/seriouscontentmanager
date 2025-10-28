@@ -17,7 +17,14 @@ public class AppStyle {
         DRACULA(new Dracula());
 
         Theme(atlantafx.base.theme.Theme theme) { this.theme = theme; }
+        @Getter
         final atlantafx.base.theme.Theme theme;
+
+
+        @Override
+        public String toString() {
+            return this.theme.getName();
+        }
     }
 
     private String name;

@@ -4,7 +4,6 @@ import com.wlf.app.Config;
 import com.wlf.common.controls.OverlayStage;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class BaseController {
-    private final ObjectProperty<Config> configuration = new SimpleObjectProperty<>(Config.getInstance());
+    protected final ObjectProperty<Config> configuration = new SimpleObjectProperty<>(Config.getInstance());
 
     @Getter @Setter
     private List<Consumer<Event>> onBackCallbacks = new ArrayList<>();
@@ -52,5 +51,15 @@ public abstract class BaseController {
                 overlayStage.close();
             }
         }
+    }
+
+    // ---------------------------------- FX Boilerplate ---------------------------------
+
+    public Config getConfiguration() {
+        return configuration.get();
+    }
+
+    public ObjectProperty<Config> configurationProperty() {
+        return configuration;
     }
 }

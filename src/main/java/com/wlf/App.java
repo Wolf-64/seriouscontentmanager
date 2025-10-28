@@ -1,9 +1,9 @@
 package com.wlf;
 
-import atlantafx.base.theme.*;
-import com.wlf.app.MainController;
+import com.wlf.app.AppStyle;
+import com.wlf.app.Config;
+import com.wlf.app.FrameController;
 import com.wlf.app.preferences.Language;
-import com.wlf.common.LoginController;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,8 +15,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
-
 
 public class App extends javafx.application.Application {
 
@@ -26,6 +24,7 @@ public class App extends javafx.application.Application {
     public static String APP_TITLE = "Lightweight FX";
     public static String APP_STYLE = Utils.getCss("common/default.css");
     public static Image APP_ICON = Utils.getImageResource("app/programicon.png");
+    public static FrameController FRAME_CONTROLLER;
 
     public static void main(String[] args) {
         // used to display on the GUI for funsies
@@ -42,24 +41,19 @@ public class App extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        MainController controller = appInit(stage);
-        controller.loadGUI("app/mainView.fxml");
+        FrameController controller = appInit(stage);
+        //controller.loadGUI("app/mainView.fxml");
 
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
-        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
-        Application.setUserAgentStylesheet(new NordLight().getUserAgentStylesheet());
-        Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
-        Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
-        Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
-        Application.setUserAgentStylesheet(new Dracula().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(AppStyle.Theme.PRIMER_LIGHT.getTheme().getUserAgentStylesheet());
     }
 
-    private MainController appInit(Stage stage) throws IOException {
+    private FrameController appInit(Stage stage) throws IOException {
         MAINSTAGE = stage;
         FXMLLoader loader = new FXMLLoader(App.class.getResource("app/frame.fxml"));
         Parent launcherGUI = loader.load();
         Scene scene = new Scene(launcherGUI);
-        MainController controller = loader.getController();
+        FrameController controller = loader.getController();
+        FRAME_CONTROLLER = controller;
         controller.setStage(stage);
         controller.setScene(scene);
 
@@ -68,13 +62,19 @@ public class App extends javafx.application.Application {
         stage.getIcons().add(APP_ICON);
         scene.getStylesheets().add(APP_STYLE);
         stage.setScene(scene);
+        stage.centerOnScreen();
 
         stage.show();
         return controller;
     }
 
     public static void setLanguage(Language language) {
+        Config.getInstance().setLanguage(language);
+    }
 
+    public static void setTheme(AppStyle.Theme theme) {
+        Application.setUserAgentStylesheet(theme.getTheme().getUserAgentStylesheet());
+        Config.getInstance().setActiveTheme(theme);
     }
 
     public static void showError(Exception e) {

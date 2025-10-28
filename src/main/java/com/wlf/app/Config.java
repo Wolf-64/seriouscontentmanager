@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wlf.app.preferences.Language;
@@ -26,16 +24,13 @@ public class Config {
     /** Mapper to read/write config.json */
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    /** Active theme index from the global list of themes. */
-    @Getter @Setter
-    private int activeTheme = 0;
+    /** Active theme index from the global list of themes.*/
+    private final ObjectProperty<AppStyle.Theme> activeTheme = new SimpleObjectProperty<>(AppStyle.Theme.PRIMER_LIGHT);
 
     /** Stored config version from file. Can be compared to constant to differentiate. */
     @Getter @Setter
     private int configVersion;
 
-    /**  */
-    private final BooleanProperty enableDarkMode = new SimpleBooleanProperty();
     private final ObjectProperty<Language> language = new SimpleObjectProperty<>(Language.ENGLISH);
 
     // not used in UI and only for dev
@@ -82,7 +77,6 @@ public class Config {
 
         if (conf == null) {
             conf = new Config();
-            conf.activeTheme = 0;
             mapper.writerWithDefaultPrettyPrinter().writeValue(new File(CONFIG_PATH), conf);
         }
 
@@ -96,16 +90,29 @@ public class Config {
 
     // --- JavaFX boilerplate that's not covered by Lombok ---
 
-    public boolean isEnableDarkMode() {
-        return enableDarkMode.get();
+
+    public AppStyle.Theme getActiveTheme() {
+        return activeTheme.get();
     }
 
-    public BooleanProperty enableDarkModeProperty() {
-        return enableDarkMode;
+    public ObjectProperty<AppStyle.Theme> activeThemeProperty() {
+        return activeTheme;
     }
 
-    public void setEnableDarkMode(boolean enableDarkMode) {
-        this.enableDarkMode.set(enableDarkMode);
+    public void setActiveTheme(AppStyle.Theme activeTheme) {
+        this.activeTheme.set(activeTheme);
+    }
+
+    public Language getLanguage() {
+        return language.get();
+    }
+
+    public ObjectProperty<Language> languageProperty() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language.set(language);
     }
 }
 
