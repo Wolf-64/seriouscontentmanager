@@ -3,6 +3,7 @@ package com.wlf;
 import com.wlf.app.AppStyle;
 import com.wlf.app.Config;
 import com.wlf.app.FrameController;
+import com.wlf.app.MainController;
 import com.wlf.app.preferences.Language;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
@@ -15,6 +16,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class App extends javafx.application.Application {
 
@@ -25,6 +28,8 @@ public class App extends javafx.application.Application {
     public static String APP_STYLE = "";//Utils.getCss("../common/default.css");
     public static Image APP_ICON = Utils.getImageResource("app/programicon.png");
     public static FrameController FRAME_CONTROLLER;
+    public static MainController MAIN_CONTROLLER;
+    public static ResourceBundle I18N = ResourceBundle.getBundle("com.wlf.app.i18n", Config.getInstance().getLanguage().getLocale());
 
     public static void main(String[] args) {
         // used to display on the GUI for funsies
@@ -43,12 +48,14 @@ public class App extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         FrameController controller = appInit(stage);
         controller.afterInit();
+        Application.setUserAgentStylesheet(Config.getInstance().getActiveTheme().getTheme().getUserAgentStylesheet());
         controller.loadMainGUI("app/mainView.fxml");
     }
 
     private FrameController appInit(Stage stage) throws IOException {
         MAINSTAGE = stage;
         FXMLLoader loader = new FXMLLoader(App.class.getResource("app/frame.fxml"));
+        loader.setResources(I18N);
         Parent launcherGUI = loader.load();
         Scene scene = new Scene(launcherGUI);
         FrameController controller = loader.getController();

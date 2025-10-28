@@ -25,6 +25,8 @@ public final class FrameController extends BaseController {
     @FXML
     private MaskerPane loadingMask;
 
+    private String mainGuiFXML;
+
     public FrameController(){}
 
 
@@ -37,45 +39,27 @@ public final class FrameController extends BaseController {
     public void loadMainGUI(String fxml) throws IOException {
         splash.setVisible(true);
         AsyncFXMLLoader loader = new AsyncFXMLLoader(fxml);
-        loader.setOnSucceeded((gui) -> {
-            content.setCenter(gui);
+
+        loader.setOnSucceeded((fxmlLoader) -> {
+            content.setCenter(fxmlLoader.getGui());
+            App.MAIN_CONTROLLER = (MainController) fxmlLoader.getController();
             splash.setVisible(false);
+            mainGuiFXML = fxml;
+        });
+        loader.load();
+    }
+
+    public void reloadGUI() throws IOException {
+        content.setCenter(null);
+        AsyncFXMLLoader loader = new AsyncFXMLLoader(mainGuiFXML);
+        loader.setOnSucceeded((gui) -> {
+            content.setCenter(gui.getGui());
         });
         loader.load();
     }
 
     @Override
     public void afterInit() {
-        App.setTheme(getConfiguration().getActiveTheme());
-    }
-
-    @FXML
-    private void showPreferences() {
-        App.MAINSTAGE.centerOnScreen();
-        if (preferences.getCenter() == null) {
-            setLoading(true);
-            AsyncFXMLLoader loader = new AsyncFXMLLoader("app/preferences.fxml");
-            loader.setOnSucceeded((preferencesPane) -> {
-                content.setVisible(false);
-                preferences.setCenter(preferencesPane);
-                preferences.setVisible(true);
-                setLoading(false);
-            });
-            loader.load();
-        } else {
-            content.setVisible(false);
-            preferences.setVisible(true);
-        }
-    }
-
-    @FXML
-    public void hidePreferences() {
-        content.setVisible(true);
-        preferences.setVisible(false);
-    }
-
-    public void setLoading(boolean value) {
-        loadingMask.setVisible(value);
     }
 
     private void checkInternetConnection() {

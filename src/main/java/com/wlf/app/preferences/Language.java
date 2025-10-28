@@ -5,8 +5,8 @@ import lombok.Getter;
 import java.util.Locale;
 
 public enum Language {
-    ENGLISH(Locale.US),
-    GERMAN(Locale.GERMANY);
+    ENGLISH(Locale.ENGLISH),
+    GERMAN(Locale.GERMAN);
 
     @Getter
     final Locale locale;

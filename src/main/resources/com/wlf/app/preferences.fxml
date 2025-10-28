@@ -27,16 +27,16 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label text="Language:" GridPane.rowIndex="1" />
-                        <Label text="Theme" GridPane.rowIndex="2" />
+                        <Label text="%language" GridPane.rowIndex="1" />
+                        <Label text="%theme" GridPane.rowIndex="2" />
                         <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="General" GridPane.columnSpan="2">
+                        <Label text="%settings.General" GridPane.columnSpan="2">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Save" GridPane.rowIndex="3" onAction="#onSave" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%settings.save" GridPane.rowIndex="3" onAction="#onSave" />
                     </children>
                 </GridPane>
             </children>

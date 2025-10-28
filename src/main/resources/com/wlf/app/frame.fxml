@@ -1,48 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.MaskerPane?>
 
 <StackPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.FrameController">
-    <BorderPane>
-        <top>
-            <MenuBar BorderPane.alignment="CENTER">
-                <Menu mnemonicParsing="false" text="File">
-                    <MenuItem mnemonicParsing="false" text="Close" />
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                    <MenuItem mnemonicParsing="false" onAction="#showPreferences" text="Preferences" />
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <MenuItem mnemonicParsing="false" text="About" />
-                </Menu>
-            </MenuBar>
-        </top>
-        <center>
-            <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                <BorderPane fx:id="content" prefHeight="200.0" prefWidth="200.0" />
-                <BorderPane fx:id="preferences" prefHeight="200.0" prefWidth="200.0" visible="false" />
-            </StackPane>
-        </center>
-    </BorderPane>
+    <!-- Contains the actual node tree for the app after loading. Used to "refresh" i18n strings at runtime. -->
+    <BorderPane fx:id="content"/>
+    <!-- Only used as initial app startup/splash screen. -->
     <VBox fx:id="splash" alignment="CENTER" style="-fx-background-color: rgba(0%,0%,0%,0.75);">
-        <Label text="Loading..." textAlignment="CENTER" textFill="WHITE">
-            <padding>
-                <Insets bottom="8.0" />
-            </padding>
-        </Label>
         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
             <Image url="@programicon.png" />
         </ImageView>
     </VBox>
-   <MaskerPane fx:id="loadingMask" text="Loading..." visible="false" />
 </StackPane>

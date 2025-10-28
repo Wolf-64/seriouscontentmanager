@@ -3,6 +3,7 @@ package com.wlf.app.preferences;
 import com.wlf.App;
 import com.wlf.app.AppStyle;
 import com.wlf.app.Config;
+import com.wlf.common.BaseController;
 import com.wlf.common.OverlayStageController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -11,18 +12,23 @@ import javafx.scene.control.ComboBox;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class PreferencesController extends OverlayStageController {
+public class PreferencesController extends BaseController {
     @FXML
     private ComboBox<Language> cmbLanguages;
     @FXML
     private ComboBox<AppStyle.Theme> cmbThemes;
+
+    private boolean changedLanguage = false;
 
     @FXML
     public void initialize() {
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
         cmbLanguages.getSelectionModel().select(getConfiguration().getLanguage());
         cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
-                (_, _, newValue) -> App.setLanguage(newValue));
+                (_, _, newValue) -> {
+                    App.setLanguage(newValue);
+                    changedLanguage = true;
+                });
 
         cmbThemes.setItems(FXCollections.observableList(Arrays.stream(AppStyle.Theme.values()).toList()));
         cmbThemes.getSelectionModel().select(getConfiguration().getActiveTheme());
@@ -33,6 +39,9 @@ public class PreferencesController extends OverlayStageController {
     @FXML
     public void onSave() throws IOException {
         Config.save();
-        App.FRAME_CONTROLLER.hidePreferences();
+        if (changedLanguage) {
+            App.FRAME_CONTROLLER.reloadGUI();
+            App.MAIN_CONTROLLER.hidePreferences();
+        }
     }
 }
