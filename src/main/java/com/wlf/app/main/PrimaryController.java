@@ -39,6 +39,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
@@ -46,6 +47,7 @@ import javafx.stage.WindowEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.controlsfx.control.MaskerPane;
 
 public class PrimaryController extends BaseController<BaseModel> {
     static Logger log = Logger.getLogger(PrimaryController.class.getSimpleName());
@@ -57,7 +59,12 @@ public class PrimaryController extends BaseController<BaseModel> {
     private final ObjectProperty<Filter> tableFilter = new SimpleObjectProperty<>(new Filter());
 
     @FXML @Getter @Setter
-    WebView webView;
+    private WebView webView;
+
+    @FXML
+    private BorderPane webViewContainer;
+    @FXML
+    private MaskerPane webViewLoading;
 
     private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
 
@@ -125,9 +132,21 @@ public class PrimaryController extends BaseController<BaseModel> {
     public void initialize() {
         // register WebView lazy-load when tab active
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldVal, newVal) -> {
-            if (newVal.intValue() == 1 // should always be second tab
-                    && browser.get().getHistory().getEntries().isEmpty()) { // only if not yet opened
-                browser.get().load(GRO_REPOSITORY_URL);
+            // should always be second tab
+            if (newVal.intValue() == 1) {
+                if (webView == null) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    initWebView();
+                }
+
+                // only if not yet opened
+                if (browser.get().getHistory().getEntries().isEmpty()) {
+                    browser.get().load(GRO_REPOSITORY_URL);
+                }
             }
         });
 
@@ -137,19 +156,6 @@ public class PrimaryController extends BaseController<BaseModel> {
         fileEntries.addAll(dbManager.getAllFileEntries());
         fileEntries.forEach(item ->
                 item.completedProperty().addListener(getListItemListener(item)));
-
-        browser.set(webView.getEngine());
-        browser.get().locationProperty().addListener((observable -> {
-            //check for url here?
-            try {
-                lastLocation = browser.get().getHistory().getEntries().getLast().getUrl();
-                // after clicking on download we'll just get a white screen
-                if (ABOUT_BLANK.equals(browser.get().getLocation())
-                        && lastLocation.startsWith(GRO_MODPAGE_URL)) {
-                    onDownloadRequestReceived();
-                }
-            } catch (NoSuchElementException ignored) {}
-        }));
 
         tfDirectoryDownloads.setText(config.get().getDirectoryDownloads());
         tfDirectoryTFE.setText(config.get().getDirectoryTFE());
@@ -192,6 +198,26 @@ public class PrimaryController extends BaseController<BaseModel> {
          */
 
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
+    }
+
+    // need to defer this to runtime as the WebView must be instantiated on the FX application thread
+    private void initWebView() {
+        webView = new WebView();
+        webViewContainer.setCenter(webView);
+        browser.set(webView.getEngine());
+        browser.get().locationProperty().addListener((observable -> {
+            //check for url here?
+            try {
+                lastLocation = browser.get().getHistory().getEntries().getLast().getUrl();
+                // after clicking on download we'll just get a white screen
+                if (ABOUT_BLANK.equals(browser.get().getLocation())
+                        && lastLocation.startsWith(GRO_MODPAGE_URL)) {
+                    onDownloadRequestReceived();
+                }
+            } catch (NoSuchElementException ignored) {}
+        }));
+
+        webViewLoading.setVisible(false);
     }
 
     private void onDownloadRequestReceived() {

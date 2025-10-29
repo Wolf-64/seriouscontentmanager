@@ -1,4 +1,4 @@
-module lightweightFX {
+module seriouscontentmanager {
     requires atlantafx.base;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
@@ -28,7 +28,7 @@ module lightweightFX {
     opens com.wlf.common.themes to com.fasterxml.jackson.databind, javafx.fxml;
     opens com.wlf.app to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
-    opens com.wlf.app.main.data to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
+    opens com.wlf.app.main.data to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics, javafx.base;
     opens com.wlf.app.main.io to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main.net to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
 }
