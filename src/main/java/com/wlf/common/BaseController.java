@@ -1,6 +1,6 @@
 package com.wlf.common;
 
-import com.wlf.app.Config;
+import com.wlf.app.preferences.Config;
 import com.wlf.common.controls.OverlayStage;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

@@ -22,4 +22,5 @@ module lightweightFX {
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common.controls to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common.util to com.fasterxml.jackson.databind,javafx.fxml;
+    opens com.wlf.common.themes to com.fasterxml.jackson.databind, javafx.fxml;
 }

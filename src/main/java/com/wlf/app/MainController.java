@@ -6,7 +6,6 @@ import com.wlf.common.BaseController;
 import com.wlf.common.BaseModel;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-import org.controlsfx.control.MaskerPane;
 
 public class MainController extends BaseController<BaseModel> {
     @FXML
@@ -20,7 +19,6 @@ public class MainController extends BaseController<BaseModel> {
 
     @FXML
     private void showPreferences() {
-        App.MAINSTAGE.centerOnScreen();
         if (preferences.getCenter() == null) {
             App.FRAME_CONTROLLER.setLoading(true);
             AppLoader<PreferencesController> loader = new AppLoader<>("app/preferences.fxml",

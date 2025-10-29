@@ -1,9 +1,9 @@
 package com.wlf.app;
 
 import com.wlf.App;
+import com.wlf.app.preferences.Config;
 import com.wlf.common.BaseController;
 import com.wlf.common.util.ErrorHandler;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;

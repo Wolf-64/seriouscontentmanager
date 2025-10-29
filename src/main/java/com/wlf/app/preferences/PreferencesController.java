@@ -3,7 +3,6 @@ package com.wlf.app.preferences;
 import com.wlf.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
-import com.wlf.app.Config;
 import com.wlf.common.BaseController;
 import com.wlf.common.BaseModel;
 import javafx.beans.property.BooleanProperty;
@@ -48,6 +47,8 @@ public class PreferencesController extends BaseController<BaseModel> {
         if (App.STATE.isLanguageChanged()) {
             getConfiguration().setLanguage(cmbLanguages.getValue());
             AppLoader.reloadGuis();
+        } else {
+            App.MAIN_CONTROLLER.hidePreferences();
         }
     }
 

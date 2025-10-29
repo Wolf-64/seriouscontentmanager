@@ -1,35 +1,29 @@
 package com.wlf;
 
 import com.wlf.app.*;
-import com.wlf.app.preferences.Language;
+import com.wlf.app.preferences.Config;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.ResourceBundle;
 
 public class App extends javafx.application.Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class.getSimpleName());
 
     public static String USERNAME;
     public static Stage MAINSTAGE;
+    public static Scene MAINSCENE;
 
     public static String APP_TITLE = "Lightweight FX";
-    public static String APP_STYLE = "";//Utils.getCss("../common/default.css");
     public static Image APP_ICON = Utils.getImageResource("app/programicon.png");
     public static FrameController FRAME_CONTROLLER;
     public static MainController MAIN_CONTROLLER;
@@ -52,7 +46,7 @@ public class App extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         FrameController controller = appInit(stage);
         controller.afterInit();
-        Application.setUserAgentStylesheet(Config.getInstance().getActiveTheme().getTheme().getUserAgentStylesheet());
+        setTheme(Config.getInstance().getActiveTheme());
         controller.loadMainGUI("app/mainView.fxml");
     }
 
@@ -61,6 +55,7 @@ public class App extends javafx.application.Application {
         AppLoader<FrameController> appLoader = new AppLoader<>("app/frame.fxml");
         Parent launcherGUI = appLoader.load();
         Scene scene = new Scene(launcherGUI);
+        MAINSCENE = scene;
         FrameController controller = appLoader.getController();
         FRAME_CONTROLLER = controller;
         controller.setStage(stage);
@@ -69,16 +64,21 @@ public class App extends javafx.application.Application {
         stage.setTitle(APP_TITLE + getAppVersion());
 
         stage.getIcons().add(APP_ICON);
-        scene.getStylesheets().add(APP_STYLE);
         stage.setScene(scene);
 
         stage.show();
-        stage.centerOnScreen();
         return controller;
     }
 
     public static void setTheme(AppStyle.Theme theme) {
-        Application.setUserAgentStylesheet(theme.getTheme().getUserAgentStylesheet());
+        // Modena Dark sits on top of Modena, so it needs a bit of a special treatment
+        if (theme == AppStyle.Theme.MODENA_DARK) {
+            Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
+            MAINSCENE.getStylesheets().add(theme.getTheme().getUserAgentStylesheet());
+        } else {
+            MAINSCENE.getStylesheets().clear();
+            Application.setUserAgentStylesheet(theme.getTheme().getUserAgentStylesheet());
+        }
         Config.getInstance().setActiveTheme(theme);
     }
 

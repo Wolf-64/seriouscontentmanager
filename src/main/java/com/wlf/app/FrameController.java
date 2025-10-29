@@ -1,6 +1,7 @@
 package com.wlf.app;
 
 import com.wlf.App;
+import com.wlf.app.preferences.Config;
 import com.wlf.common.*;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
@@ -40,6 +41,7 @@ public final class FrameController extends BaseController<BaseModel> {
             App.MAIN_CONTROLLER = controller;
             splash.setVisible(false);
             App.STATE.setInitializing(false);
+            App.MAINSTAGE.centerOnScreen();
         });
         loader.loadAsync();
     }

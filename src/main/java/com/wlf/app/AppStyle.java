@@ -1,6 +1,9 @@
 package com.wlf.app;
 
 import atlantafx.base.theme.*;
+import com.wlf.common.themes.Caspian;
+import com.wlf.common.themes.Modena;
+import com.wlf.common.themes.ModenaDark;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,12 +17,14 @@ public class AppStyle {
         NORD_DARK(new NordDark()),
         CUPERTINO_LIGHT(new CupertinoLight()),
         CUPERTINO_DARK(new CupertinoDark()),
-        DRACULA(new Dracula());
+        DRACULA(new Dracula()),
+        MODENA(new Modena()),
+        MODENA_DARK(new ModenaDark()),
+        CASPIAN(new Caspian());
 
         Theme(atlantafx.base.theme.Theme theme) { this.theme = theme; }
         @Getter
         final atlantafx.base.theme.Theme theme;
-
 
         @Override
         public String toString() {
