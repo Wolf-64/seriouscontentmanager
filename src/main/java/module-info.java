@@ -15,6 +15,11 @@ module lightweightFX {
     requires org.slf4j;
     requires java.desktop;
     requires org.kordamp.ikonli.fontawesome6;
+    requires javafx.web;
+    requires java.sql;
+    requires java.net.http;
+    requires async.http.client;
+    requires org.apache.commons.exec;
 
     opens com.wlf.app.preferences to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;
@@ -23,4 +28,7 @@ module lightweightFX {
     opens com.wlf.common.themes to com.fasterxml.jackson.databind, javafx.fxml;
     opens com.wlf.app to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
+    opens com.wlf.app.main.data to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
+    opens com.wlf.app.main.io to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
+    opens com.wlf.app.main.net to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
 }

@@ -23,8 +23,8 @@ public class App extends javafx.application.Application {
     public static Stage MAINSTAGE;
     public static Scene MAINSCENE;
 
-    public static String APP_TITLE = "Lightweight FX";
-    public static Image APP_ICON = Utils.getImageResource("programicon.png");
+    public static String APP_TITLE = "Serious Content Manager";
+    public static Image APP_ICON = Utils.getImageResource("main/icons/programicon.png");
     public static FrameController FRAME_CONTROLLER;
     public static BaseController<?> MAIN_CONTROLLER;
     public final static AppState STATE = new AppState();

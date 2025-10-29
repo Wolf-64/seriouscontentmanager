@@ -1,0 +1,309 @@
+package com.wlf.app.main.io;
+
+import com.wlf.app.main.data.*;
+import com.wlf.app.preferences.Config;
+import org.apache.commons.exec.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+public class FileHandler {
+    private static final Logger log = Logger.getLogger(FileHandler.class.getSimpleName());
+    private static final Config config = Config.getInstance();
+
+    // mod files
+    private static File getTempModDir(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager");
+    }
+    private static File getTempModDescriptor(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager.des");
+    }
+    private static File getTempModExlusionList(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/BaseBrowseExclude.lst");
+    }
+    private static File getTempModInclusionList(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/BaseBrowseInclude.lst");
+    }
+    private static File getTempModInclusionListWrite(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/BaseWriteInclude.lst");
+    }
+    private static File getTempModDataVar(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Data/Var");
+    }
+    private static File getTempModScripts(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Scripts");
+    }
+    private static File getTempModGameStartupIni(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Scripts/Game_startup.ini");
+    }
+    private static File getTempModModNameVar(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Data/Var/ModName.var");
+    }
+    private static File getTempModSamVersionVar(Game game) {
+        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Data/Var/Sam_Version.var");
+    }
+
+    public static void registerNewFile(String file, String originURL, String name) {
+        try {
+            // move to downloads
+            Path filePath = Path.of(file);
+            Path downloads = Path.of(config.getDirectoryDownloads());
+            if (!Files.exists(downloads)) {
+                Files.createDirectory(downloads);
+            }
+
+            Path newFileLocation = Files.move(filePath, Path.of(downloads.toString() + "/" + filePath.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+            ContentModel newFile = new ContentModel();
+            newFile.setName(name);
+            newFile.setOrigin(originURL);
+            newFile.setDownloadedFileName(newFileLocation.getFileName().toString());
+            DBManager.getInstance().registerNewFile(newFile);
+        } catch (IOException e) {
+            log.severe(e.toString());
+        }     
+        
+    }
+
+    public static void registerNewFile(ContentModel contentModel, String file) {
+        try {
+            // move to downloads
+            Path tempFilePath = Path.of(file);
+            Path downloads = Path.of(config.getDirectoryDownloads());
+            if (!Files.exists(downloads)) {
+                Files.createDirectory(downloads);
+            }
+
+            String downloadPathName = downloads + "/" + tempFilePath.getFileName();
+            ContentFile newFile = categorizeFile(downloadPathName);
+
+            if (newFile != null) {
+                move(tempFilePath, newFile.toPath());
+                contentModel.setDownloadedFile(newFile);
+                contentModel.setDownloadedFileName(newFile.getName());
+                DBManager.getInstance().registerNewFile(contentModel);
+            } else {
+                log.warning("Could not register new file: Unrecognized format.");
+            }
+        } catch (IOException e) {
+            log.severe(e.toString());
+        }
+    }
+
+    public static ContentFile categorizeFile(String filePath) {
+        if (filePath.toLowerCase().endsWith(".gro")) {
+            return new GroFile(filePath);
+        } else if (filePath.toLowerCase().endsWith(".zip")) {
+            return new ZipFile(filePath);
+        } else {
+            // not recognized, what do?
+            return null;
+        }
+    }
+
+    public static void installContent(ContentModel contentModel) {
+        try {
+            Path sourcePath = contentModel.getDownloadedFile().toPath();
+            Path targetPath = Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName());
+            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            contentModel.setInstalled(true);
+
+            // register new deployment on DB
+            DBManager.getInstance().update(contentModel);
+        } catch (IOException e) {
+            log.warning(e.toString());
+        }
+    }
+
+    public static void installContent(ContentModel contentModel, Path targetLocation) {
+        try {
+            Path sourcePath = contentModel.getDownloadedFile().toPath();
+            Files.copy(sourcePath, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            contentModel.setInstalled(true);
+            contentModel.setInstallFileLocation(targetLocation.toFile());
+
+            // register new deployment on DB
+            DBManager.getInstance().update(contentModel);
+        } catch (IOException e) {
+            log.warning(e.toString());
+        }
+    }
+
+    public static void createTempMod(ContentModel contentModel) {
+        try {
+            log.info("Creating temp mod directory: " + getTempModDir(contentModel.getGame()).toPath());
+            removeTempModFolder(contentModel); // if leftover
+            Path modDir = Files.createDirectory(getTempModDir(contentModel.getGame()).toPath());
+
+            // Set mod description to map name
+            String descriptionContent = contentModel.getName() + " (SCM)";
+            Files.writeString(getTempModDescriptor(contentModel.getGame()).toPath(), descriptionContent);
+
+            // exclude base game levels to only display custom map
+            String excludeList = "Levels";
+            Files.writeString(getTempModExlusionList(contentModel.getGame()).toPath(), excludeList);
+            String include = "SaveGame\nControls";
+            Files.writeString(getTempModInclusionList(contentModel.getGame()).toPath(), include);
+            Files.writeString(getTempModInclusionListWrite(contentModel.getGame()).toPath(), include);
+
+            Files.createDirectories(getTempModDataVar(contentModel.getGame()).toPath());
+            Files.writeString(getTempModModNameVar(contentModel.getGame()).toPath(), descriptionContent);
+            if (contentModel.getVersion() != null) {
+                Files.writeString(getTempModSamVersionVar(contentModel.getGame()).toPath(), contentModel.getVersion());
+            }
+
+            // define new game map name if only one map
+            Path levelName = contentModel.getDownloadedFile().findFirstLevel();
+            if (levelName != null) {
+                String relativePath = levelName.toString().substring(1);
+                if (relativePath.startsWith("\\")) {
+                    relativePath = relativePath.substring(1);
+                }
+                relativePath = relativePath.replace("\\", "\\\\"); // backslashes in string need to be escaped for the file as well
+                String startingMapEntry = "sam_strFirstLevel = \"" + relativePath + "\";";
+                Files.createDirectory(getTempModScripts(contentModel.getGame()).toPath());
+                Files.writeString(getTempModGameStartupIni(contentModel.getGame()).toPath(), startingMapEntry);
+            }
+
+            File target = new File(modDir + File.separator + contentModel.getDownloadedFileName());
+            if (contentModel.getDownloadedFile() instanceof GroFile) {
+                installContent(contentModel, target.toPath());
+            } else if (contentModel.getDownloadedFile() instanceof ZipFile) {
+                // extract into mod dir
+                extractZip(contentModel.getDownloadedFile(), modDir.toFile());
+
+                contentModel.setInstalled(true);
+                contentModel.setInstallFileLocation(target);
+
+                // register new deployment on DB
+                DBManager.getInstance().update(contentModel);
+            } else {
+                // we can't do anything here really
+            }
+        } catch (IOException ex) {
+            log.severe(ex.toString());
+        }
+    }
+
+    private static void extractZip(File zip, File target) throws IOException {
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(zip));
+        ZipEntry zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+            File newFile = newFile(target, zipEntry);
+            if (zipEntry.isDirectory()) {
+                if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                    throw new IOException("Failed to create directory " + newFile);
+                }
+            } else {
+                // fix for Windows-created archives
+                File parent = newFile.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create directory " + parent);
+                }
+
+                // write file content
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+            }
+            zipEntry = zis.getNextEntry();
+        }
+
+        zis.closeEntry();
+        zis.close();
+    }
+
+    /**
+     * The newFile() method guards against writing files to the file system outside the target folder. This vulnerability is called Zip Slip.
+     * @param destinationDir
+     * @param zipEntry
+     * @return
+     * @throws IOException
+     */
+    private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+
+        String destDirPath = destinationDir.getCanonicalPath();
+        String destFilePath = destFile.getCanonicalPath();
+
+        if (!destFilePath.startsWith(destDirPath + File.separator)) {
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+        }
+
+        return destFile;
+    }
+
+    private static void removeTempModFolder(ContentModel contentModel) throws IOException {
+        if (getTempModDir(contentModel.getGame()).exists()) {
+            try (Stream<Path> pathStream = Files.walk(getTempModDir(contentModel.getGame()).toPath())) {
+                log.info("Removing temp mod files...");
+                pathStream.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                Files.delete(getTempModDescriptor(contentModel.getGame()).toPath());
+            }
+        }
+    }
+
+    public static void removeTempMod(ContentModel contentModel) {
+        try {
+            removeTempModFolder(contentModel);
+            log.info("... done.");
+            contentModel.setInstallFileLocation(null);
+            contentModel.setInstalled(false);
+            DBManager.getInstance().update(contentModel);
+        } catch (IOException ex) {
+            log.severe(ex.toString());
+        }
+    }
+
+    public static Path move(Path source, Path destination) {
+        try {
+            return Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.warning(e.toString());
+        }
+
+        return null;
+    }
+
+    public static void removeContent(ContentModel contentModel) {
+        try {
+            Files.delete(Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName()));
+            contentModel.setInstalled(false);
+            DBManager.getInstance().update(contentModel);
+        } catch (IOException e) {
+            log.warning(e.toString());
+        }
+    }
+
+    public static void deleteContent(ContentModel contentModel) {
+        try {
+            if (contentModel.isInstalled()) {
+                removeContent(contentModel);
+            }
+            DBManager.getInstance().delete(contentModel);
+            Files.delete(Path.of(config.getDirectoryDownloads() + "/" + contentModel.getDownloadedFileName()));
+        } catch (IOException e) {
+            log.warning(e.toString());
+        }
+    }
+}

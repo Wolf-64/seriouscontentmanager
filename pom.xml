@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wlf</groupId>
-    <artifactId>lightweightFX</artifactId>
+    <artifactId>SeriousContentManager</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>${project.artifactId}::${project.version}</name>
     <inceptionYear>2025</inceptionYear>
     <scm>
-        <developerConnection>scm:git:https://github.com/Wolf-64/lightweightFX.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/Wolf-64/seriouscontentmanager.git</developerConnection>
         <tag>v1.0</tag>
     </scm>
 
@@ -34,6 +34,11 @@
         <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.asynchttpclient</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>2.12.4</version>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -204,10 +209,10 @@
                     <noHeaderFiles>true</noHeaderFiles>
                     <stripDebug>true</stripDebug>
                     <noManPages>true</noManPages>
-                    <launcher>lightweightfx</launcher>
+                    <launcher>SeriousContentManager</launcher>
                     <mainClass>lightweightfx/${project.mainClass}</mainClass>
-                    <jlinkImageName>lightweightfx</jlinkImageName>
-                    <jlinkZipName>lightweightfx</jlinkZipName>
+                    <jlinkImageName>SeriousContentManager</jlinkImageName>
+                    <jlinkZipName>SeriousContentManager</jlinkZipName>
                 </configuration>
                 <executions>
                     <execution>
@@ -216,9 +221,9 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>${project.mainClass}</mainClass>
-                            <launcher>lightweightfx</launcher>
-                            <jlinkZipName>lightweightfx</jlinkZipName>
-                            <jlinkImageName>lightweightfx</jlinkImageName>
+                            <launcher>SeriousContentManager</launcher>
+                            <jlinkZipName>SeriousContentManager</jlinkZipName>
+                            <jlinkImageName>SeriousContentManager</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>

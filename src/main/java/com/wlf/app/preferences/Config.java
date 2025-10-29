@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wlf.app.AppStyle;
@@ -36,6 +38,15 @@ public class Config {
     // not used in UI and only for dev
     @Getter @Setter
     private boolean devMode;
+
+    private final StringProperty directoryDownloads = new SimpleStringProperty();
+    private final StringProperty directoryTFE = new SimpleStringProperty();
+    private final StringProperty directoryTSE = new SimpleStringProperty();
+
+    @JsonIgnore
+    private final BooleanProperty tfeDirectoryValid = new SimpleBooleanProperty();
+    @JsonIgnore
+    private final BooleanProperty tseDirectoryValid = new SimpleBooleanProperty();
 
     private static Config _config;
 
@@ -113,6 +124,64 @@ public class Config {
 
     public void setLanguage(Language language) {
         this.language.set(language);
+    }
+
+    public String getDirectoryTFE() {
+        return directoryTFE.get();
+    }
+
+    public void setDirectoryTFE(String directoryTFE) {
+        this.directoryTFE.set(directoryTFE);
+    }
+
+    public StringProperty directoryTFEProperty() {
+        return directoryTFE;
+    }
+    public String getDirectoryTSE() {
+        return directoryTSE.get();
+    }
+
+    public void setDirectoryTSE(String directoryTSE) {
+        this.directoryTSE.set(directoryTSE);
+    }
+
+    public StringProperty directoryTSEProperty() {
+        return directoryTSE;
+    }
+    public String getDirectoryDownloads() {
+        return directoryDownloads.get();
+    }
+
+    public void setDirectoryDownloads(String directoryTFE) {
+        this.directoryDownloads.set(directoryTFE);
+    }
+
+    public StringProperty directoryDownloadsProperty() {
+        return directoryDownloads;
+    }
+
+    public boolean isTfeDirectoryValid() {
+        return tfeDirectoryValid.get();
+    }
+
+    public BooleanProperty tfeDirectoryValidProperty() {
+        return tfeDirectoryValid;
+    }
+
+    public void setTfeDirectoryValid(boolean tfeDirectoryValid) {
+        this.tfeDirectoryValid.set(tfeDirectoryValid);
+    }
+
+    public boolean isTseDirectoryValid() {
+        return tseDirectoryValid.get();
+    }
+
+    public BooleanProperty tseDirectoryValidProperty() {
+        return tseDirectoryValid;
+    }
+
+    public void setTseDirectoryValid(boolean tseDirectoryValid) {
+        this.tseDirectoryValid.set(tseDirectoryValid);
     }
 }
 
