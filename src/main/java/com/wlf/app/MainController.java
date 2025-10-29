@@ -1,17 +1,16 @@
 package com.wlf.app;
 
 import com.wlf.App;
+import com.wlf.app.preferences.PreferencesController;
 import com.wlf.common.BaseController;
-import com.wlf.common.util.AsyncFXMLLoader;
+import com.wlf.common.BaseModel;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import org.controlsfx.control.MaskerPane;
 
-public class MainController extends BaseController {
+public class MainController extends BaseController<BaseModel> {
     @FXML
     private BorderPane content, preferences;
-    @FXML
-    private MaskerPane loadingMask;
 
     @FXML
     @Override
@@ -23,23 +22,19 @@ public class MainController extends BaseController {
     private void showPreferences() {
         App.MAINSTAGE.centerOnScreen();
         if (preferences.getCenter() == null) {
-            setLoading(true);
-            AsyncFXMLLoader loader = new AsyncFXMLLoader("app/preferences.fxml");
-            loader.setOnSucceeded((preferencesPane) -> {
+            App.FRAME_CONTROLLER.setLoading(true);
+            AppLoader<PreferencesController> loader = new AppLoader<>("app/preferences.fxml",
+                    (gui) -> preferences.setCenter(gui));
+            loader.setOnSucceeded((_) -> {
                 content.setVisible(false);
-                preferences.setCenter(preferencesPane.getGui());
                 preferences.setVisible(true);
-                setLoading(false);
+                App.FRAME_CONTROLLER.setLoading(false);
             });
-            loader.load();
+            loader.loadAsync();
         } else {
             content.setVisible(false);
             preferences.setVisible(true);
         }
-    }
-
-    public void setLoading(boolean value) {
-        loadingMask.setVisible(value);
     }
 
     @FXML

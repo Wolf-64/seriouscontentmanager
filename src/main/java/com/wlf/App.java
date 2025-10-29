@@ -1,9 +1,6 @@
 package com.wlf;
 
-import com.wlf.app.AppStyle;
-import com.wlf.app.Config;
-import com.wlf.app.FrameController;
-import com.wlf.app.MainController;
+import com.wlf.app.*;
 import com.wlf.app.preferences.Language;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
@@ -13,13 +10,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.controlsfx.dialog.ExceptionDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Locale;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class App extends javafx.application.Application {
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class.getSimpleName());
 
     public static String USERNAME;
     public static Stage MAINSTAGE;
@@ -29,7 +33,7 @@ public class App extends javafx.application.Application {
     public static Image APP_ICON = Utils.getImageResource("app/programicon.png");
     public static FrameController FRAME_CONTROLLER;
     public static MainController MAIN_CONTROLLER;
-    public static ResourceBundle I18N = ResourceBundle.getBundle("com.wlf.app.i18n", Config.getInstance().getLanguage().getLocale());
+    public final static AppState STATE = new AppState();
 
     public static void main(String[] args) {
         // used to display on the GUI for funsies
@@ -54,11 +58,10 @@ public class App extends javafx.application.Application {
 
     private FrameController appInit(Stage stage) throws IOException {
         MAINSTAGE = stage;
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("app/frame.fxml"));
-        loader.setResources(I18N);
-        Parent launcherGUI = loader.load();
+        AppLoader<FrameController> appLoader = new AppLoader<>("app/frame.fxml");
+        Parent launcherGUI = appLoader.load();
         Scene scene = new Scene(launcherGUI);
-        FrameController controller = loader.getController();
+        FrameController controller = appLoader.getController();
         FRAME_CONTROLLER = controller;
         controller.setStage(stage);
         controller.setScene(scene);
@@ -74,31 +77,23 @@ public class App extends javafx.application.Application {
         return controller;
     }
 
-    public static void setLanguage(Language language) {
-        Config.getInstance().setLanguage(language);
-    }
-
     public static void setTheme(AppStyle.Theme theme) {
         Application.setUserAgentStylesheet(theme.getTheme().getUserAgentStylesheet());
         Config.getInstance().setActiveTheme(theme);
     }
 
     public static void showError(Exception e) {
-        Alert alert = new Alert(Alert.AlertType.WARNING,
-                "An error occurred:"
-                        + System.lineSeparator()
-                        + System.lineSeparator()
-                        + e);
-        alert.showAndWait();
+        LOGGER.error("", e);
+        ExceptionDialog dlg = new ExceptionDialog(e);
+        dlg.setTitle("An exception occurred");
+        dlg.setHeaderText("An uncaught exception occurred during runtime");
+        dlg.initOwner(MAINSTAGE.getOwner());
+        dlg.initModality(Modality.WINDOW_MODAL);
+        dlg.showAndWait();
     }
 
     public static void showCriticalError(Exception e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR,
-                "A critical error occurred. The application will now shutdown."
-                        + System.lineSeparator()
-                        + System.lineSeparator()
-                        + e);
-        alert.showAndWait();
+        showError(e);
         System.exit(-1);
     }
 

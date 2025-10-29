@@ -18,7 +18,8 @@
                 <GridPane>
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -36,7 +37,8 @@
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%settings.save" GridPane.rowIndex="3" onAction="#onSave" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSave" text="%settings.save" GridPane.rowIndex="3" />
+                  <Label text="%settings.language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                     </children>
                 </GridPane>
             </children>

@@ -40,5 +40,6 @@
             </TabPane>
         </center>
     </BorderPane>
-    <MaskerPane text="%loading" visible="false"/>
+    <BorderPane fx:id="preferences" visible="false"/>
+    <MaskerPane fx:id="loadingMask" text="%loading" visible="false"/>
 </StackPane>

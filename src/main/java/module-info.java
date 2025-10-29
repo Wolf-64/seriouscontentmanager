@@ -14,6 +14,7 @@ module lightweightFX {
     requires org.kordamp.ikonli.javafx;
     requires org.slf4j;
     requires java.desktop;
+    requires org.kordamp.ikonli.fontawesome6;
 
     opens com.wlf to javafx.fxml, javafx.graphics;
     opens com.wlf.app to com.fasterxml.jackson.databind, javafx.fxml;

@@ -2,7 +2,6 @@ package com.wlf.app;
 
 import com.wlf.App;
 import com.wlf.common.*;
-import com.wlf.common.util.AsyncFXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -14,18 +13,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public final class FrameController extends BaseController {
+public final class FrameController extends BaseController<BaseModel> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrameController.class.getSimpleName());
     private static final boolean DEV_MODE = Config.getInstance().isDevMode();
 
     @FXML
     private VBox splash;
     @FXML
-    private BorderPane content, preferences;
+    private BorderPane content;
     @FXML
     private MaskerPane loadingMask;
-
-    private String mainGuiFXML;
 
     public FrameController(){}
 
@@ -38,28 +35,22 @@ public final class FrameController extends BaseController {
 
     public void loadMainGUI(String fxml) throws IOException {
         splash.setVisible(true);
-        AsyncFXMLLoader loader = new AsyncFXMLLoader(fxml);
-
-        loader.setOnSucceeded((fxmlLoader) -> {
-            content.setCenter(fxmlLoader.getGui());
-            App.MAIN_CONTROLLER = (MainController) fxmlLoader.getController();
+        AppLoader<MainController> loader = new AppLoader<>(fxml, content::setCenter);
+        loader.setOnSucceeded((controller) -> {
+            App.MAIN_CONTROLLER = controller;
             splash.setVisible(false);
-            mainGuiFXML = fxml;
+            App.STATE.setInitializing(false);
         });
-        loader.load();
-    }
-
-    public void reloadGUI() throws IOException {
-        content.setCenter(null);
-        AsyncFXMLLoader loader = new AsyncFXMLLoader(mainGuiFXML);
-        loader.setOnSucceeded((gui) -> {
-            content.setCenter(gui.getGui());
-        });
-        loader.load();
+        loader.loadAsync();
     }
 
     @Override
     public void afterInit() {
+    }
+
+
+    public void setLoading(boolean value) {
+        loadingMask.setVisible(value);
     }
 
     private void checkInternetConnection() {

@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class BaseController {
+public abstract class BaseController<T extends BaseModel> {
     protected final ObjectProperty<Config> configuration = new SimpleObjectProperty<>(Config.getInstance());
+    protected T model;
 
     @Getter @Setter
     private List<Consumer<Event>> onBackCallbacks = new ArrayList<>();
