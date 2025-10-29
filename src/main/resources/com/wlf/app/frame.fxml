@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.MaskerPane?>
+
+<StackPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.FrameController">
+    <!-- Contains the actual node tree for the app after loading. Used to "refresh" i18n strings at runtime. -->
+    <BorderPane fx:id="content" />
+    <!-- Only used as initial app startup/splash screen. -->
+    <VBox fx:id="splash" alignment="CENTER" style="-fx-background-color: rgba(0%,0%,0%,0.75);">
+        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@programicon.png" />
+        </ImageView>
+    </VBox>
+   <MaskerPane fx:id="loadingMask" text="%loading" visible="false" />
+</StackPane>

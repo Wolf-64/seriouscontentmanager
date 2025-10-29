@@ -1,0 +1,38 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Makes it run after any version tag has been pushed
+  workflow_dispatch: # Should allow a manual trigger
+
+jobs:
+  build-and-release:
+    env:
+      MAVEN_SETTINGS: ${{ secrets.MAVEN_SETTINGS }}
+      MAVEN_SETTINGS_SECURITY: ${{ secrets.MAVEN_SETTINGS_SECURITY }}
+    runs-on: docker
+    steps:
+    - uses: dedalus-cis4u/with-standard-setup@v2.0.9
+      with:
+        git-checkout: 'all'
+        maven: 3.9.6
+        java: 17
+    - name: Build with Maven
+      run: mvn clean package
+
+    - name: Find JAR files
+      id: find-jar
+      run: |
+        echo "JAR_PATH_GUI=$(find modules/forms/target/ -name 'CIAToolbox.jar' | head -n 1)" >> $GITHUB_ENV
+        echo "JAR_PATH_CLI=$(find modules/app/target/ -name 'CIAToolsCLI.jar' | head -n 1)" >> $GITHUB_ENV
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }} # tag or branch name, depending on which the action is run on
+        files: |
+          ${{ env.JAR_PATH_GUI }}
+          ${{ env.JAR_PATH_CLI }}
+      env:
+       GITHUB_TOKEN: ${{ github.token }}
