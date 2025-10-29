@@ -1,6 +1,6 @@
 package com.wlf.common.util;
 
-import com.wlf.App;
+import com.wlf.app.App;
 import javafx.scene.image.Image;
 
 import java.io.File;

@@ -1,6 +1,6 @@
 package com.wlf.app.preferences;
 
-import com.wlf.App;
+import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
 import com.wlf.common.BaseController;
@@ -16,7 +16,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class PreferencesController extends BaseController<BaseModel> {
+public abstract class BasePreferencesController extends BaseController<BaseModel> {
     @FXML
     private ComboBox<Language> cmbLanguages;
     @FXML
@@ -42,20 +42,19 @@ public class PreferencesController extends BaseController<BaseModel> {
     }
 
     @FXML
-    private void onSave() throws IOException {
-        Config.save();
+    protected void onSave() throws IOException {
         if (App.STATE.isLanguageChanged()) {
             getConfiguration().setLanguage(cmbLanguages.getValue());
-            AppLoader.reloadGuis();
+            Config.save();
+            AppLoader.reloadGUIs();
         } else {
-            App.MAIN_CONTROLLER.hidePreferences();
+            Config.save();
+            onCancel();
         }
     }
 
     @FXML
-    private void onCancel() throws IOException {
-        App.MAIN_CONTROLLER.hidePreferences();
-    }
+    protected abstract void onCancel();
 
     // ----------------------------------- FX Boilerplate ---------------------------------------
 

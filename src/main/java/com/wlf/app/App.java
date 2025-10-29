@@ -1,7 +1,7 @@
-package com.wlf;
+package com.wlf.app;
 
-import com.wlf.app.*;
 import com.wlf.app.preferences.Config;
+import com.wlf.common.BaseController;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,9 +24,9 @@ public class App extends javafx.application.Application {
     public static Scene MAINSCENE;
 
     public static String APP_TITLE = "Lightweight FX";
-    public static Image APP_ICON = Utils.getImageResource("app/programicon.png");
+    public static Image APP_ICON = Utils.getImageResource("programicon.png");
     public static FrameController FRAME_CONTROLLER;
-    public static MainController MAIN_CONTROLLER;
+    public static BaseController<?> MAIN_CONTROLLER;
     public final static AppState STATE = new AppState();
 
     public static void main(String[] args) {
@@ -47,12 +47,12 @@ public class App extends javafx.application.Application {
         FrameController controller = appInit(stage);
         controller.afterInit();
         setTheme(Config.getInstance().getActiveTheme());
-        controller.loadMainGUI("app/mainView.fxml");
+        controller.loadMainGUI("main/mainView.fxml");
     }
 
     private FrameController appInit(Stage stage) throws IOException {
         MAINSTAGE = stage;
-        AppLoader<FrameController> appLoader = new AppLoader<>("app/frame.fxml");
+        AppLoader<FrameController> appLoader = new AppLoader<>("frame.fxml");
         Parent launcherGUI = appLoader.load();
         Scene scene = new Scene(launcherGUI);
         MAINSCENE = scene;

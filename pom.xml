@@ -12,7 +12,7 @@
     </scm>
 
     <properties>
-        <project.mainClass>com.wlf.App</project.mainClass>
+        <project.mainClass>com.wlf.app.App</project.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.javafx>25.0.1</version.javafx>
         <version.lombok>1.18.42</version.lombok>

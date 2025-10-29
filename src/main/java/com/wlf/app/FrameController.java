@@ -1,6 +1,5 @@
 package com.wlf.app;
 
-import com.wlf.App;
 import com.wlf.app.preferences.Config;
 import com.wlf.common.*;
 import javafx.fxml.FXML;
@@ -36,7 +35,7 @@ public final class FrameController extends BaseController<BaseModel> {
 
     public void loadMainGUI(String fxml) throws IOException {
         splash.setVisible(true);
-        AppLoader<MainController> loader = new AppLoader<>(fxml, content::setCenter);
+        AppLoader<BaseController<?>> loader = new AppLoader<>(fxml, content::setCenter);
         loader.setOnSucceeded((controller) -> {
             App.MAIN_CONTROLLER = controller;
             splash.setVisible(false);

@@ -1,6 +1,5 @@
 package com.wlf.app;
 
-import com.wlf.App;
 import com.wlf.app.preferences.Config;
 import com.wlf.common.BaseController;
 import com.wlf.common.util.ErrorHandler;
@@ -74,7 +73,7 @@ public class AppLoader<T extends BaseController<?>> {
         return gui;
     }
 
-    public static void reloadGuis() throws LoadException {
+    public static void reloadGUIs() throws LoadException {
         for (String fxml : loadedGuis.keySet()) {
             reloadGui(fxml);
         }
