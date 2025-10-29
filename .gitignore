@@ -33,3 +33,5 @@ replay_pid*
 
 # app generated
 *config.json
+/src/main/java/com/wlf/app/main/*
+/src/main/resources/com/wlf/app/main/*
