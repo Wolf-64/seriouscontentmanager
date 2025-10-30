@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -37,460 +38,471 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.MaskerPane?>
+<?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.Rating?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.PrimaryController">
-   <bottom>
-      <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-      </VBox>
-   </bottom>
-   <top>
-       <MenuBar BorderPane.alignment="CENTER">
-           <Menu mnemonicParsing="false" text="File">
-               <MenuItem mnemonicParsing="false" text="Close" />
-           </Menu>
-           <Menu mnemonicParsing="false" text="Edit">
-               <MenuItem mnemonicParsing="false" text="Delete" />
-           </Menu>
-           <Menu mnemonicParsing="false" text="?">
-               <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
-           </Menu>
-       </MenuBar>
-   </top>
-   <center>
-       <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" side="LEFT" style="-fx-tab-max-height: 70; -fx-tab-max-width: 64;" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-           <Tab text="Manager">
-               <graphic>
-                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
-                       <Image url="@icons/programicon.png" />
-                   </ImageView>
-               </graphic>
-               <tooltip>
-                   <Tooltip text="Content Manager" />
-               </tooltip>
-               <BorderPane>
-                   <top>
-                       <GridPane hgap="4.0" vgap="4.0" BorderPane.alignment="CENTER">
-                           <columnConstraints>
-                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <BorderPane.margin>
-                               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                           </BorderPane.margin>
-                           <RadioButton fx:id="rbTfe" mnemonicParsing="false" selected="true" text="The First Encounter">
-                               <userData>
-                                   <Game fx:constant="TFE" />
-                               </userData>
-                               <toggleGroup>
-                                   <ToggleGroup fx:id="tgGame" />
-                               </toggleGroup>
-                           </RadioButton>
-                           <RadioButton fx:id="rbTse" mnemonicParsing="false" text="The Second Encounter" toggleGroup="$tgGame" GridPane.rowIndex="1">
-                               <userData>
-                                   <Game fx:constant="TSE" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton mnemonicParsing="false" selected="true" text="Any" toggleGroup="$tgGame" GridPane.rowIndex="2">
-                               <userData>
-                                   <Game fx:constant="ANY" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton fx:id="rbMaps" mnemonicParsing="false" text="Maps" GridPane.columnIndex="1">
-                               <toggleGroup>
-                                   <ToggleGroup fx:id="tgType" />
-                               </toggleGroup>
-                               <userData>
-                                   <Type fx:constant="MAP" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton fx:id="rbMods" mnemonicParsing="false" text="Mods" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                               <userData>
-                                   <Type fx:constant="MOD" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton mnemonicParsing="false" text="Skin" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                               <userData>
-                                   <Type fx:constant="SKIN" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton mnemonicParsing="false" selected="true" text="Any" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                               <userData>
-                                   <Type fx:constant="UNDEFINED" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton fx:id="rbSp" mnemonicParsing="false" text="Singleplayer" GridPane.columnIndex="2">
-                               <toggleGroup>
-                                   <ToggleGroup fx:id="tgMode" />
-                               </toggleGroup>
-                               <userData>
-                                   <Mode fx:constant="SP" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton fx:id="rbCoop" mnemonicParsing="false" text="Co-op" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                               <userData>
-                                   <Mode fx:constant="COOP" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton fx:id="rbDm" mnemonicParsing="false" text="Deathmatch" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                               <userData>
-                                   <Mode fx:constant="DM" />
-                               </userData>
-                           </RadioButton>
-                           <RadioButton mnemonicParsing="false" selected="true" text="Any" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                               <userData>
-                                   <Mode fx:constant="ALL" />
-                               </userData>
-                           </RadioButton>
-                           <CheckBox fx:id="cbInstalled" mnemonicParsing="false" text="Installed" GridPane.columnIndex="3" />
-                           <CheckBox fx:id="cbCompleted" mnemonicParsing="false" text="Completed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                           <TextField fx:id="tfNameFilter" promptText="Name filter" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                           <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                               <Label text="From:" />
-                               <DatePicker />
-                           </HBox>
-                           <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="3" GridPane.rowIndex="4">
-                               <Label text="To:" />
-                               <DatePicker />
-                           </HBox>
-                           <Button mnemonicParsing="false" onAction="#rescanDownloadDir" prefHeight="30.0" prefWidth="205.0" text="Rescan Download Directory" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                           <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="205.0" text="Play The First Encounter" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
-                               <graphic>
-                                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                       <Image url="@icons/tfe.png" />
-                                   </ImageView>
-                               </graphic>
-                           </Button>
-                           <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="205.0" text="Play The Second Encounter" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
-                               <graphic>
-                                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                       <Image url="@icons/game.png" />
-                                   </ImageView>
-                               </graphic>
-                           </Button>
-                           <Rating GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                       </GridPane>
-                   </top>
-                   <center>
-                       <TableView fx:id="table" editable="true" items="${controller.fileEntries}" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
-                           <columns>
-                               <TableColumn prefWidth="246.0" text="Name">
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="name" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                               <TableColumn prefWidth="253.0" text="File">
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="downloadedFileName" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                               <TableColumn minWidth="0.0" prefWidth="149.0" text="Game">
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="game" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                               <TableColumn prefWidth="71.0" text="Type">
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="type" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                               <TableColumn prefWidth="136.0" text="Mode(s)">
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="modes" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                               <TableColumn editable="false" prefWidth="32.0">
-                                   <cellFactory>
-                                       <CheckBoxTableCellFactory />
-                                   </cellFactory>
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="installed" />
-                                   </cellValueFactory>
-                                   <graphic>
-                                       <Label text="I">
-                                           <tooltip>
-                                               <Tooltip text="Installed" />
-                                           </tooltip>
-                                       </Label>
-                                   </graphic>
-                               </TableColumn>
-                               <TableColumn minWidth="0.0" prefWidth="32.0">
-                                   <cellFactory>
-                                       <CheckBoxTableCellFactory />
-                                   </cellFactory>
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="completed" />
-                                   </cellValueFactory>
-                                   <graphic>
-                                       <Label text="C">
-                                           <tooltip>
-                                               <Tooltip text="Completed" />
-                                           </tooltip>
-                                       </Label>
-                                   </graphic>
-                               </TableColumn>
-                               <TableColumn fx:id="colDateAdded" prefWidth="120.0" text="date added">
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="dateAdded" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                               <TableColumn prefWidth="180.0" text="Rating">
-                                   <cellFactory>
-                                       <RatingTableCellFactory />
-                                   </cellFactory>
-                                   <cellValueFactory>
-                                       <PropertyValueFactory property="rating" />
-                                   </cellValueFactory>
-                               </TableColumn>
-                           </columns>
-                           <contextMenu>
-                               <ContextMenu onShowing="#updateContextMenu">
-                                   <items>
-                                       <MenuItem fx:id="quickPlay" mnemonicParsing="false" onAction="#onPlaySingleMap" text="Play!" />
-                                       <MenuItem fx:id="menuItemInstall" mnemonicParsing="false" onAction="#onDeploy" text="Install" />
-                                       <MenuItem fx:id="menuItemRemove" mnemonicParsing="false" onAction="#onRemove" text="Remove" />
-                                       <SeparatorMenuItem />
-                                       <MenuItem mnemonicParsing="false" onAction="#onMarkComplete" text="Un-/Mark complete" />
-                                       <MenuItem mnemonicParsing="false" onAction="#onRate" text="Rate..." />
-                                       <SeparatorMenuItem />
-                                       <MenuItem mnemonicParsing="false" onAction="#onDelete" text="Delete" />
-                                   </items>
-                               </ContextMenu>
-                           </contextMenu>
-                       </TableView>
-                   </center>
-               </BorderPane>
-           </Tab>
-           <Tab closable="false">
-               <graphic>
-                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
-                       <Image url="@icons/grorepository.png" />
-                   </ImageView>
-               </graphic>
-               <tooltip>
-                   <Tooltip text="grorepository.ru" />
-               </tooltip>
-               <StackPane>
-                   <BorderPane>
-                       <bottom>
-                           <BorderPane BorderPane.alignment="CENTER">
-                               <center>
-                                   <ProgressBar fx:id="downloadProgress" prefHeight="20.0" prefWidth="1009.0" progress="0.0" />
-                               </center>
-                               <left>
-                                   <HBox BorderPane.alignment="CENTER">
-                                       <Button disable="${controller.stopDownloadButtonDisabled}" mnemonicParsing="false" onAction="#onStopDownloads">
-                                           <tooltip>
-                                               <Tooltip text="Stop Download" />
-                                           </tooltip>
-                                           <graphic>
-                                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                   <Image url="@icons/stop.png" />
-                                               </ImageView>
-                                           </graphic>
-                                       </Button>
-                                       <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" mnemonicParsing="false" onAction="#onPauseDownloads">
-                                           <graphic>
-                                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                   <Image url="@icons/play_pause_64dp.png" />
-                                               </ImageView>
-                                           </graphic>
-                                       </Button>
-                                   </HBox>
-                               </left>
-                           </BorderPane>
-                       </bottom>
-                       <center>
-                           <SplitPane dividerPositions="0.741307371349096" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
-                               <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                   <center>
-                                       <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gro Repository" BorderPane.alignment="TOP_CENTER">
-                                           <BorderPane fx:id="webViewContainer">
-                                               <center>
-                                                    <!-- will be loaded at runtime upon activating the tab and inserted here -->
-                                               </center>
-                                               <top>
-                                                   <BorderPane prefHeight="25.0" prefWidth="1107.0" BorderPane.alignment="CENTER">
-                                                       <center>
-                                                           <Label text="${controller.browser.location}" BorderPane.alignment="CENTER" />
-                                                       </center>
-                                                       <left>
-                                                           <HBox prefHeight="25.0" prefWidth="77.0" spacing="8.0" BorderPane.alignment="CENTER">
-                                                               <Button mnemonicParsing="false" onAction="#onBrowserBack">
-                                                                   <graphic>
-                                                                       <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                                                           <Image url="@icons/arrow_back.png" />
-                                                                       </ImageView>
-                                                                   </graphic>
-                                                               </Button>
-                                                               <Button mnemonicParsing="false" onAction="#onBrowserForward">
-                                                                   <graphic>
-                                                                       <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                                                           <Image url="@icons/arrow_forward.png" />
-                                                                       </ImageView>
-                                                                   </graphic>
-                                                               </Button>
-                                                           </HBox>
-                                                       </left>
-                                                       <right>
-                                                           <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="36.0" BorderPane.alignment="CENTER">
-                                                               <Button mnemonicParsing="false" onAction="#onBrowserRefresh">
-                                                                   <graphic>
-                                                                       <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                                                           <Image url="@icons/refresh.png" />
-                                                                       </ImageView>
-                                                                   </graphic>
-                                                               </Button>
-                                                           </HBox>
-                                                       </right>
-                                                   </BorderPane>
-                                               </top>
-                                           </BorderPane>
-                                       </TitledPane>
-                                   </center>
-                               </BorderPane>
-                               <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                   <center>
-                                       <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Downloads" BorderPane.alignment="TOP_LEFT">
-                                           <TableView items="${controller.activeDonwloads}">
-                                               <columns>
-                                                   <TableColumn prefWidth="430.0" text="File name">
-                                                       <cellValueFactory>
-                                                           <PropertyValueFactory property="fileName" />
-                                                       </cellValueFactory>
-                                                   </TableColumn>
-                                                   <TableColumn prefWidth="247.0" text="Status">
-                                                       <cellValueFactory>
-                                                           <PropertyValueFactory property="status" />
-                                                       </cellValueFactory>
-                                                   </TableColumn>
-                                                   <TableColumn prefWidth="103.0" text="Downloaded">
-                                                       <cellValueFactory>
-                                                           <PropertyValueFactory property="downloadedMb" />
-                                                       </cellValueFactory>
-                                                   </TableColumn>
-                                                   <TableColumn minWidth="0.0" prefWidth="65.0" text="Size">
-                                                       <cellValueFactory>
-                                                           <PropertyValueFactory property="maxMb" />
-                                                       </cellValueFactory>
-                                                   </TableColumn>
-                                                   <TableColumn prefWidth="333.0" text="Progress">
-                                                       <cellFactory>
-                                                           <AccentedProgressBarTableCellFactory />
-                                                       </cellFactory>
-                                                       <cellValueFactory>
-                                                           <PropertyValueFactory property="progress" />
-                                                       </cellValueFactory>
-                                                   </TableColumn>
-                                               </columns>
-                                           </TableView>
-                                       </TitledPane>
-                                   </center>
-                               </BorderPane>
-                           </SplitPane>
-                       </center>
-                   </BorderPane>
-                   <MaskerPane fx:id="webViewLoading" />
-               </StackPane>
-           </Tab>
-           <Tab text="Untitled Tab">
-               <graphic>
-                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
-                       <Image url="@icons/settigns.png" />
-                   </ImageView>
-               </graphic>
-               <tooltip>
-                   <Tooltip text="Settings" />
-               </tooltip>
-               <BorderPane>
-                   <center>
-                       <GridPane BorderPane.alignment="CENTER">
-                           <columnConstraints>
-                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1049.0" minWidth="10.0" prefWidth="1026.0" />
-                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="10.0" prefWidth="87.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <BorderPane.margin>
-                               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                           </BorderPane.margin>
-                           <Label text="Download directory:" GridPane.valignment="BOTTOM" />
-                           <Label text="The First Encounter directory:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                           <TextField fx:id="tfDirectoryDownloads" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-                           <ValidatingTextField fx:id="tfDirectoryTFE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tfeDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-                           <Label text="The Second Encounter directory:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
-                           <ValidatingTextField fx:id="tfDirectoryTSE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tseDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                           <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                               <ImageView fx:id="imgCheckTFE" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                   <Image url="@icons/check.png" />
-                               </ImageView>
-                               <Button fx:id="btnBrowseDirectoryTFE" mnemonicParsing="false">
-                                   <graphic>
-                                       <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                           <Image url="@icons/folder_open.png" />
-                                       </ImageView>
-                                   </graphic>
-                               </Button>
-                           </HBox>
-                           <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                               <ImageView fx:id="imgCheckTSE" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                   <Image url="@icons/check.png" />
-                               </ImageView>
-                               <Button fx:id="btnBrowseDirectoryTSE" mnemonicParsing="false">
-                                   <graphic>
-                                       <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                           <Image url="@icons/folder_open.png" />
-                                       </ImageView>
-                                   </graphic>
-                               </Button>
-                           </HBox>
-                           <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
-                               <Button fx:id="btnBrowseDirectoryDownloads" mnemonicParsing="false">
-                                   <graphic>
-                                       <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                           <Image url="@icons/folder_open.png" />
-                                       </ImageView>
-                                   </graphic>
-                               </Button>
-                           </HBox>
-                       </GridPane>
-                   </center>
-                   <bottom>
-                       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <buttons>
-                               <Button mnemonicParsing="false" onAction="#onSaveSettings" text="Save" />
-                           </buttons>
-                           <BorderPane.margin>
-                               <Insets right="16.0" />
-                           </BorderPane.margin>
-                       </ButtonBar>
-                   </bottom>
-               </BorderPane>
-           </Tab>
-       </TabPane>
-   </center>
+<BorderPane prefHeight="800.0" prefWidth="1281.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.PrimaryController">
+    <bottom>
+        <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </VBox>
+    </bottom>
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="File">
+                <MenuItem mnemonicParsing="false" text="Close" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+                <MenuItem mnemonicParsing="false" text="Delete" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="?">
+                <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" side="LEFT" style="-fx-tab-max-height: 70; -fx-tab-max-width: 64;" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <Tab text="Manager">
+                <graphic>
+                    <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@icons/programicon.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Content Manager" />
+                </tooltip>
+                <BorderPane>
+                    <top>
+                        <GridPane hgap="4.0" vgap="4.0" BorderPane.alignment="CENTER">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <BorderPane.margin>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            </BorderPane.margin>
+                            <RadioButton fx:id="rbTfe" mnemonicParsing="false" selected="true" text="The First Encounter">
+                                <userData>
+                                    <Game fx:constant="TFE" />
+                                </userData>
+                                <toggleGroup>
+                                    <ToggleGroup fx:id="tgGame" />
+                                </toggleGroup>
+                            </RadioButton>
+                            <RadioButton fx:id="rbTse" mnemonicParsing="false" text="The Second Encounter" toggleGroup="$tgGame" GridPane.rowIndex="1">
+                                <userData>
+                                    <Game fx:constant="TSE" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton mnemonicParsing="false" selected="true" text="Any" toggleGroup="$tgGame" GridPane.rowIndex="2">
+                                <userData>
+                                    <Game fx:constant="ANY" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton fx:id="rbMaps" mnemonicParsing="false" text="Maps" GridPane.columnIndex="1">
+                                <toggleGroup>
+                                    <ToggleGroup fx:id="tgType" />
+                                </toggleGroup>
+                                <userData>
+                                    <Type fx:constant="MAP" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton fx:id="rbMods" mnemonicParsing="false" text="Mods" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <userData>
+                                    <Type fx:constant="MOD" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton mnemonicParsing="false" text="Skin" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <userData>
+                                    <Type fx:constant="SKIN" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton mnemonicParsing="false" selected="true" text="Any" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                <userData>
+                                    <Type fx:constant="UNDEFINED" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton fx:id="rbSp" mnemonicParsing="false" text="Singleplayer" GridPane.columnIndex="2">
+                                <toggleGroup>
+                                    <ToggleGroup fx:id="tgMode" />
+                                </toggleGroup>
+                                <userData>
+                                    <Mode fx:constant="SP" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton fx:id="rbCoop" mnemonicParsing="false" text="Co-op" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                <userData>
+                                    <Mode fx:constant="COOP" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton fx:id="rbDm" mnemonicParsing="false" text="Deathmatch" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                <userData>
+                                    <Mode fx:constant="DM" />
+                                </userData>
+                            </RadioButton>
+                            <RadioButton mnemonicParsing="false" selected="true" text="Any" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                <userData>
+                                    <Mode fx:constant="ALL" />
+                                </userData>
+                            </RadioButton>
+                            <CheckBox fx:id="cbInstalled" mnemonicParsing="false" text="Installed" GridPane.columnIndex="3" />
+                            <CheckBox fx:id="cbCompleted" mnemonicParsing="false" text="Completed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                            <TextField fx:id="tfNameFilter" promptText="Name filter" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                            <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                <Label text="From:" />
+                                <DatePicker />
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                <Label text="To:" />
+                                <DatePicker />
+                            </HBox>
+                            <Button mnemonicParsing="false" onAction="#rescanDownloadDir" prefHeight="30.0" prefWidth="205.0" text="Rescan Download Directory" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                            <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="205.0" text="Play The First Encounter" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
+                                <graphic>
+                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                        <Image url="@icons/tfe.png" />
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="205.0" text="Play The Second Encounter" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                <graphic>
+                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                        <Image url="@icons/game.png" />
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Rating GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                        </GridPane>
+                    </top>
+                    <center>
+                        <TableView fx:id="table" editable="true" items="${controller.fileEntries}" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+                            <columns>
+                                <TableColumn prefWidth="246.0" text="Name">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="name" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn prefWidth="253.0" text="File">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="downloadedFileName" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn minWidth="0.0" prefWidth="149.0" text="Game">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="game" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn prefWidth="71.0" text="Type">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="type" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn prefWidth="136.0" text="Mode(s)">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="modes" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn editable="false" prefWidth="32.0">
+                                    <cellFactory>
+                                        <CheckBoxTableCellFactory />
+                                    </cellFactory>
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="installed" />
+                                    </cellValueFactory>
+                                    <graphic>
+                                        <Label text="I">
+                                            <tooltip>
+                                                <Tooltip text="Installed" />
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn minWidth="0.0" prefWidth="32.0">
+                                    <cellFactory>
+                                        <CheckBoxTableCellFactory />
+                                    </cellFactory>
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="completed" />
+                                    </cellValueFactory>
+                                    <graphic>
+                                        <Label text="C">
+                                            <tooltip>
+                                                <Tooltip text="Completed" />
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="colDateAdded" prefWidth="120.0" text="date added">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="dateAdded" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn prefWidth="180.0" text="Rating">
+                                    <cellFactory>
+                                        <RatingTableCellFactory />
+                                    </cellFactory>
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="rating" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                            </columns>
+                            <contextMenu>
+                                <ContextMenu onShowing="#updateContextMenu">
+                                    <items>
+                                        <MenuItem fx:id="quickPlay" mnemonicParsing="false" onAction="#onPlaySingleMap" text="Play!" />
+                                        <MenuItem fx:id="menuItemInstall" mnemonicParsing="false" onAction="#onDeploy" text="Install" />
+                                        <MenuItem fx:id="menuItemRemove" mnemonicParsing="false" onAction="#onRemove" text="Remove" />
+                                        <SeparatorMenuItem />
+                                        <MenuItem mnemonicParsing="false" onAction="#onMarkComplete" text="Un-/Mark complete" />
+                                        <MenuItem mnemonicParsing="false" onAction="#onRate" text="Rate..." />
+                                        <SeparatorMenuItem />
+                                        <MenuItem mnemonicParsing="false" onAction="#onDelete" text="Delete" />
+                                    </items>
+                                </ContextMenu>
+                            </contextMenu>
+                        </TableView>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab closable="false">
+                <graphic>
+                    <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@icons/grorepository.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="grorepository.ru" />
+                </tooltip>
+                <BorderPane>
+                    <bottom>
+                        <BorderPane BorderPane.alignment="CENTER">
+                            <center>
+                                <ProgressBar fx:id="downloadProgress" prefHeight="20.0" prefWidth="1009.0" progress="0.0" />
+                            </center>
+                            <left>
+                                <HBox BorderPane.alignment="CENTER">
+                                    <Button disable="${controller.stopDownloadButtonDisabled}" mnemonicParsing="false" onAction="#onStopDownloads">
+                                        <tooltip>
+                                            <Tooltip text="Stop Download" />
+                                        </tooltip>
+                                        <graphic>
+                                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                <Image url="@icons/stop.png" />
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" mnemonicParsing="false" onAction="#onPauseDownloads">
+                                        <graphic>
+                                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                <Image url="@icons/play_pause_64dp.png" />
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                </HBox>
+                            </left>
+                        </BorderPane>
+                    </bottom>
+                    <center>
+                        <SplitPane dividerPositions="0.741307371349096" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+                            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <center>
+                                    <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gro Repository" BorderPane.alignment="TOP_CENTER">
+                                        <BorderPane fx:id="webViewContainer">
+                                            <center>
+                                                <!-- will be loaded at runtime upon activating the tab and inserted here -->
+                                            </center>
+                                            <top>
+                                                <BorderPane prefHeight="25.0" prefWidth="1107.0" BorderPane.alignment="CENTER">
+                                                    <center>
+                                                        <Label text="${controller.browser.location}" BorderPane.alignment="CENTER" />
+                                                    </center>
+                                                    <left>
+                                                        <HBox prefHeight="25.0" prefWidth="77.0" spacing="8.0" BorderPane.alignment="CENTER">
+                                                            <Button mnemonicParsing="false" onAction="#onBrowserBack">
+                                                <graphic>
+                                                   <FontIcon iconLiteral="fas-arrow-left" iconSize="24" />
+                                                </graphic>
+                                                            </Button>
+                                                            <Button mnemonicParsing="false" onAction="#onBrowserForward">
+                                                <graphic>
+                                                   <FontIcon iconLiteral="fas-arrow-right" iconSize="24" />
+                                                </graphic>
+                                                            </Button>
+                                                        </HBox>
+                                                    </left>
+                                                    <right>
+                                                        <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="36.0" BorderPane.alignment="CENTER">
+                                                            <Button mnemonicParsing="false" onAction="#onBrowserRefresh">
+                                                <graphic>
+                                                   <FontIcon iconLiteral="fas-redo" iconSize="24" />
+                                                </graphic>
+                                                            </Button>
+                                                        </HBox>
+                                                    </right>
+                                                </BorderPane>
+                                            </top>
+                                        </BorderPane>
+                                    </TitledPane>
+                                </center>
+                            </BorderPane>
+                            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <center>
+                                    <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Downloads" BorderPane.alignment="TOP_LEFT">
+                                        <TableView items="${controller.activeDonwloads}">
+                                            <columns>
+                                                <TableColumn prefWidth="430.0" text="File name">
+                                                    <cellValueFactory>
+                                                        <PropertyValueFactory property="fileName" />
+                                                    </cellValueFactory>
+                                                </TableColumn>
+                                                <TableColumn prefWidth="247.0" text="Status">
+                                                    <cellValueFactory>
+                                                        <PropertyValueFactory property="status" />
+                                                    </cellValueFactory>
+                                                </TableColumn>
+                                                <TableColumn prefWidth="103.0" text="Downloaded">
+                                                    <cellValueFactory>
+                                                        <PropertyValueFactory property="downloadedMb" />
+                                                    </cellValueFactory>
+                                                </TableColumn>
+                                                <TableColumn minWidth="0.0" prefWidth="65.0" text="Size">
+                                                    <cellValueFactory>
+                                                        <PropertyValueFactory property="maxMb" />
+                                                    </cellValueFactory>
+                                                </TableColumn>
+                                                <TableColumn prefWidth="333.0" text="Progress">
+                                                    <cellFactory>
+                                                        <AccentedProgressBarTableCellFactory />
+                                                    </cellFactory>
+                                                    <cellValueFactory>
+                                                        <PropertyValueFactory property="progress" />
+                                                    </cellValueFactory>
+                                                </TableColumn>
+                                            </columns>
+                                        </TableView>
+                                    </TitledPane>
+                                </center>
+                            </BorderPane>
+                        </SplitPane>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab text="Untitled Tab">
+                <graphic>
+                    <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@icons/settigns.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Settings" />
+                </tooltip>
+                <BorderPane>
+                    <top>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="%language" GridPane.rowIndex="1" />
+                                <Label text="%theme" GridPane.rowIndex="2" />
+                                <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <Label text="%settings.general" GridPane.columnSpan="2">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Label>
+                                <Label text="%settings.language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                            </children>
+                     <padding>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </padding>
+                        </GridPane>
+                    </top>
+                    <center>
+                        <GridPane BorderPane.alignment="CENTER">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1049.0" minWidth="10.0" percentWidth="90.0" prefWidth="1026.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="10.0" percentWidth="10.0" prefWidth="87.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <BorderPane.margin>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            </BorderPane.margin>
+                            <Label text="Download directory:" GridPane.valignment="BOTTOM" />
+                            <Label text="The First Encounter directory:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                            <TextField fx:id="tfDirectoryDownloads" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                            <ValidatingTextField fx:id="tfDirectoryTFE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tfeDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                            <Label text="The Second Encounter directory:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
+                            <ValidatingTextField fx:id="tfDirectoryTSE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tseDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <FontIcon fx:id="imgCheckTFE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
+                                <Button fx:id="btnBrowseDirectoryTFE" mnemonicParsing="false">
+                           <graphic>
+                              <FontIcon iconLiteral="far-folder-open" iconSize="20" />
+                           </graphic>
+                                </Button>
+                            </HBox>
+                            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <FontIcon fx:id="imgCheckTSE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
+                                <Button fx:id="btnBrowseDirectoryTSE" mnemonicParsing="false">
+                           <graphic>
+                              <FontIcon iconLiteral="far-folder-open" iconSize="20" />
+                           </graphic>
+                                </Button>
+                            </HBox>
+                            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                <Button fx:id="btnBrowseDirectoryDownloads" mnemonicParsing="false">
+                           <graphic>
+                              <FontIcon iconLiteral="far-folder-open" iconSize="20" />
+                           </graphic>
+                                </Button>
+                            </HBox>
+                        </GridPane>
+                    </center>
+                    <bottom>
+                        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                            <buttons>
+                                <Button mnemonicParsing="false" onAction="#onSaveSettings" text="Save" />
+                            </buttons>
+                            <BorderPane.margin>
+                                <Insets right="16.0" />
+                            </BorderPane.margin>
+                        </ButtonBar>
+                    </bottom>
+                </BorderPane>
+            </Tab>
+        </TabPane>
+    </center>
 </BorderPane>

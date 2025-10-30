@@ -12,48 +12,98 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.TextField?>
+<?import com.wlf.common.controls.ValidatingTextField?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.preferences.BasePreferencesController">
+    <top>
+        <GridPane>
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <padding>
+                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            </padding>
+            <Label text="%language" GridPane.rowIndex="1"/>
+            <Label text="%theme" GridPane.rowIndex="2"/>
+            <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <Label text="%settings.general" GridPane.columnSpan="2">
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </Label>
+            <Label text="%settings.language.warning" visible="${controller.languageWarningVisible}"
+                   GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+        </GridPane>
+    </top>
     <center>
-        <VBox spacing="8.0" BorderPane.alignment="CENTER">
-            <children>
-                <GridPane>
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label text="%language" GridPane.rowIndex="1" />
-                        <Label text="%theme" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="%settings.general" GridPane.columnSpan="2">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-                  <Label text="%settings.language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    </children>
-                </GridPane>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
-               <children>
-                  <Button defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSave" prefWidth="120.0" text="%settings.save" />
-                  <Button cancelButton="true" mnemonicParsing="false" prefWidth="120.0" text="%settings.cancel" onAction="#onCancel" />
-               </children>
+        <GridPane BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1049.0" minWidth="10.0" percentWidth="90.0" prefWidth="1026.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="10.0" percentWidth="10.0" prefWidth="87.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <BorderPane.margin>
+                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+            </BorderPane.margin>
+            <Label text="Download directory:" GridPane.valignment="BOTTOM" />
+            <Label text="The First Encounter directory:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+            <TextField fx:id="tfDirectoryDownloads" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+            <ValidatingTextField fx:id="tfDirectoryTFE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tfeDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <Label text="The Second Encounter directory:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
+            <ValidatingTextField fx:id="tfDirectoryTSE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tseDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <FontIcon fx:id="imgCheckTFE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
+                <Button fx:id="btnBrowseDirectoryTFE" mnemonicParsing="false">
+                    <graphic>
+                        <FontIcon iconLiteral="far-folder-open" iconSize="20" />
+                    </graphic>
+                </Button>
             </HBox>
-            </children>
-        </VBox>
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <FontIcon fx:id="imgCheckTSE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
+                <Button fx:id="btnBrowseDirectoryTSE" mnemonicParsing="false">
+                    <graphic>
+                        <FontIcon iconLiteral="far-folder-open" iconSize="20" />
+                    </graphic>
+                </Button>
+            </HBox>
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
+                <Button fx:id="btnBrowseDirectoryDownloads" mnemonicParsing="false">
+                    <graphic>
+                        <FontIcon iconLiteral="far-folder-open" iconSize="20" />
+                    </graphic>
+                </Button>
+            </HBox>
+        </GridPane>
     </center>
-    <opaqueInsets>
-        <Insets />
-    </opaqueInsets>
-    <padding>
-        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-    </padding>
+    <bottom>
+        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onSaveSettings" text="Save" />
+            </buttons>
+            <BorderPane.margin>
+                <Insets right="16.0" />
+            </BorderPane.margin>
+        </ButtonBar>
+    </bottom>
 </BorderPane>

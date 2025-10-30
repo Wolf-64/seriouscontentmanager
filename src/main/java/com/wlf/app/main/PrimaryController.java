@@ -12,9 +12,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.wlf.app.App;
+import com.wlf.app.preferences.BasePreferencesController;
 import com.wlf.app.preferences.Config;
-import com.wlf.common.BaseController;
-import com.wlf.common.BaseModel;
 import com.wlf.common.controls.AccentedProgressBar;
 import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
@@ -23,6 +23,7 @@ import com.wlf.app.main.net.Downloader;
 
 import com.wlf.app.main.net.Requester;
 import com.wlf.app.main.util.LocalDateTimeStringConverter;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
@@ -48,8 +49,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.controlsfx.control.MaskerPane;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-public class PrimaryController extends BaseController<BaseModel> {
+public class PrimaryController extends BasePreferencesController {
     static Logger log = Logger.getLogger(PrimaryController.class.getSimpleName());
 
     @FXML
@@ -77,7 +79,8 @@ public class PrimaryController extends BaseController<BaseModel> {
     @FXML TextField tfDirectoryTFE;
     @FXML TextField tfDirectoryTSE;
 
-    @FXML ImageView imgCheckTFE, imgCheckTSE;
+    @FXML
+    FontIcon imgCheckTFE, imgCheckTSE;
 
     @FXML Button btnBrowseDirectoryDownloads;
     @FXML Button btnBrowseDirectoryTFE;
@@ -130,22 +133,16 @@ public class PrimaryController extends BaseController<BaseModel> {
 
     @FXML
     public void initialize() {
+        super.initialize();
         // register WebView lazy-load when tab active
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldVal, newVal) -> {
             // should always be second tab
             if (newVal.intValue() == 1) {
                 if (webView == null) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    initWebView();
-                }
-
-                // only if not yet opened
-                if (browser.get().getHistory().getEntries().isEmpty()) {
-                    browser.get().load(GRO_REPOSITORY_URL);
+                    App.FRAME_CONTROLLER.setLoading(true);
+                    Platform.runLater(() -> {
+                        Platform.runLater(this::initWebView);
+                    });
                 }
             }
         });
@@ -200,6 +197,11 @@ public class PrimaryController extends BaseController<BaseModel> {
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
     }
 
+    @Override
+    protected void onCancel() {
+
+    }
+
     // need to defer this to runtime as the WebView must be instantiated on the FX application thread
     private void initWebView() {
         webView = new WebView();
@@ -217,7 +219,11 @@ public class PrimaryController extends BaseController<BaseModel> {
             } catch (NoSuchElementException ignored) {}
         }));
 
-        webViewLoading.setVisible(false);
+        if (browser.get().getHistory().getEntries().isEmpty()) {
+            browser.get().load(GRO_REPOSITORY_URL);
+        }
+
+        App.FRAME_CONTROLLER.setLoading(false);
     }
 
     private void onDownloadRequestReceived() {
