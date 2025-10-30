@@ -278,7 +278,7 @@
                     </center>
                 </BorderPane>
             </Tab>
-            <Tab closable="false">
+            <Tab closable="false" fx:id="grorepo">
                 <graphic>
                     <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                         <Image url="@icons/grorepository.png" />
@@ -401,7 +401,7 @@
                     </center>
                 </BorderPane>
             </Tab>
-            <Tab text="Untitled Tab">
+            <Tab text="Untitled Tab" fx:id="settings">
                 <graphic>
                     <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                         <Image url="@icons/settigns.png" />
@@ -410,98 +410,6 @@
                 <tooltip>
                     <Tooltip text="Settings" />
                 </tooltip>
-                <BorderPane>
-                    <top>
-                        <GridPane>
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                                <Label text="%language" GridPane.rowIndex="1" />
-                                <Label text="%theme" GridPane.rowIndex="2" />
-                                <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <Label text="%settings.general" GridPane.columnSpan="2">
-                                    <font>
-                                        <Font name="System Bold" size="16.0" />
-                                    </font>
-                                </Label>
-                                <Label text="%settings.language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                            </children>
-                     <padding>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </padding>
-                        </GridPane>
-                    </top>
-                    <center>
-                        <GridPane BorderPane.alignment="CENTER">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1049.0" minWidth="10.0" percentWidth="90.0" prefWidth="1026.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="10.0" percentWidth="10.0" prefWidth="87.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <BorderPane.margin>
-                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                            </BorderPane.margin>
-                            <Label text="Download directory:" GridPane.valignment="BOTTOM" />
-                            <Label text="The First Encounter directory:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                            <TextField fx:id="tfDirectoryDownloads" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-                            <ValidatingTextField fx:id="tfDirectoryTFE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tfeDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-                            <Label text="The Second Encounter directory:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
-                            <ValidatingTextField fx:id="tfDirectoryTSE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.config.tseDirectoryValid}" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                        <FontIcon fx:id="imgCheckTFE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
-                                <Button fx:id="btnBrowseDirectoryTFE" mnemonicParsing="false">
-                           <graphic>
-                              <FontIcon iconLiteral="far-folder-open" iconSize="20" />
-                           </graphic>
-                                </Button>
-                            </HBox>
-                            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                        <FontIcon fx:id="imgCheckTSE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
-                                <Button fx:id="btnBrowseDirectoryTSE" mnemonicParsing="false">
-                           <graphic>
-                              <FontIcon iconLiteral="far-folder-open" iconSize="20" />
-                           </graphic>
-                                </Button>
-                            </HBox>
-                            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
-                                <Button fx:id="btnBrowseDirectoryDownloads" mnemonicParsing="false">
-                           <graphic>
-                              <FontIcon iconLiteral="far-folder-open" iconSize="20" />
-                           </graphic>
-                                </Button>
-                            </HBox>
-                        </GridPane>
-                    </center>
-                    <bottom>
-                        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                            <buttons>
-                                <Button mnemonicParsing="false" onAction="#onSaveSettings" text="Save" />
-                            </buttons>
-                            <BorderPane.margin>
-                                <Insets right="16.0" />
-                            </BorderPane.margin>
-                        </ButtonBar>
-                    </bottom>
-                </BorderPane>
             </Tab>
         </TabPane>
     </center>

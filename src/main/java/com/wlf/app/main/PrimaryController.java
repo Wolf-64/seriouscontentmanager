@@ -13,8 +13,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.wlf.app.App;
-import com.wlf.app.preferences.BasePreferencesController;
+import com.wlf.app.AppLoader;
 import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.PreferencesController;
+import com.wlf.common.BaseController;
+import com.wlf.common.BaseModel;
 import com.wlf.common.controls.AccentedProgressBar;
 import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
@@ -22,8 +25,7 @@ import com.wlf.app.main.io.GameHandler;
 import com.wlf.app.main.net.Downloader;
 
 import com.wlf.app.main.net.Requester;
-import com.wlf.app.main.util.LocalDateTimeStringConverter;
-import javafx.application.Application;
+import com.wlf.common.util.LocalDateTimeStringConverter;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
@@ -36,22 +38,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.WindowEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
-import org.controlsfx.control.MaskerPane;
-import org.kordamp.ikonli.javafx.FontIcon;
 
-public class PrimaryController extends BasePreferencesController {
+public class PrimaryController extends BaseController<BaseModel> {
     static Logger log = Logger.getLogger(PrimaryController.class.getSimpleName());
 
     @FXML
@@ -60,47 +55,48 @@ public class PrimaryController extends BasePreferencesController {
     @FXML
     private final ObjectProperty<Filter> tableFilter = new SimpleObjectProperty<>(new Filter());
 
-    @FXML @Getter @Setter
+    @FXML
+    @Getter
+    @Setter
     private WebView webView;
 
     @FXML
     private BorderPane webViewContainer;
-    @FXML
-    private MaskerPane webViewLoading;
 
     private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
 
-    @FXML TabPane tabPane;
-
-    @FXML ProgressBar downloadProgress;
-
-    // --- Settings ---
-    @FXML TextField tfDirectoryDownloads;
-    @FXML TextField tfDirectoryTFE;
-    @FXML TextField tfDirectoryTSE;
+    @FXML
+    TabPane tabPane;
+    @FXML
+    Tab settings, grorepo;
 
     @FXML
-    FontIcon imgCheckTFE, imgCheckTSE;
-
-    @FXML Button btnBrowseDirectoryDownloads;
-    @FXML Button btnBrowseDirectoryTFE;
-    @FXML Button btnBrowseDirectoryTSE;
-    @FXML Button btnSaveConfig;
+    ProgressBar downloadProgress;
 
     // --- Filter ---
-    @FXML TextField tfNameFilter;
-    @FXML RadioButton rbTfe, rbTse, rbMaps, rbMods, rbSp, rbCoop, rbDm;
-    @FXML CheckBox cbInstalled, cbCompleted;
+    @FXML
+    TextField tfNameFilter;
+    @FXML
+    RadioButton rbTfe, rbTse, rbMaps, rbMods, rbSp, rbCoop, rbDm;
+    @FXML
+    CheckBox cbInstalled, cbCompleted;
 
-    @FXML ToggleGroup tgGame, tgType, tgMode;
-    @FXML TableView<ContentModel> table;
-    @FXML TableColumn<ContentModel, Void> actionColumn;
-    @FXML TableColumn<ContentModel, LocalDateTime> colDateAdded;
-    @FXML TableColumn<ContentModel, String> colDateCreated;
+    @FXML
+    ToggleGroup tgGame, tgType, tgMode;
+    @FXML
+    TableView<ContentModel> table;
+    @FXML
+    TableColumn<ContentModel, Void> actionColumn;
+    @FXML
+    TableColumn<ContentModel, LocalDateTime> colDateAdded;
+    @FXML
+    TableColumn<ContentModel, String> colDateCreated;
 
     // --- TableView context menu ---
-    @FXML MenuItem menuItemInstall;
-    @FXML MenuItem menuItemRemove;
+    @FXML
+    MenuItem menuItemInstall;
+    @FXML
+    MenuItem menuItemRemove;
 
     private final DBManager dbManager = DBManager.getInstance();
 
@@ -109,15 +105,15 @@ public class PrimaryController extends BasePreferencesController {
     private final String ABOUT_BLANK = "about:blank";
     private final String TMP_DONWLOADS = "tmpDownload";
 
-    @Setter @Getter
+    @Setter
+    @Getter
     private ObservableList<ContentModel> fileEntries = FXCollections.observableArrayList();
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private ObservableList<DownloadModel> activeDonwloads = FXCollections.observableArrayList();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
-    private final BooleanProperty tfeLocationValid = new SimpleBooleanProperty();
-    private final BooleanProperty tseLocationValid = new SimpleBooleanProperty();
     private final BooleanProperty installDisabled = new SimpleBooleanProperty();
     private final BooleanProperty installVisible = new SimpleBooleanProperty(true);
     private final BooleanProperty installMultiDisabled = new SimpleBooleanProperty();
@@ -133,11 +129,14 @@ public class PrimaryController extends BasePreferencesController {
 
     @FXML
     public void initialize() {
-        super.initialize();
+        AppLoader<PreferencesController> loader = new AppLoader<>("preferences.fxml", (gui) -> {
+            settings.setContent(gui);
+        });
+        loader.loadAsync();
+
         // register WebView lazy-load when tab active
-        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldVal, newVal) -> {
-            // should always be second tab
-            if (newVal.intValue() == 1) {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == grorepo) {
                 if (webView == null) {
                     App.FRAME_CONTROLLER.setLoading(true);
                     Platform.runLater(() -> {
@@ -154,52 +153,7 @@ public class PrimaryController extends BasePreferencesController {
         fileEntries.forEach(item ->
                 item.completedProperty().addListener(getListItemListener(item)));
 
-        tfDirectoryDownloads.setText(config.get().getDirectoryDownloads());
-        tfDirectoryTFE.setText(config.get().getDirectoryTFE());
-        tfDirectoryTSE.setText(config.get().getDirectoryTSE());
-
-        tfDirectoryTFE.textProperty().addListener((observable, oldVal, newVal) -> {
-            // validate and set...
-            validateTFEPath(newVal);
-        });
-        tfDirectoryTSE.textProperty().addListener((observable, oldVal, newVal) -> {
-            validateTSEPath(newVal);
-        });
-        tfDirectoryDownloads.textProperty().addListener((observable, oldVal, newVal) -> {
-            config.get().setDirectoryDownloads(newVal);
-        });
-
-        validateGamePaths();
-
-        // test stuff TODO remove
-        /*
-        File testfolder = new File("C:\\Users\\Wolf\\Downloads\\SSTSE\\Test");
-        ArrayList<ContentModel> foundStuff = new ArrayList();
-        Arrays.stream(testfolder.listFiles()).forEach(file -> {
-            try {
-                if (file.getAbsolutePath().toLowerCase().endsWith(".gro")) {
-                    GroFile gro = new GroFile(file.getAbsolutePath());
-                    foundStuff.add(gro.analyzeContent());
-                } else {
-                    ZipFile zip = new ZipFile(file.getAbsolutePath());
-                    foundStuff.add(zip.analyzeContent());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        GroFile test = new GroFile("C:\\Users\\Wolf\\Downloads\\SSTSE\\GR.gro");
-        var model = test.analyzeContent();
-        model.canInstall();
-
-         */
-
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
-    }
-
-    @Override
-    protected void onCancel() {
-
     }
 
     // need to defer this to runtime as the WebView must be instantiated on the FX application thread
@@ -216,7 +170,8 @@ public class PrimaryController extends BasePreferencesController {
                         && lastLocation.startsWith(GRO_MODPAGE_URL)) {
                     onDownloadRequestReceived();
                 }
-            } catch (NoSuchElementException ignored) {}
+            } catch (NoSuchElementException ignored) {
+            }
         }));
 
         if (browser.get().getHistory().getEntries().isEmpty()) {
@@ -367,34 +322,19 @@ public class PrimaryController extends BasePreferencesController {
     }
 
     @FXML
-    public String browseForDirectory() {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        File selectedDirectory = directoryChooser.showDialog(null);
-        if (selectedDirectory != null && selectedDirectory.exists() && selectedDirectory.isDirectory()) {
-            return selectedDirectory.getAbsolutePath();
-        } else {
-            return null;
-        }
-    }
-
-    @FXML
-    public void validateDirectory(String path) {
-
-    }
-
-    @FXML
     public void onBrowserBack(ActionEvent event) {
         try {
             browser.get().getHistory().go(-1);
-        } catch (IndexOutOfBoundsException ignored) {}
+        } catch (IndexOutOfBoundsException ignored) {
+        }
     }
 
     @FXML
     public void onBrowserForward(ActionEvent event) {
         try {
             browser.get().getHistory().go(1);
-        } catch (IndexOutOfBoundsException ignored) {}
+        } catch (IndexOutOfBoundsException ignored) {
+        }
     }
 
     @FXML
@@ -561,72 +501,22 @@ public class PrimaryController extends BasePreferencesController {
         }
     }
 
-    @FXML
-    public void onSaveSettings(ActionEvent event) {
-        validateGamePaths();
-        try {
-            Config.save();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @FXML
-    public void onDirectoryDrop(DragEvent event) {
-        if (event.getSource() instanceof TextField tf) {
-            Dragboard db = event.getDragboard();
-            if (db.hasFiles()) {
-                tf.setText(db.getFiles().getFirst().getAbsolutePath());
-                event.setDropCompleted(true);
-            } else {
-                event.setDropCompleted(false);
-            }
-        }
-        event.consume();
-    }
-
-    @FXML
-    public void onDirectoryDragOver(DragEvent event) {
-        if (event.getDragboard().hasFiles() && event.getDragboard().getFiles().size() == 1) {
-            event.acceptTransferModes(TransferMode.ANY);
-        }
-
-        event.consume();
-    }
-
     private void initBindings() {
-        // register directory browser buttons
-        btnBrowseDirectoryDownloads.setOnAction((event) -> {
-            String path = browseForDirectory();
-            config.get().setDirectoryDownloads(path);
-            onSaveSettings(event);
-        });
-        btnBrowseDirectoryTFE.setOnAction((event) -> {
-            String path = browseForDirectory();
-            setGamePath(path, Game.TFE);
-            onSaveSettings(event);
-        });
-        btnBrowseDirectoryTSE.setOnAction((event) -> {
-            String path = browseForDirectory();
-            setGamePath(path, Game.TSE);
-            onSaveSettings(event);
-        });
-
-        getTableFilter().setGameSelected(((Game)tgGame.getSelectedToggle().getUserData()).ordinal());
-        getTableFilter().setTypeSelected(((Type)tgType.getSelectedToggle().getUserData()).ordinal());
-        getTableFilter().setModeSelected(((Mode)tgMode.getSelectedToggle().getUserData()).ordinal());
+        getTableFilter().setGameSelected(((Game) tgGame.getSelectedToggle().getUserData()).ordinal());
+        getTableFilter().setTypeSelected(((Type) tgType.getSelectedToggle().getUserData()).ordinal());
+        getTableFilter().setModeSelected(((Mode) tgMode.getSelectedToggle().getUserData()).ordinal());
         cbInstalled.selectedProperty().bindBidirectional(getTableFilter().installedProperty());
         cbCompleted.selectedProperty().bindBidirectional(getTableFilter().completedProperty());
         tfNameFilter.textProperty().bindBidirectional(getTableFilter().nameProperty());
 
         tgGame.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setGameSelected(((Game)newVal.getUserData()).ordinal());
+            getTableFilter().setGameSelected(((Game) newVal.getUserData()).ordinal());
         });
         tgMode.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setModeSelected(((Mode)newVal.getUserData()).ordinal());
+            getTableFilter().setModeSelected(((Mode) newVal.getUserData()).ordinal());
         });
         tgType.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setTypeSelected(((Type)newVal.getUserData()).ordinal());
+            getTableFilter().setTypeSelected(((Type) newVal.getUserData()).ordinal());
         });
 
         getTableFilter().gameSelectedProperty().addListener(filterListener);
@@ -652,39 +542,6 @@ public class PrimaryController extends BasePreferencesController {
             return factory.call(param);
         });
          */
-    }
-
-    private void validateTFEPath(String path) {
-        boolean valid = Game.TFE.isGamePathValid(path);
-        config.get().setTfeDirectoryValid(valid); // mark text if not valid
-        imgCheckTFE.setVisible(valid);
-
-        if (valid) {
-            config.get().setDirectoryTFE(path);
-        }
-    }
-
-    private void validateTSEPath(String path) {
-        boolean valid = Game.TSE.isGamePathValid(path);
-        config.get().setTseDirectoryValid(valid);
-        imgCheckTSE.setVisible(valid);
-
-        if (valid) {
-            config.get().setDirectoryTSE(path);
-        }
-    }
-
-    private void validateGamePaths() {
-        validateTFEPath(tfDirectoryTFE.getText());
-        validateTSEPath(tfDirectoryTSE.getText());
-    }
-
-    private void setGamePath(String path, Game game) {
-        if (Game.TFE.equals(game)) {
-            config.get().setDirectoryTFE(path);
-        } else if (Game.TSE.equals(game)) {
-            config.get().setDirectoryTSE(path);
-        }
     }
 
     ChangeListener<Object> filterListener = ((observable, oldVal, newVal) -> {
@@ -753,22 +610,6 @@ public class PrimaryController extends BasePreferencesController {
 
     public void setRemoveDisabled(boolean removeDisabled) {
         this.removeDisabled.set(removeDisabled);
-    }
-
-    public boolean isTfeLocationValid() {
-        return tfeLocationValid.get();
-    }
-
-    public BooleanProperty tfeLocationValidProperty() {
-        return tfeLocationValid;
-    }
-
-    public boolean isTseLocationValid() {
-        return tseLocationValid.get();
-    }
-
-    public BooleanProperty tseLocationValidProperty() {
-        return tseLocationValid;
     }
 
     public boolean isInstallVisible() {

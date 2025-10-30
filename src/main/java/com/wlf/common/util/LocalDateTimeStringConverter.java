@@ -1,4 +1,4 @@
-package com.wlf.app.main.util;
+package com.wlf.common.util;
 
 import javafx.util.StringConverter;
 
