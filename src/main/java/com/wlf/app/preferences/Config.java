@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wlf.app.AppStyle;
+import com.wlf.common.BaseModel;
 import javafx.beans.property.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ import lombok.Setter;
  * Is loaded from and stored to JSON for simplicity.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Config {
+public class Config extends BaseModel {
     /** Version to compare for potential updates and adjustments of changed or deprecated settings. */
     private static final int CURRENT_CONFIG_VERSION = 1;
     /** Path to store config file. Should be local to executed jar. */
