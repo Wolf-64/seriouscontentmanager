@@ -67,10 +67,10 @@
             </BorderPane.margin>
             <Label text="Download directory:" GridPane.valignment="BOTTOM" />
             <Label text="The First Encounter directory:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-            <TextField fx:id="tfDirectoryDownloads" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-            <ValidatingTextField fx:id="tfDirectoryTFE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.tfeLocationValid}" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <ValidatingTextField fx:id="vtfDownloadsPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+            <ValidatingTextField fx:id="vtfTFEPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="3" />
             <Label text="The Second Encounter directory:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
-            <ValidatingTextField fx:id="tfDirectoryTSE" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" valid="${controller.tseLocationValid}" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+            <ValidatingTextField fx:id="vtfTSEPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="5" />
             <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <FontIcon fx:id="imgCheckTFE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
                 <Button fx:id="btnBrowseDirectoryTFE" mnemonicParsing="false">

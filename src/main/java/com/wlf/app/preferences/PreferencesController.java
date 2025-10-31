@@ -5,6 +5,7 @@ import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
 import com.wlf.app.main.data.Game;
 import com.wlf.common.BaseController;
+import com.wlf.common.controls.ValidatingTextField;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -21,6 +22,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public class PreferencesController extends BaseController<Config> {
@@ -31,15 +34,11 @@ public class PreferencesController extends BaseController<Config> {
     private final FontIcon warningIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     private final BooleanProperty languageWarningVisible = new SimpleBooleanProperty(false);
 
-    private final BooleanProperty tfeLocationValid = new SimpleBooleanProperty();
-    private final BooleanProperty tseLocationValid = new SimpleBooleanProperty();
-
-    @FXML TextField tfDirectoryDownloads;
-    @FXML TextField tfDirectoryTFE;
-    @FXML TextField tfDirectoryTSE;
-
     @FXML
     FontIcon imgCheckTFE, imgCheckTSE;
+
+    @FXML
+    private ValidatingTextField vtfTFEPath, vtfTSEPath, vtfDownloadsPath;
 
     @FXML
     Button btnBrowseDirectoryDownloads;
@@ -68,44 +67,32 @@ public class PreferencesController extends BaseController<Config> {
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> App.setTheme(newValue));
 
-        tfDirectoryDownloads.setText(model.getDirectoryDownloads());
-        tfDirectoryTFE.setText(model.getDirectoryTFE());
-        tfDirectoryTSE.setText(model.getDirectoryTSE());
-
-        tfDirectoryTFE.textProperty().addListener((observable, oldVal, newVal) -> {
-            // validate and set...
-            validateTFEPath(newVal);
-        });
-        tfDirectoryTSE.textProperty().addListener((observable, oldVal, newVal) -> {
-            validateTSEPath(newVal);
-        });
-        tfDirectoryDownloads.textProperty().addListener((observable, oldVal, newVal) -> {
-            model.setDirectoryDownloads(newVal);
-        });
+        vtfDownloadsPath.textProperty().bindBidirectional(getModel().directoryDownloadsProperty());
+        vtfDownloadsPath.setValidator(this::validateDownloadsPath);
+        vtfTFEPath.textProperty().bindBidirectional(getModel().directoryTFEProperty());
+        vtfTFEPath.setValidator(this::validateTFEPath);
+        vtfTSEPath.textProperty().bindBidirectional(getModel().directoryTSEProperty());
+        vtfTSEPath.setValidator(this::validateTSEPath);
 
         validateGamePaths();
 
         // register directory browser buttons
         btnBrowseDirectoryDownloads.setOnAction((event) -> {
             String path = browseForDirectory();
-            model.setDirectoryDownloads(path);
+            getModel().setDirectoryDownloads(path);
         });
         btnBrowseDirectoryTFE.setOnAction((event) -> {
             String path = browseForDirectory();
-            setGamePath(path, Game.TFE);
+            getModel().setDirectoryTFE(path);
         });
         btnBrowseDirectoryTSE.setOnAction((event) -> {
             String path = browseForDirectory();
-            setGamePath(path, Game.TSE);
+            getModel().setDirectoryTSE(path);
         });
     }
 
-    private void setGamePath(String path, Game game) {
-        if (Game.TFE.equals(game)) {
-            model.setDirectoryTFE(path);
-        } else if (Game.TSE.equals(game)) {
-            model.setDirectoryTSE(path);
-        }
+    private boolean validateDownloadsPath(String path) {
+        return Files.exists(Path.of(path));
     }
 
     @FXML
@@ -139,11 +126,6 @@ public class PreferencesController extends BaseController<Config> {
     }
 
     @FXML
-    public void validateDirectory(String path) {
-
-    }
-
-    @FXML
     public void onDirectoryDrop(DragEvent event) {
         if (event.getSource() instanceof TextField tf) {
             Dragboard db = event.getDragboard();
@@ -167,28 +149,22 @@ public class PreferencesController extends BaseController<Config> {
     }
 
     private void validateGamePaths() {
-        validateTFEPath(tfDirectoryTFE.getText());
-        validateTSEPath(tfDirectoryTSE.getText());
+        validateTFEPath(getModel().getDirectoryTFE());
+        validateTSEPath(getModel().getDirectoryTSE());
     }
 
-    private void validateTFEPath(String path) {
+    private boolean validateTFEPath(String path) {
         boolean valid = Game.TFE.isGamePathValid(path);
-        model.setTfeDirectoryValid(valid); // mark text if not valid
+        getModel().setTfeDirectoryValid(valid);
         imgCheckTFE.setVisible(valid);
-
-        if (valid) {
-            model.setDirectoryTFE(path);
-        }
+        return valid;
     }
 
-    private void validateTSEPath(String path) {
+    private boolean validateTSEPath(String path) {
         boolean valid = Game.TSE.isGamePathValid(path);
-        model.setTseDirectoryValid(valid);
+        getModel().setTseDirectoryValid(valid);
         imgCheckTSE.setVisible(valid);
-
-        if (valid) {
-            model.setDirectoryTSE(path);
-        }
+        return valid;
     }
 
     // ----------------------------------- FX Boilerplate ---------------------------------------
@@ -203,29 +179,5 @@ public class PreferencesController extends BaseController<Config> {
 
     public void setLanguageWarningVisible(boolean languageWarningVisible) {
         this.languageWarningVisible.set(languageWarningVisible);
-    }
-
-    public boolean isTfeLocationValid() {
-        return tfeLocationValid.get();
-    }
-
-    public BooleanProperty tfeLocationValidProperty() {
-        return tfeLocationValid;
-    }
-
-    public void setTfeLocationValid(boolean tfeLocationValid) {
-        this.tfeLocationValid.set(tfeLocationValid);
-    }
-
-    public boolean isTseLocationValid() {
-        return tseLocationValid.get();
-    }
-
-    public BooleanProperty tseLocationValidProperty() {
-        return tseLocationValid;
-    }
-
-    public void setTseLocationValid(boolean tseLocationValid) {
-        this.tseLocationValid.set(tseLocationValid);
     }
 }
