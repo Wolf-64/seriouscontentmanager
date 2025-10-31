@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public abstract class BaseController<T extends BaseModel> {
     protected final ObjectProperty<Config> configuration = new SimpleObjectProperty<>(Config.getInstance());
-    protected T model;
+    protected ObjectProperty<T> model = new SimpleObjectProperty<>();
 
     @Getter @Setter
     private List<Consumer<Event>> onBackCallbacks = new ArrayList<>();
@@ -62,5 +62,17 @@ public abstract class BaseController<T extends BaseModel> {
 
     public ObjectProperty<Config> configurationProperty() {
         return configuration;
+    }
+
+    public T getModel() {
+        return model.get();
+    }
+
+    public ObjectProperty<T> modelProperty() {
+        return model;
+    }
+
+    public void setModel(T model) {
+        this.model.set(model);
     }
 }
