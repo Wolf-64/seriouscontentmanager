@@ -25,8 +25,10 @@ public class ValidatingTextField extends TextField {
             if (validator != null) {
                 if (!validator.apply(newVal)) {
                     setValid(false);
+                    setStyle("-fx-text-fill: tomato; -fx-focus-color: tomato");
                 } else {
                     setValid(true);
+                    setStyle(null);
                 }
             }
         });
