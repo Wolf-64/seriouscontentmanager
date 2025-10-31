@@ -49,22 +49,22 @@ public class PreferencesController extends BaseController<Config> {
 
 
     public PreferencesController() {
-        model = Config.getInstance();
+        model.set(Config.getInstance());
     }
 
     @FXML
     public void initialize() {
         warningIcon.setStyle("-fx-icon-color: red");
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
-        cmbLanguages.getSelectionModel().select(model.getLanguage());
+        cmbLanguages.getSelectionModel().select(model.get().getLanguage());
         cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
-                    App.STATE.setLanguageChanged(newValue != model.getLanguage());
-                    languageWarningVisible.setValue(newValue != model.getLanguage());
+                    App.STATE.setLanguageChanged(newValue != model.get().getLanguage());
+                    languageWarningVisible.setValue(newValue != model.get().getLanguage());
                 });
 
         cmbThemes.setItems(FXCollections.observableList(Arrays.stream(AppStyle.Theme.values()).toList()));
-        cmbThemes.getSelectionModel().select(model.getActiveTheme());
+        cmbThemes.getSelectionModel().select(model.get().getActiveTheme());
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> App.setTheme(newValue));
 
@@ -112,7 +112,7 @@ public class PreferencesController extends BaseController<Config> {
     protected void onSave() throws IOException {
         validateGamePaths();
         if (App.STATE.isLanguageChanged()) {
-            model.setLanguage(cmbLanguages.getValue());
+            model.get().setLanguage(cmbLanguages.getValue());
             Config.save();
             AppLoader.reloadGUIs();
         } else {
