@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
+import com.wlf.app.main.net.GroRepositoryController;
 import com.wlf.app.preferences.Config;
 import com.wlf.app.preferences.PreferencesController;
 import com.wlf.common.BaseController;
@@ -46,7 +47,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 
-public class PrimaryController extends BaseController<BaseModel> {
+public class PrimaryController extends BaseController<DataModel> {
     static Logger log = Logger.getLogger(PrimaryController.class.getSimpleName());
 
     @FXML
@@ -56,22 +57,9 @@ public class PrimaryController extends BaseController<BaseModel> {
     private final ObjectProperty<Filter> tableFilter = new SimpleObjectProperty<>(new Filter());
 
     @FXML
-    @Getter
-    @Setter
-    private WebView webView;
-
-    @FXML
-    private BorderPane webViewContainer;
-
-    private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
-
-    @FXML
     TabPane tabPane;
     @FXML
     Tab settings, grorepo;
-
-    @FXML
-    ProgressBar downloadProgress;
 
     // --- Filter ---
     @FXML
@@ -99,21 +87,8 @@ public class PrimaryController extends BaseController<BaseModel> {
     MenuItem menuItemRemove;
 
     private final DBManager dbManager = DBManager.getInstance();
+    private GroRepositoryController repoController;
 
-    private final String GRO_REPOSITORY_URL = "https://grorepository.ru/mods";
-    private final String GRO_MODPAGE_URL = "https://grorepository.ru/mod/";
-    private final String ABOUT_BLANK = "about:blank";
-    private final String TMP_DONWLOADS = "tmpDownload";
-
-    @Setter
-    @Getter
-    private ObservableList<ContentModel> fileEntries = FXCollections.observableArrayList();
-
-    @Getter
-    @Setter
-    private ObservableList<DownloadModel> activeDonwloads = FXCollections.observableArrayList();
-
-    private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
     private final BooleanProperty installDisabled = new SimpleBooleanProperty();
     private final BooleanProperty installVisible = new SimpleBooleanProperty(true);
     private final BooleanProperty installMultiDisabled = new SimpleBooleanProperty();
@@ -121,174 +96,51 @@ public class PrimaryController extends BaseController<BaseModel> {
     private final BooleanProperty removeDisabled = new SimpleBooleanProperty();
     private final BooleanProperty removeVisible = new SimpleBooleanProperty(true);
 
-    private boolean downloadInProgress;
-
-    private String lastLocation;
-
     private final ObjectProperty<ContentModel> currentSelection = new SimpleObjectProperty<>();
 
     @FXML
     public void initialize() {
-        AppLoader<PreferencesController> loader = new AppLoader<>("preferences.fxml", (gui) -> {
+        AppLoader<PreferencesController> loaderSettings = new AppLoader<>("preferences.fxml", (gui) -> {
             settings.setContent(gui);
         });
-        loader.loadAsync();
+        loaderSettings.loadAsync();
+
+        AppLoader<GroRepositoryController> loaderGroRepo = new AppLoader<>("main/repositoryView.fxml", (gui) -> {
+            grorepo.setContent(gui);
+        });
+        loaderGroRepo.setOnSucceeded((controller) -> {
+            repoController = controller;
+            repoController.setModel(getModel());
+            App.FRAME_CONTROLLER.setLoading(true);
+            // defer instantiation of WebView after render
+            Platform.runLater(() -> {
+                Platform.runLater(repoController::initWebView);
+            });
+        });
+        loaderGroRepo.loadAsync();
 
         // register WebView lazy-load when tab active
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == grorepo) {
-                if (webView == null) {
-                    App.FRAME_CONTROLLER.setLoading(true);
-                    Platform.runLater(() -> {
-                        Platform.runLater(this::initWebView);
-                    });
-                }
+            if (repoController.getBrowser().getHistory().getEntries().isEmpty()) {
+                repoController.loadGroRepo();
             }
         });
 
         initBindings();
 
         // load existing entries from DB
-        fileEntries.addAll(dbManager.getAllFileEntries());
-        fileEntries.forEach(item ->
+        setModel(new DataModel());
+        getModel().getContent().addAll(dbManager.getAllFileEntries());
+        getModel().getContent().forEach(item ->
                 item.completedProperty().addListener(getListItemListener(item)));
 
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
     }
 
-    // need to defer this to runtime as the WebView must be instantiated on the FX application thread
-    private void initWebView() {
-        webView = new WebView();
-        webViewContainer.setCenter(webView);
-        browser.set(webView.getEngine());
-        browser.get().locationProperty().addListener((observable -> {
-            //check for url here?
-            try {
-                lastLocation = browser.get().getHistory().getEntries().getLast().getUrl();
-                // after clicking on download we'll just get a white screen
-                if (ABOUT_BLANK.equals(browser.get().getLocation())
-                        && lastLocation.startsWith(GRO_MODPAGE_URL)) {
-                    onDownloadRequestReceived();
-                }
-            } catch (NoSuchElementException ignored) {
-            }
-        }));
-
-        if (browser.get().getHistory().getEntries().isEmpty()) {
-            browser.get().load(GRO_REPOSITORY_URL);
-        }
-
-        App.FRAME_CONTROLLER.setLoading(false);
-    }
-
-    private void onDownloadRequestReceived() {
-        String modName = lastLocation.substring(lastLocation.lastIndexOf('/') + 1);
-        DownloadModel downloadModel = new DownloadModel();
-        downloadModel.setFileName(modName);
-        downloadModel.setDownloadURL(lastLocation);
-
-        // check for already active download of the same file
-        if (activeDonwloads.stream().anyMatch(download -> download.getDownloadURL().equals(lastLocation))) {
-            log.warning("Content '" + modName + "' already in download list.");
-            new Alert(AlertType.WARNING, "File already downloading!").show();
-            browser.get().load(lastLocation);
-            //onBrowserBack(null);
-            return;
-        }
-
-        // check for already existing file on system
-        try (Requester requester = new Requester()) {
-            ContentModel mod = new ContentModel().fromJSON(requester.requestModInfo(modName));
-            if (fileEntries.stream().anyMatch(item -> item.getName().equals(mod.getName()))) {
-                new Alert(AlertType.WARNING, "Content already in library!").show();
-                browser.get().load(lastLocation);
-                //onBrowserBack(null);
-                return;
-            }
-            // we don't support skins or resources for simplicity
-            if (mod.getType().ordinal() >= Type.SKIN.ordinal()) {
-                new Alert(AlertType.WARNING, "Content type not supported: " + mod.getType().getName()).show();
-                browser.get().load(lastLocation);
-                return;
-            }
-        } catch (IOException | InterruptedException e) {
-            // show message?
-            return;
-        }
-
-        activeDonwloads.add(downloadModel);
-        downloadProgress.setProgress(0.0);
-
-        // Check for temp download dir
-        Path path = Path.of(TMP_DONWLOADS);
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectory(path);
-            } catch (IOException e) {
-                log.severe(e.toString());
-            }
-        }
-
-        // fire request and download file
-        Downloader downloader = new Downloader();
-        downloader.setUpdateIntervalMillis(1000L);
-        downloader.setOnStart((model) -> {
-            downloadModel.setFileName(String.format("%s (%S)", model.getName(), model.getDownloadedFileName()));
-        });
-        downloader.setOnProgress((totalBytes, bytesReceived, progress) -> {
-            onDownloadProgress(downloadModel, totalBytes, bytesReceived, progress);
-        });
-
-        //reset progress bar on finish
-        downloader.setOnCompleted((filePath, downloadedContentModel) -> {
-            onDownloadFinished(downloadModel, filePath, downloadedContentModel);
-        });
-        downloader.setOnError((e) -> {
-            log.severe(e.toString());
-            downloadModel.setStatus(e.getMessage());
-            downloadModel.setProgress(AccentedProgressBar.FAILED_PROGRESS);
-        });
-        downloadModel.setDownloader(downloader);
-        downloader.download(modName, TMP_DONWLOADS);
-
-        downloadInProgress = true;
-        setStopDownloadButtonDisabled(false);
-
-        browser.get().load(lastLocation);
-        //onBrowserBack(null);
-    }
-
-    private void onDownloadProgress(DownloadModel downloadModel, long fileSize, long bytesReceived, double progressPercent) {
-        Platform.runLater(() -> {
-            double totalMb = (double) bytesReceived / (1024 * 1024);
-            downloadModel.setDownloadedMb(BigDecimal.valueOf(totalMb).setScale(2, RoundingMode.HALF_UP) + "mb");
-            downloadModel.setProgress(progressPercent);
-            if (downloadModel.getMaxMb() == null) {
-                downloadModel.setMaxMb(BigDecimal.valueOf(fileSize / (1024 * 1024)).setScale(2, RoundingMode.HALF_UP) + "mb");
-            }
-            downloadProgress.setProgress(progressPercent);
-        });
-    }
-
-    private void onDownloadFinished(DownloadModel downloadModel, String filePath, ContentModel downloadedContentModel) {
-        Platform.runLater(() -> downloadProgress.setProgress(0));
-        downloadInProgress = false;
-        if (filePath != null) {
-            downloadModel.setStatus("Finished!");
-        }
-        setStopDownloadButtonDisabled(true);
-        // is null when download has been cancelled
-        if (filePath != null) {
-            FileHandler.registerNewFile(downloadedContentModel, filePath);
-            downloadedContentModel.completedProperty().addListener(getListItemListener(downloadedContentModel));
-            fileEntries.add(downloadedContentModel);
-        }
-    }
 
     private InvalidationListener getListItemListener(ContentModel object) {
         return observable -> dbManager.update(object);
     }
-
 
     @FXML
     public void rescanDownloadDir(ActionEvent event) {
@@ -321,54 +173,11 @@ public class PrimaryController extends BaseController<BaseModel> {
         }
     }
 
-    @FXML
-    public void onBrowserBack(ActionEvent event) {
-        try {
-            browser.get().getHistory().go(-1);
-        } catch (IndexOutOfBoundsException ignored) {
-        }
-    }
-
-    @FXML
-    public void onBrowserForward(ActionEvent event) {
-        try {
-            browser.get().getHistory().go(1);
-        } catch (IndexOutOfBoundsException ignored) {
-        }
-    }
-
-    @FXML
-    public void onBrowserRefresh(ActionEvent event) {
-        browser.get().reload();
-    }
 
     @FXML
     public void onAbout(ActionEvent event) {
         // TODO move to template
         //App.showAbout();
-    }
-
-    @FXML
-    public void onStopDownloads(ActionEvent event) {
-        for (var download : activeDonwloads) {
-            if (download.getDownloader() != null) {
-                download.getDownloader().stopDownload();
-                download.setStatus("Stopped.");
-            }
-        }
-    }
-
-    boolean pauseToggle = false;
-
-    @FXML
-    public void onPauseDownloads(ActionEvent event) {
-        pauseToggle = !pauseToggle;
-        for (var download : activeDonwloads) {
-            if (download.getDownloader() != null) {
-                download.getDownloader().setPause(pauseToggle);
-                download.setStatus(pauseToggle ? "Paused." : "Downloading...");
-            }
-        }
     }
 
     @FXML
@@ -486,7 +295,7 @@ public class PrimaryController extends BaseController<BaseModel> {
     @FXML
     public void onDelete(ActionEvent actionEvent) {
         FileHandler.deleteContent(currentSelection.get());
-        fileEntries.remove(currentSelection.get());
+        getModel().getContent().remove(currentSelection.get());
     }
 
     @FXML
@@ -549,8 +358,10 @@ public class PrimaryController extends BaseController<BaseModel> {
     });
 
     private void applyFilter() {
-        fileEntries.setAll(dbManager.getFileEntries(getTableFilter()));
+        getModel().getContent().setAll(dbManager.getFileEntries(getTableFilter()));
     }
+
+    // ------------------------ FX Boilerplate ------------------------
 
     public Config getConfig() {
         return config.get();
@@ -574,18 +385,6 @@ public class PrimaryController extends BaseController<BaseModel> {
 
     public void setTableFilter(Filter tableFilter) {
         this.tableFilter.set(tableFilter);
-    }
-
-    public boolean isStopDownloadButtonDisabled() {
-        return stopDownloadButtonDisabled.get();
-    }
-
-    public BooleanProperty stopDownloadButtonDisabledProperty() {
-        return stopDownloadButtonDisabled;
-    }
-
-    public void setStopDownloadButtonDisabled(boolean stopDownloadButtonDisabled) {
-        this.stopDownloadButtonDisabled.set(stopDownloadButtonDisabled);
     }
 
     public boolean isInstallDisabled() {
@@ -650,17 +449,5 @@ public class PrimaryController extends BaseController<BaseModel> {
 
     public ObjectProperty<ContentModel> currentSelectionProperty() {
         return currentSelection;
-    }
-
-    public WebEngine getBrowser() {
-        return browser.get();
-    }
-
-    public ObjectProperty<WebEngine> browserProperty() {
-        return browser;
-    }
-
-    public void setBrowser(WebEngine browser) {
-        this.browser.set(browser);
     }
 }

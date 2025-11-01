@@ -1,5 +1,6 @@
 package com.wlf.app.main.net;
 
+import com.wlf.app.main.data.ContentLanguage;
 import com.wlf.common.controls.AccentedProgressBar;
 import com.wlf.app.main.data.ContentModel;
 import lombok.Setter;
@@ -8,6 +9,11 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiConsumer;
@@ -18,7 +24,7 @@ public class Downloader extends Thread implements Runnable {
     public static final Logger log = Logger.getLogger(Downloader.class.getSimpleName());
 
     private ContentModel currentDownloadingContentModel;
-    private String url;
+    private URI downloadURI;
     private String filename;
     private String destinationFolder;
 
@@ -27,8 +33,9 @@ public class Downloader extends Thread implements Runnable {
     private long updateIntervalMillis;
 
     private boolean stop;
-    @Setter
-    private volatile boolean pause;
+
+    private final Object pauseLock = new Object();
+    private volatile boolean pause = false;
 
     @Setter
     private BiConsumer<String, ContentModel> onCompleted;
@@ -39,20 +46,19 @@ public class Downloader extends Thread implements Runnable {
     @Setter
     private Consumer<Exception> onError;
 
-    public void download(String modName, String downloadDirectory) {
-        URI downloadURI = null;
-        // fetch metadata and request download
-        com.fasterxml.jackson.databind.JsonNode modInfoJson;
-        try (Requester requester = new Requester()) {
-            modInfoJson = requester.requestModInfo(modName);
+    public Downloader(URI fileUri) {
+        this.downloadURI = fileUri;
+    }
 
-            currentDownloadingContentModel = new ContentModel().fromJSON(modInfoJson);
-            downloadURI = requester.requestDownloadURI(currentDownloadingContentModel.getRepoId());
+    public void download(ModInfo modInfo, int linkIndex, String downloadDirectory) {
+        // fetch metadata and request download
+        try (Requester requester = new Requester()) {
+            currentDownloadingContentModel = new ContentModel().fromModInfo(modInfo);
+            downloadURI = requester.requestDownloadURI(modInfo.getId(), modInfo.getLinks().get(linkIndex).getType());
 
             if (downloadURI != null) {
                 Requester.FileInfo fileInfo = requester.requestFileInfo(downloadURI);
-                int totalFileSize = fileInfo.getTotalFileSize();
-                filename = /*downloadDirectory + "/" + */fileInfo.getFileName();
+                filename = fileInfo.getFileName();
                 currentDownloadingContentModel.setDownloadedFileName(filename);
             } else {
                 return;
@@ -65,73 +71,77 @@ public class Downloader extends Thread implements Runnable {
         }
 
         destinationFolder = downloadDirectory;
-        url = downloadURI.toString();
 
         super.start();
     }
 
-    public void run(){
+    public void run() {
         try {
             if (onStart != null) {
                 onStart.accept(currentDownloadingContentModel);
             }
 
-            URL url = URI.create(this.url).toURL();
-            URLConnection urlConnection = url.openConnection();
-            urlConnection.connect();
+            URL url = downloadURI.toURL();
 
-            long total = urlConnection.getContentLengthLong();
-            int count;
+            long totalBytes = url.openConnection().getContentLengthLong();
+            if (totalBytes <= 0) totalBytes = -1; // sometimes we just don't know :(
 
-            InputStream input = new BufferedInputStream(url.openStream());
-            OutputStream output = new FileOutputStream(destinationFolder + File.separator + filename);
+            try (ReadableByteChannel src = Channels.newChannel(url.openStream());
+                 FileOutputStream fos = new FileOutputStream(Path.of(destinationFolder, filename).toFile());
+                 WritableByteChannel dest = fos.getChannel()) {
 
-            byte[] data = new byte[4096];
-            long current = 0;
+                ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
+                long bytesReadTotal = 0;
 
-            while ((count = input.read(data)) != -1) {
-                if (stop) {
-                    break;
-                }
+                while (src.read(buffer) != -1) {
+                    buffer.flip();
+                    bytesReadTotal += dest.write(buffer);
+                    buffer.clear();
 
-                current += count;
-                output.write(data, 0, count);
-                if (System.currentTimeMillis() - lastUpdateTime > updateIntervalMillis) {
-                    lastUpdateTime = System.currentTimeMillis();
-                    if (onProgress != null) {
-                        onProgress.accept(total, current, ((double) current / total));
+                    if (System.currentTimeMillis() - lastUpdateTime > updateIntervalMillis) {
+                        lastUpdateTime = System.currentTimeMillis();
+                        if (onProgress != null) {
+                            onProgress.accept(totalBytes, bytesReadTotal, ((double) bytesReadTotal / totalBytes));
+                        }
+                    }
+
+                    while (pause) {
+                        synchronized (pauseLock) {
+                            pauseLock.wait(); // *thread naps happily*
+                        }
+                    }
+
+                    if (stop) {
+                        if (onProgress != null) {
+                            onProgress.accept(totalBytes, bytesReadTotal, AccentedProgressBar.WARNING_PROGRESS);
+                        }
+                        if (onCompleted != null) {
+                            onCompleted.accept(null, null);
+                        }
+                        Files.delete(Path.of(destinationFolder + File.separator + filename));
+                        break;
                     }
                 }
 
-                while (pause) {
-                    Thread.onSpinWait();
+                if (onCompleted != null && !stop) {
+                    if (onProgress != null) {
+                        onProgress.accept(1, 1, 1.0);
+                    }
+                    onCompleted.accept(destinationFolder + File.separator + filename, currentDownloadingContentModel);
                 }
-            }
-
-            output.flush();
-
-            output.close();
-            input.close();
-
-            if (onCompleted != null && !stop) {
-                if (onProgress != null) {
-                    onProgress.accept(1, 1, 1.0);
-                }
-                onCompleted.accept(destinationFolder + File.separator + filename, currentDownloadingContentModel);
-            }
-
-            if (stop) {
-                if (onProgress != null) {
-                    onProgress.accept(total, current, AccentedProgressBar.WARNING_PROGRESS);
-                }
-                if (onCompleted != null) {
-                    onCompleted.accept(null, null);
-                }
-                Files.delete(Path.of(destinationFolder + File.separator + filename));
             }
         } catch (Exception e) {
             if (onError != null) {
                 onError.accept(e);
+            }
+        }
+    }
+
+    public void setPause(boolean value) {
+        pause = value;
+        if (!value) {
+            synchronized (pauseLock) {
+                pauseLock.notifyAll();
             }
         }
     }

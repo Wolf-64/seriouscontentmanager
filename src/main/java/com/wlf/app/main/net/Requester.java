@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.wlf.app.main.data.ContentLanguage;
 import lombok.Data;
 
 public class Requester implements Closeable {
@@ -28,7 +30,8 @@ public class Requester implements Closeable {
         client = HttpClient.newBuilder()
                             //.sslContext(createSslContext())
                             .build();
-        mapper = new ObjectMapper();                                    
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
     }
 
     // GET https://grorepository.ru/api/mods/gates-to-hammurabi
@@ -51,7 +54,7 @@ public class Requester implements Closeable {
         return null;
     }
 
-    public JsonNode requestModInfo(String modName) throws IOException, InterruptedException {
+    public ModInfo requestModInfo(String modName) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(MOD_API_URL + modName))
                 .GET()
@@ -62,16 +65,20 @@ public class Requester implements Closeable {
         response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            log.log(Level.SEVERE, "Failed to fetch file URI. HTTP Status: {0}", response.statusCode());
-            return mapper.readTree(response.body());
+            ModInfo modInfo = mapper.readValue(response.body(), ModInfo.class);
+            log.log(Level.INFO, "Fetched mod info:\n", modInfo);
+            return modInfo;
         }
 
         return null;
     }
 
-    public URI requestDownloadURI(String modId) throws IOException, InterruptedException {
+    public URI requestDownloadURI(long modId, ContentLanguage language) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(DOWNLOAD_API_URL + modId))
+                .uri(URI.create(DOWNLOAD_API_URL
+                        + modId
+                        + "?linkType="
+                        + language.ordinal()))
                 .GET()
                 .build();
 

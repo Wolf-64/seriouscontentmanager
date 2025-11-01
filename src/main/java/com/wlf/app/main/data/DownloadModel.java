@@ -1,11 +1,12 @@
 package com.wlf.app.main.data;
 
 import com.wlf.app.main.net.Downloader;
+import com.wlf.common.BaseModel;
 import javafx.beans.property.*;
 import lombok.Getter;
 import lombok.Setter;
 
-public class DownloadModel {
+public class DownloadModel extends BaseModel {
     private final DoubleProperty progress = new SimpleDoubleProperty();
     private final StringProperty status = new SimpleStringProperty("Downloading...");
     private final StringProperty downloadURL = new SimpleStringProperty();

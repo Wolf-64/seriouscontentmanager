@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wlf.app.main.net.ModInfo;
 import com.wlf.app.main.net.Requester;
 
 import com.wlf.app.preferences.Config;
@@ -110,15 +111,33 @@ public class ContentModel {
      */
     public ContentModel fromJSON(JsonNode json) {
         origin.set(Requester.MOD_SITE_URL + json.get("transliteratedTitle").asText());
+        repoId = json.get("id").asText();
         name.set(json.get("title").asText());
         type.set(Type.values()[json.get("type").asInt()]); // 0 map 2 skin 1 mod
         game.set(Game.values()[json.get("game").asInt()]); // 0 TFE? 1 TSE 2 both?
         modes.set(Mode.values()[json.get("subcategory").asInt()]); // mode? 4 all, 2 = sp + coop
         size.set(json.get("size").asLong());
-        repoId = json.get("id").asText();
         try {
             version.set(json.get("version").asText());
             dateCreated.set(LocalDate.parse(json.get("originalCreatedDate").asText()));
+        } catch (DateTimeParseException ex) {
+            log.warning(ex.getMessage());
+        }
+
+        return this;
+    }
+
+    public ContentModel fromModInfo(ModInfo modInfo) {
+        origin.set(Requester.MOD_SITE_URL + modInfo.getTransliteratedTitle());
+        repoId = "" + modInfo.getId();
+        name.set(modInfo.getTitle());
+        type.set(modInfo.getType()); // 0 map 2 skin 1 mod
+        game.set(modInfo.getGame()); // 0 TFE? 1 TSE 2 both?
+        modes.set(modInfo.getSubcategory()); // mode? 4 all, 2 = sp + coop
+        size.set(modInfo.getLinks().getFirst().getSize());
+        try {
+            version.set(modInfo.getVersion());
+            dateCreated.set(modInfo.getOriginalCreatedDate().toLocalDate());
         } catch (DateTimeParseException ex) {
             log.warning(ex.getMessage());
         }

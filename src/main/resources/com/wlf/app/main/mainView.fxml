@@ -3,31 +3,24 @@
 <?import com.wlf.app.main.data.Game?>
 <?import com.wlf.app.main.data.Mode?>
 <?import com.wlf.app.main.data.Type?>
-<?import com.wlf.common.controls.AccentedProgressBarTableCellFactory?>
 <?import com.wlf.common.controls.CheckBoxTableCellFactory?>
 <?import com.wlf.common.controls.RatingTableCellFactory?>
-<?import com.wlf.common.controls.ValidatingTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
@@ -39,9 +32,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.Rating?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane prefHeight="800.0" prefWidth="1281.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.PrimaryController">
     <bottom>
@@ -189,7 +180,7 @@
                         </GridPane>
                     </top>
                     <center>
-                        <TableView fx:id="table" editable="true" items="${controller.fileEntries}" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+                        <TableView fx:id="table" editable="true" items="${controller.model.content}" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
                             <columns>
                                 <TableColumn prefWidth="246.0" text="Name">
                                     <cellValueFactory>
@@ -287,119 +278,6 @@
                 <tooltip>
                     <Tooltip text="grorepository.ru" />
                 </tooltip>
-                <BorderPane>
-                    <bottom>
-                        <BorderPane BorderPane.alignment="CENTER">
-                            <center>
-                                <ProgressBar fx:id="downloadProgress" prefHeight="20.0" prefWidth="1009.0" progress="0.0" />
-                            </center>
-                            <left>
-                                <HBox BorderPane.alignment="CENTER">
-                                    <Button disable="${controller.stopDownloadButtonDisabled}" mnemonicParsing="false" onAction="#onStopDownloads">
-                                        <tooltip>
-                                            <Tooltip text="Stop Download" />
-                                        </tooltip>
-                                        <graphic>
-                                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                <Image url="@icons/stop.png" />
-                                            </ImageView>
-                                        </graphic>
-                                    </Button>
-                                    <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" mnemonicParsing="false" onAction="#onPauseDownloads">
-                                        <graphic>
-                                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                <Image url="@icons/play_pause_64dp.png" />
-                                            </ImageView>
-                                        </graphic>
-                                    </Button>
-                                </HBox>
-                            </left>
-                        </BorderPane>
-                    </bottom>
-                    <center>
-                        <SplitPane dividerPositions="0.741307371349096" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
-                            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                <center>
-                                    <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gro Repository" BorderPane.alignment="TOP_CENTER">
-                                        <BorderPane fx:id="webViewContainer">
-                                            <center>
-                                                <!-- will be loaded at runtime upon activating the tab and inserted here -->
-                                            </center>
-                                            <top>
-                                                <BorderPane prefHeight="25.0" prefWidth="1107.0" BorderPane.alignment="CENTER">
-                                                    <center>
-                                                        <Label text="${controller.browser.location}" BorderPane.alignment="CENTER" />
-                                                    </center>
-                                                    <left>
-                                                        <HBox prefHeight="25.0" prefWidth="77.0" spacing="8.0" BorderPane.alignment="CENTER">
-                                                            <Button mnemonicParsing="false" onAction="#onBrowserBack">
-                                                <graphic>
-                                                   <FontIcon iconLiteral="fas-arrow-left" iconSize="24" />
-                                                </graphic>
-                                                            </Button>
-                                                            <Button mnemonicParsing="false" onAction="#onBrowserForward">
-                                                <graphic>
-                                                   <FontIcon iconLiteral="fas-arrow-right" iconSize="24" />
-                                                </graphic>
-                                                            </Button>
-                                                        </HBox>
-                                                    </left>
-                                                    <right>
-                                                        <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="36.0" BorderPane.alignment="CENTER">
-                                                            <Button mnemonicParsing="false" onAction="#onBrowserRefresh">
-                                                <graphic>
-                                                   <FontIcon iconLiteral="fas-redo" iconSize="24" />
-                                                </graphic>
-                                                            </Button>
-                                                        </HBox>
-                                                    </right>
-                                                </BorderPane>
-                                            </top>
-                                        </BorderPane>
-                                    </TitledPane>
-                                </center>
-                            </BorderPane>
-                            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                <center>
-                                    <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Downloads" BorderPane.alignment="TOP_LEFT">
-                                        <TableView items="${controller.activeDonwloads}">
-                                            <columns>
-                                                <TableColumn prefWidth="430.0" text="File name">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="fileName" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn prefWidth="247.0" text="Status">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="status" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn prefWidth="103.0" text="Downloaded">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="downloadedMb" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn minWidth="0.0" prefWidth="65.0" text="Size">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="maxMb" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn prefWidth="333.0" text="Progress">
-                                                    <cellFactory>
-                                                        <AccentedProgressBarTableCellFactory />
-                                                    </cellFactory>
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="progress" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                            </columns>
-                                        </TableView>
-                                    </TitledPane>
-                                </center>
-                            </BorderPane>
-                        </SplitPane>
-                    </center>
-                </BorderPane>
             </Tab>
             <Tab text="Untitled Tab" fx:id="settings">
                 <graphic>

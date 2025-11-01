@@ -2,6 +2,7 @@ module seriouscontentmanager {
     requires atlantafx.base;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.datatype.jsr310;
     requires java.datatransfer;
     requires javafx.base;
     requires javafx.controls;
@@ -20,6 +21,7 @@ module seriouscontentmanager {
     requires java.net.http;
     requires async.http.client;
     requires org.apache.commons.exec;
+    requires java.logging;
 
     opens com.wlf.app.preferences to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;
