@@ -37,8 +37,7 @@ public class AppLoader<T extends BaseController<?>> {
                     App.FRAME_CONTROLLER.setLoading(true);
                 }
                 FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-                loader.setResources(getI18NResourceForLocale(fxml.replace(".fxml", ""),
-                        Config.getInstance().getLanguage().getLocale()));
+                loader.setResources(getI18NResourceForLocale(guiName, Config.getInstance().getLanguage().getLocale()));
                 gui = loader.load();
                 controller = loader.getController();
                 return null;
