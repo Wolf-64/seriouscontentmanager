@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -21,11 +22,13 @@ public class AppLoader<T extends BaseController<?>> {
     private T controller;
     private Parent gui;
     private final String fxml;
+    private final String guiName;
     private final Consumer<Parent> target;
     private Consumer<T> onSucceededConsumer;
 
     public AppLoader(String fxml, Consumer<Parent> target) {
         this.fxml = fxml;
+        this.guiName = Path.of(fxml).getFileName().toString().replace(".fxml", "");
         this.target = target;
         loaderTask = new Task<>() {
             @Override
@@ -49,6 +52,7 @@ public class AppLoader<T extends BaseController<?>> {
 
     public AppLoader(String fxml) {
         this.fxml = fxml;
+        this.guiName = Path.of(fxml).getFileName().toString().replace(".fxml", "");
         this.target = null;
         this.loaderTask = null;
     }
@@ -64,8 +68,7 @@ public class AppLoader<T extends BaseController<?>> {
     /** Does not register an fxml for reloading */
     public Parent load() throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-        loader.setResources(getI18NResourceForLocale(fxml.replace(".fxml", ""),
-                Config.getInstance().getLanguage().getLocale()));
+        loader.setResources(getI18NResourceForLocale(guiName, Config.getInstance().getLanguage().getLocale()));
         gui = loader.load();
         controller = loader.getController();
 
