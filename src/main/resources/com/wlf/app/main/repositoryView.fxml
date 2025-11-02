@@ -27,7 +27,7 @@
                   <HBox BorderPane.alignment="CENTER">
                       <Button disable="${controller.stopDownloadButtonDisabled}" mnemonicParsing="false" onAction="#onStopDownloads">
                           <tooltip>
-                              <Tooltip text="Stop Download" />
+                              <Tooltip text="%downloads.stop.tooltip" />
                           </tooltip>
                           <graphic>
                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -36,6 +36,9 @@
                           </graphic>
                       </Button>
                       <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" mnemonicParsing="false" onAction="#onPauseDownloads">
+                          <tooltip>
+                              <Tooltip text="%downloads.pause.tooltip" />
+                          </tooltip>
                           <graphic>
                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                   <Image url="@icons/play_pause_64dp.png" />
@@ -94,27 +97,27 @@
                       <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Downloads" BorderPane.alignment="TOP_LEFT">
                           <TableView items="${controller.activeDonwloads}">
                               <columns>
-                                  <TableColumn prefWidth="430.0" text="File name">
+                                  <TableColumn prefWidth="430.0" text="%downloads.fileName">
                                       <cellValueFactory>
                                           <PropertyValueFactory property="fileName" />
                                       </cellValueFactory>
                                   </TableColumn>
-                                  <TableColumn prefWidth="247.0" text="Status">
+                                  <TableColumn prefWidth="247.0" text="%downloads.status">
                                       <cellValueFactory>
                                           <PropertyValueFactory property="status" />
                                       </cellValueFactory>
                                   </TableColumn>
-                                  <TableColumn prefWidth="103.0" text="Downloaded">
+                                  <TableColumn prefWidth="103.0" text="%downloads.currentlyDownloaded">
                                       <cellValueFactory>
                                           <PropertyValueFactory property="downloadedMb" />
                                       </cellValueFactory>
                                   </TableColumn>
-                                  <TableColumn minWidth="0.0" prefWidth="65.0" text="Size">
+                                  <TableColumn minWidth="0.0" prefWidth="65.0" text="%downloads.size">
                                       <cellValueFactory>
                                           <PropertyValueFactory property="maxMb" />
                                       </cellValueFactory>
                                   </TableColumn>
-                                  <TableColumn prefWidth="333.0" text="Progress">
+                                  <TableColumn prefWidth="333.0" text="%downloads.progress">
                                       <cellFactory>
                                           <AccentedProgressBarTableCellFactory />
                                       </cellFactory>

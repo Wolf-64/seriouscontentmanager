@@ -75,11 +75,11 @@
             <BorderPane.margin>
                 <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
             </BorderPane.margin>
-            <Label text="Download directory:" GridPane.valignment="BOTTOM" />
-            <Label text="The First Encounter directory:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+            <Label text="%dir.downloads" GridPane.valignment="BOTTOM" />
+            <Label text="%dir.tfe" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
             <ValidatingTextField fx:id="vtfDownloadsPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="1" />
             <ValidatingTextField fx:id="vtfTFEPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-            <Label text="The Second Encounter directory:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
+            <Label text="%dir.tse" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
             <ValidatingTextField fx:id="vtfTSEPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="5" />
             <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <FontIcon fx:id="imgCheckTFE" fill="GREEN" iconColor="GREEN" iconLiteral="fas-check-circle" iconSize="32" />
@@ -109,7 +109,7 @@
     <bottom>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <buttons>
-                <Button mnemonicParsing="false" onAction="#onSave" text="Save" defaultButton="true" />
+                <Button mnemonicParsing="false" onAction="#onSave" text="%save" defaultButton="true" />
             </buttons>
             <BorderPane.margin>
                 <Insets right="16.0" />
