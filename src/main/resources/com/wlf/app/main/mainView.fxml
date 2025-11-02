@@ -34,7 +34,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.Rating?>
 
-<BorderPane prefHeight="800.0" prefWidth="1281.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.PrimaryController">
+<BorderPane prefHeight="800.0" prefWidth="1281.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.PrimaryController">
     <bottom>
         <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
             <padding>
@@ -70,11 +70,11 @@
                     <top>
                         <GridPane hgap="4.0" vgap="4.0" BorderPane.alignment="CENTER">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -153,23 +153,23 @@
                             <CheckBox fx:id="cbInstalled" mnemonicParsing="false" text="%filter.installed" GridPane.columnIndex="3" />
                             <CheckBox fx:id="cbCompleted" mnemonicParsing="false" text="%filter.completed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                             <TextField fx:id="tfNameFilter" promptText="%filter.name" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                            <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                                <Label text="From:" />
+                            <HBox alignment="CENTER_RIGHT" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                <Label text="%filter.date.from" />
                                 <DatePicker />
                             </HBox>
-                            <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="3" GridPane.rowIndex="4">
-                                <Label text="To:" />
+                            <HBox alignment="CENTER_RIGHT" spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                <Label text="%filter.date.to" />
                                 <DatePicker />
                             </HBox>
-                            <Button mnemonicParsing="false" onAction="#rescanDownloadDir" prefHeight="30.0" prefWidth="205.0" text="%actions.rescanDownloads" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                            <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="205.0" text="%actions.playTFE" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
+                            <Button mnemonicParsing="false" onAction="#rescanDownloadDir" prefWidth="250.0" text="%actions.rescanDownloads" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                            <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="250.0" text="%actions.playTFE" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
                                 <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/tfe.png" />
                                     </ImageView>
                                 </graphic>
                             </Button>
-                            <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="205.0" text="%actions.playTSE" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                            <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="250.0" text="%actions.playTSE" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                 <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/game.png" />
@@ -269,7 +269,7 @@
                     </center>
                 </BorderPane>
             </Tab>
-            <Tab closable="false" fx:id="grorepo">
+            <Tab fx:id="grorepo" closable="false">
                 <graphic>
                     <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                         <Image url="@icons/grorepository.png" />
@@ -279,7 +279,7 @@
                     <Tooltip text="grorepository.ru" />
                 </tooltip>
             </Tab>
-            <Tab text="Untitled Tab" fx:id="settings">
+            <Tab fx:id="settings" text="Untitled Tab">
                 <graphic>
                     <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                         <Image url="@icons/settigns.png" />
