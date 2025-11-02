@@ -10,10 +10,7 @@ import javafx.scene.Parent;
 import lombok.Getter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class AppLoader<T extends BaseController<?>> {
@@ -37,7 +34,8 @@ public class AppLoader<T extends BaseController<?>> {
                     App.FRAME_CONTROLLER.setLoading(true);
                 }
                 FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-                loader.setResources(getI18NResourceForLocale(Config.getInstance().getLanguage().getLocale()));
+                loader.setResources(getI18NResourceForLocale(fxml.replace(".fxml", ""),
+                        Config.getInstance().getLanguage().getLocale()));
                 gui = loader.load();
                 controller = loader.getController();
                 return null;
@@ -66,7 +64,8 @@ public class AppLoader<T extends BaseController<?>> {
     /** Does not register an fxml for reloading */
     public Parent load() throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-        loader.setResources(getI18NResourceForLocale(Config.getInstance().getLanguage().getLocale()));
+        loader.setResources(getI18NResourceForLocale(fxml.replace(".fxml", ""),
+                Config.getInstance().getLanguage().getLocale()));
         gui = loader.load();
         controller = loader.getController();
 
@@ -103,7 +102,7 @@ public class AppLoader<T extends BaseController<?>> {
         App.FRAME_CONTROLLER.setLoading(false);
     }
 
-    private ResourceBundle getI18NResourceForLocale(Locale locale) {
-        return ResourceBundle.getBundle("com.wlf.app.i18n", locale);
+    private ResourceBundle getI18NResourceForLocale(String view, Locale locale) {
+        return ResourceBundle.getBundle("com.wlf.app.i18n." + view, locale);
     }
 }

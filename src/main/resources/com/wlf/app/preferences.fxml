@@ -33,18 +33,18 @@
                         <Label text="%theme" GridPane.rowIndex="2" />
                         <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="%settings.general" GridPane.columnSpan="2">
+                        <Label text="%general" GridPane.columnSpan="2">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
-                  <Label text="%settings.language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label text="%language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                     </children>
                 </GridPane>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                <children>
-                  <Button defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSave" prefWidth="120.0" text="%settings.save" />
-                  <Button cancelButton="true" mnemonicParsing="false" prefWidth="120.0" text="%settings.cancel" onAction="#onCancel" />
+                  <Button defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSave" prefWidth="120.0" text="%save" />
+                  <Button cancelButton="true" mnemonicParsing="false" prefWidth="120.0" text="%cancel" onAction="#onCancel" />
                </children>
             </HBox>
             </children>
