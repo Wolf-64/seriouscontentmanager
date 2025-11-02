@@ -14,9 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -29,7 +27,6 @@ import java.math.RoundingMode;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -122,9 +119,18 @@ public class GroRepositoryController extends BaseController<DataModel> {
                         .toList();
                 ChoiceDialog<ContentLanguage> dlg = new ChoiceDialog<>();
                 dlg.getItems().setAll(availableLanguages);
+                dlg.setSelectedItem(dlg.getItems().get(0));
                 dlg.initOwner(App.MAINSTAGE.getOwner());
                 dlg.setTitle("Language Select");
                 dlg.getDialogPane().setContentText("Select language:");
+                dlg.setResultConverter((ButtonType type) -> {
+                    ButtonBar.ButtonData data = type == null ? null : type.getButtonData();
+                    if (data == ButtonBar.ButtonData.OK_DONE) {
+                        return dlg.getSelectedItem();
+                    } else {
+                        return null;
+                    }
+                });
                 Optional<ContentLanguage> result = dlg.showAndWait();
                 if (result.isPresent()) {
                     language = result.get();
@@ -135,6 +141,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
                     if (link.isPresent()) {
                         linkIndex = modInfo.getLinks().indexOf(link.get());
                     }
+                } else {
+                    browser.get().load(lastLocation);
+                    return;
                 }
             }
             downloadURI = requester.requestDownloadURI(modInfo.getId(), language);

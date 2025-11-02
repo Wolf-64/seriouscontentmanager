@@ -1,0 +1,1051 @@
+https://grorepository.ru/api/mods?start=0&count=12
+
+{
+  "total": 417,
+  "data": [
+    {
+      "id": 1479,
+      "createdDate": "2025-06-25T16:47:39.922629",
+      "changedDate": "2025-06-29T23:50:20.987675",
+      "title": "Serious Game Show",
+      "transliteratedTitle": "serious-game-show",
+      "description": "i18n{\"en\":\"Part of Serious Sam Classics Discord server map jam #8 \\\"Key Hunters\\\".\\n\\nSam takes part in the Serious Game Show. In this episode, he'll have to face 3 challenges, collecting key items for each challenge to proceed to the next. Who or what will he face in the final challenge? Only one way to find out.\",\"ru\":\"Часть мап джема #8 \\\"Key Hunters\\\" на сервере Serious Sam Classics в дискорде.\\n\\nСэм принимает участие в Serious Game Show. В этом эпизоде, он столкнётся с трёмя испытаниям, в каждом из которых он должен будет найти ключ от следующего. С кем или с чем он столкнётся в финальном испытании? Есть только один способ это узнать.\"}",
+      "authors": [
+        {
+          "id": 759,
+          "createdDate": "2025-06-02T09:19:57.40142",
+          "changedDate": "2025-06-02T09:19:57.401418",
+          "name": "Wolf",
+          "transliteratedName": "wolf",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": null,
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/327ac71b-915e-44d3-a2fc-0d91c19232ae",
+          "previewLink": "https://grorepository.ru/api/file/d7a20ebc-e293-48eb-9af6-2340cb314755",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/46c75e4a-e835-49f5-9cbb-051b6e145015",
+          "previewLink": "https://grorepository.ru/api/file/467052a9-7c16-4c5d-a982-b4efb850d524",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/1c823569-92c7-4881-937d-da2728bb0ff9",
+          "previewLink": "https://grorepository.ru/api/file/076c96e7-a40b-4d7c-a41f-a9bff3017fa4",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/946f7c90-7cc6-4522-8cde-2f7445c1a60f",
+          "previewLink": "https://grorepository.ru/api/file/4083d098-c44a-469f-8cdb-a500876e7a03",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/290b7422-1da4-4561-9d14-50aeb982ed65",
+          "previewLink": "https://grorepository.ru/api/file/655f5903-1397-4b45-8ee3-9680d3ae1396",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/f5eb8aec-e064-474e-932e-a21025d49584",
+          "previewLink": "https://grorepository.ru/api/file/c652da7e-24c7-4de1-b3e8-5e3ac55c4572",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 2,
+      "tagIds": [
+        1,
+        308,
+        307,
+        353
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2025-06-16T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 1478,
+      "createdDate": "2025-06-05T01:49:25.080492",
+      "changedDate": "2025-11-01T11:11:53.025479",
+      "title": "Долина двух храмов",
+      "transliteratedTitle": "dolina-dvukh-khramov",
+      "description": "i18n{\"ru\":\"Карта в стандартном стиле Майя, сделанная за 8 дней для Interrabital Khreth Mayan Mapping Jam 2025.\\n\\nПродолжительность: примерно 45 минут.\\nПока что коопа нет, будет добавлен в скором времени.\\n\\nИспользованы сторонние ресурсы:\\nМодель синего огня от StormCatcher77;\\nРесурс травы от Jester of Destiny;\\n\\nЛого сделал Омлетус!\\n\\nЗа тест спасибо следующим людям:\\nНесерьёзный тип\\nМаксим Профессионалов\\nENI\\nBazar\\n\\nПриятной игры!!!\\n\\nP.S. Известные баги: 1. Fire shooter'ы под определённым углом стреляют треугольниками и 2. в секции с лифтом, при контакте с барьером игрок либо застреёт либо умирает. Второе пофикшу с патчем, первое - нет.\",\"en\":\"A map in a standard Maya style, finished in 8 days for Interrabital Khreth Mayan Mapping Jam 2025.\\n\\nLength: about 45 minutes.\\nNo coop yet, I'll add it soon.\\n\\nThird-party resources:\\nBlue fire model by StormCatcher77;\\nGrass resource by Jester of Destiny;\\n\\nLogo by Omletus!\\n\\nThanks to these people for testing:\\nНесерьёзный тип\\nМаксим Профессионалов\\nENI\\nBazar\\n\\nHave fun!!!\\n\\nP.S. Known bugs: 1. Fire shooter's shoot out triangles at certain angles and 2. in lift section, player either dies or gets stuck when touching the barier. I will fix the second thing with a patch, but not the first one.\"}",
+      "authors": [
+        {
+          "id": 752,
+          "createdDate": "2024-10-20T18:18:08.080222",
+          "changedDate": "2024-10-20T18:18:08.080216",
+          "name": "HoBu4oK",
+          "transliteratedName": "hobu4ok",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": "1.0",
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/861d8e43-e72a-4346-8e61-74e526b7cbbd",
+          "previewLink": "https://grorepository.ru/api/file/d3ccd225-07eb-443f-9104-9e65a60a736e",
+          "size": null,
+          "type": 5,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/d18f6730-c490-4252-a84f-1aa14883c2b6",
+          "previewLink": "https://grorepository.ru/api/file/64f0c9e0-b0f3-46e3-9215-a24c41cdaa58",
+          "size": null,
+          "type": 1,
+          "sortOrder": 1
+        },
+        {
+          "link": "https://grorepository.ru/api/file/663df53c-67db-4428-9992-4bf8019de5ac",
+          "previewLink": "https://grorepository.ru/api/file/9b98c213-064a-4abf-af67-018c65c2d5a6",
+          "size": null,
+          "type": 1,
+          "sortOrder": 2
+        },
+        {
+          "link": "https://grorepository.ru/api/file/4b36756d-8b26-446a-bce7-a7c8cf9592d7",
+          "previewLink": "https://grorepository.ru/api/file/452dd391-068c-470c-b9a9-3aef6bad55b0",
+          "size": null,
+          "type": 1,
+          "sortOrder": 3
+        },
+        {
+          "link": "https://grorepository.ru/api/file/7d7e8b29-b93a-4794-837b-fb27a283e1a6",
+          "previewLink": "https://grorepository.ru/api/file/afa2bc50-830c-424f-8a08-6b1d16150859",
+          "size": null,
+          "type": 1,
+          "sortOrder": 4
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        302
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2025-06-03T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 1462,
+      "createdDate": "2025-10-29T21:26:17.131197",
+      "changedDate": "2025-11-01T11:20:00.711432",
+      "title": "Золотая Чаша Эпизод 4 \"Упокоенный Богом\"",
+      "transliteratedTitle": "zolotaya-chasha-epizod-4-upokoennyy-bogom",
+      "description": "i18n{\"ru\":\"ЭТО НАКОНЕЦ-ТО СВЕРШИЛОСЬ ! Продолжение спустя больше 2,5 года с момента релиза предыдущего эпизода. Как же это было тяжело.\\n\\nЕсли спросите почему так долго, то ответ: выгорание, творческая импотенция, борьба с перфекционизмом и т.д. Проще говоря - карта была в Производственном Аду. Но она здесь. И мне даже самому не верится, что она и вправду вышла в релиз.\\n\\nНа карте вас ждет много приятных и интересных сюрпризов: ловушки и мини-головоломки, композиции из одной \\\"старенькой\\\" французской передачи (напишите в комментариях что это за передача), стандартный классический геймплей Сэма, и КОНЕЧНО же по традиции - Николай Басков.\\n\\nКарта проходится в среднем за 45 минут, в зависимости от стиля вашего прохождения и сложности. Есть 16 секретов(из которых два - уникальные доп. Квесты).\\n\\nНе забудьте включить автосохранения в настройках. И приятной вам игры, \\\"фанаты Николая Баскова\\\".\\n\\nОбязательно сообщите мне о багах, если их найдете.\\n\\nP.S. Будет ли 5 эпизод? Не знаю, все зависит от успеха этой карты... и от моего желания\",\"en\":\"IT'S FINALLY HERE! A sequel, more than 2.5 years after the release of the previous episode. That was so hard.\\n\\nIf you ask why it took so long, the answer is: burnout, creative impotence, struggling with perfectionism, etc. Simply put, the map was in Production Hell. But it's here. And I can't even believe it's actually released.\\n\\nThe map is full of pleasant and interesting surprises: traps and mini-puzzles, music from an old French TV show (let me know which show it is in the comments), Sam's standard classic gameplay, and OF COURSE, as always, Nikolai Baskov.\\n\\nThe map takes an average of 45 minutes to complete, depending on your playstyle and difficulty. There are 16 secrets (two of which are unique additional quests).\\n\\nDon't forget to enable autosave in the settings. And enjoy the game, \\\"Nikolai Baskov fans.\\\"\\n\\nP.S. Will there be an episode 5? I don't know, it all depends on the success of this map... and my desire.\"}",
+      "authors": [
+        {
+          "id": 754,
+          "createdDate": "2025-03-09T21:00:00.679443",
+          "changedDate": "2025-03-09T21:00:00.679442",
+          "name": "The_SERIOUS_DEN",
+          "transliteratedName": "the_serious_den",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": null,
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/6d57a2f3-32a3-499c-af76-9a65ac2d4a79",
+          "previewLink": "https://grorepository.ru/api/file/7ca0ccbe-9eff-4c8e-9d18-ac8bef437196",
+          "size": null,
+          "type": 5,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/df82fa04-5537-4ee6-8345-66ef52662aef",
+          "previewLink": "https://grorepository.ru/api/file/4b8af6be-94d8-461a-aa0c-2111563fda94",
+          "size": null,
+          "type": 1,
+          "sortOrder": 2
+        },
+        {
+          "link": "https://grorepository.ru/api/file/6dc6acf1-ce39-4d0b-a0b6-762c78e27ad0",
+          "previewLink": "https://grorepository.ru/api/file/bf0d7523-7c6c-4b49-acea-d054cf515a9f",
+          "size": null,
+          "type": 1,
+          "sortOrder": 3
+        },
+        {
+          "link": "https://grorepository.ru/api/file/73d3c000-e564-4326-a0d8-a8d0398ff2a0",
+          "previewLink": "https://grorepository.ru/api/file/3a6a1352-7b6d-490d-b589-adcf83e03b36",
+          "size": null,
+          "type": 1,
+          "sortOrder": 4
+        },
+        {
+          "link": "https://grorepository.ru/api/file/8801d8c8-b096-45e3-a08b-bbbdcc7cd810",
+          "previewLink": "https://grorepository.ru/api/file/dc5b93f3-cc16-4d65-becf-0a2ade15e9fb",
+          "size": null,
+          "type": 1,
+          "sortOrder": 5
+        },
+        {
+          "link": "https://grorepository.ru/api/file/4b33a57c-d955-495f-aa62-bd36690d17dd",
+          "previewLink": "https://grorepository.ru/api/file/a311ebfb-6f85-4638-88e7-f5b2de1c497b",
+          "size": null,
+          "type": 1,
+          "sortOrder": 6
+        },
+        {
+          "link": "https://grorepository.ru/api/file/b5feb329-c113-470f-a874-f375ff194974",
+          "previewLink": "https://grorepository.ru/api/file/d6818280-afac-40f7-8688-7e7f75a5f5eb",
+          "size": null,
+          "type": 1,
+          "sortOrder": 7
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        303
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2025-01-11T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 1468,
+      "createdDate": "2025-05-10T15:45:50.485436",
+      "changedDate": "2025-05-10T15:45:50.485439",
+      "title": "Serious Sam Alpha Remake",
+      "transliteratedTitle": "SSAR",
+      "description": "i18n{\"en\":\"Alpha Remake is a mod which attempts to recreate the experience of Serious Sam Alpha (known as \\\"Sam2000\\\" or \\\"Evaluation Build\\\") based on code leftovers as well as ported assets from the Alpha build itself. The mod also includes levels from the aforementioned build with necessary critical fixes and the addition of a campaign mode.\",\"ru\":\"Alpha Remake — это мод, который пытается воссоздать опыт Serious Sam Alpha (известного как \\\"Sam2000\\\" или \\\"Evaluation Build\\\") на основе остатков кода, а также портированных ресурсов из самой сборки Alpha. Мод также включает уровни из вышеупомянутой сборки с необходимыми критическими исправлениями и добавлением режима кампании.\"}",
+      "authors": [
+        {
+          "id": 757,
+          "createdDate": "2025-05-10T15:02:22.677459",
+          "changedDate": "2025-05-10T15:02:22.677457",
+          "name": "Zdzichu",
+          "transliteratedName": "zdzichu",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 1,
+      "version": "1.5",
+      "game": 0,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/e9de01ad-1daa-40f7-939f-8a92c1862fe7",
+          "previewLink": "https://grorepository.ru/api/file/6f9efffe-8e07-449c-8a1c-5ba6247422d1",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/73082749-14ee-4265-9bd8-8f71d0702818",
+          "previewLink": "https://grorepository.ru/api/file/e28e5661-b9ed-4ba7-8c83-db05dc3ed4fe",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/bf72e9cd-c790-4f37-a88d-04e975369cfc",
+          "previewLink": "https://grorepository.ru/api/file/231807a8-2c9d-4c81-ad61-25b9e795ad7b",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/69f69904-61e4-4185-ae3c-764d7f6bf493",
+          "previewLink": "https://grorepository.ru/api/file/ec6e8c6f-2020-4bbb-aefc-dabbd6d1616b",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/b632bd6b-becb-48b7-bc1c-409ef00115bd",
+          "previewLink": "https://grorepository.ru/api/file/ab2ef139-9f4a-4f81-bdbc-a43e4904c1a1",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 4,
+      "tagIds": [
+        3,
+        305,
+        5
+      ],
+      "modFolder": "SSA",
+      "downloadCount": 0,
+      "originalCreatedDate": "2024-07-23T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 1302,
+      "createdDate": "2024-05-22T11:48:22.858498",
+      "changedDate": "2024-05-22T12:58:46.915239",
+      "title": "Rotten Raka",
+      "transliteratedTitle": "rotten-raka",
+      "description": "i18n{\"en\":\"Modified zorg skin for Serious Sam.\",\"ru\":\"Модифицированный скин зорга.\",\"fr\":\"Peau de Zorg modifiée pour Serious Sam.\"}",
+      "authors": [
+        {
+          "id": 257,
+          "createdDate": "2024-02-10T17:04:38.750415",
+          "changedDate": "2024-05-22T13:02:12.814924",
+          "name": "Zey64",
+          "transliteratedName": "zey64",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{\"site\": \"https://zey64.net\"}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 2,
+      "version": null,
+      "game": 2,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/49da6985-6bd7-4d02-9804-8f2f00598fde",
+          "previewLink": "https://grorepository.ru/api/file/7a8b89a3-1889-4db7-816d-22c3a08d2191",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/18936661-d136-4961-b7a5-a98f97842cf6",
+          "previewLink": "https://grorepository.ru/api/file/7939471c-8183-4555-a63f-58c95675b171",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 4,
+      "tagIds": [],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2024-05-22T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 1218,
+      "createdDate": "2024-05-15T20:32:44.104535",
+      "changedDate": "2025-11-01T11:13:08.863662",
+      "title": "Проклятый старый замок.",
+      "transliteratedTitle": "proklyatyy-staryy-zamok",
+      "description": "i18n{\"ru\":\"Решил я вот немного порадовать фанатов классики, и сделать небольшую карту. Надеюсь, хоть кто-то ждал возвращения моего творчества :)\\n\\nПеред вами - Проклятый, старый замок. Как вы здесь очутились - одному Господу Богу известно, если ему вообще известно о этом ужасном месте. Нужно скорее подниматься на ноги, и давать дёру отсюда!\\n\\nКарта сделана с огромным энтузиазмом. Правда, работа над ней - как глоток свежего воздуха, и я доволен результатом.\\nЭто - классическая карта на прохождение, с некоторыми элементами кетчуп-хоррора. Возможен кооператив, но он не проверялся, так что рекомендую одиночный режим, и сложность \\\"Обычная\\\". Правда, стоит оговориться, что хоть хоррор-эллемент тут присутствует, напугать нас, вояк-ветеранов, карта вряд ли способна. Однако, не сильно опытных игроков - более чем. По крайней мере, моя жена минимум три раза подпрыгнула с испугу :)\\nЯ старался сделать помещения и интерьеры как можно более атмосферными, как бы логичными, и, от части, реалистичными. Я надеюсь, у меня получилось, и результатом вы будете довольны. Главным источником вдохновения послужили старые карты десятых годов, новичковые работы полные амбиций и души авторов, а также игра Готика. Кроме того, на карте я спрятал несколько секретов. Некоторые забавные, некоторые жуткие, некоторые полезные, так что ищите внимательно!\\n\\nК слову, вся карта построена с использованием исключительно оригинальных ресурсов игры. Никаких новых текстур, никаких новых моделей, никаких новых звуков и так далее. Прошу не расценивать это как минус, но как авторскую задумку. Я попытался выжать максимум (Или почти максимум) из доступного материала.\\n\\nПриятной игры!\",\"en\":\"I have decided to treat classics enjoyers and made a little map. I hope at least someone was looking forward my works' return :)\\n\\nBehold - Old cursed castle. Only God knows how you got there, if he even is aware of this horrible place. You gotta get on your feet quick and book it!\\n\\nThe map was made with huge enthusiasm. I mean it, working on this map was like a breath of fresh air for me. I am glad with the result.\\nThis is a classic style map with some elements of ketchup-horror. Coop play is possible but wasn't tested, so I recommed singleplayer on \\\"Normal\\\" difficulty. I should mention that horror on this map can barely scare us gaming veterans, but will spook unexperienced players for sure. My wife jumped at least three times :)\\nI tried to make locations as atmospheric as possble as well as logical and somewhat realistic. I hope that I succeded and you will be happy with the result. My main sources of inspiration were old maps from 10's, newbie works full of ambition and soul, and the game Gothic. I've also hidden a few secrets on the map. Some are funny, some are scary and some are usefull, so look carefully!\\n\\nBy the way, map is made only with basic game resources. No new textures, no new models, no new sound, etc. Please regard it as an author's idea. I tried to get the most out of available material (or close to that).\\n\\nHave fun!\"}",
+      "authors": [
+        {
+          "id": 26,
+          "createdDate": "2024-02-07T14:04:24.063448",
+          "changedDate": "2024-02-07T14:04:24.063455",
+          "name": "MrOgurchick",
+          "transliteratedName": "mrogurchick",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": "1.0",
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/95a78b08-f05f-4fac-8825-dc315e8d2ae7",
+          "previewLink": "https://grorepository.ru/api/file/0ea8346e-c980-4fbf-be07-5a90378771f9",
+          "size": null,
+          "type": 5,
+          "sortOrder": 1
+        },
+        {
+          "link": "https://grorepository.ru/api/file/3e0d44aa-3564-4218-83d4-d1651d938406",
+          "previewLink": "https://grorepository.ru/api/file/689d2cc5-db16-473e-9937-9a5a2a473c6e",
+          "size": null,
+          "type": 1,
+          "sortOrder": 2
+        },
+        {
+          "link": "https://grorepository.ru/api/file/2705d9fa-be1e-452f-a96a-d6fd5b9315d1",
+          "previewLink": "https://grorepository.ru/api/file/552ec016-b7df-4389-8f16-10f857c55e44",
+          "size": null,
+          "type": 1,
+          "sortOrder": 3
+        }
+      ],
+      "rating": 0,
+      "subcategory": 2,
+      "tagIds": [
+        10,
+        27,
+        304
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2024-05-13T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 402,
+      "createdDate": "2024-02-22T21:36:16.257716",
+      "changedDate": "2025-11-01T16:29:57.987284",
+      "title": "AFTERMATH",
+      "transliteratedTitle": "aftermath",
+      "description": "i18n{\"ru\":\"Heming Hitrowski представляет уникальную карту для Serious Sam: The Second Encounter в рамках конкурса WaterWorld 2023.\\n\\nОкунитесь в захватывающее приключение, взяв на себя роль Эндрю Стокса, одного из немногих, кто смог выжить в зомби-апокалипсисе. Ваша миссия становится еще более интригующей, когда перед вами встает вопрос, требующий разгадки: кто же на самом деле Эндрю Стокс?\\n\\nОсобенности карты:\\n- Управляемый транспорт в Serious Sam! Прокатитесь по ночному городу на различных автомобилях и катерах!\\n- Система миссий, которая обострит ощущение риска и важности каждого вашего действия.\\n- Общайтесь с NPC, исследуйте город с помощью мини-карты, а также записывайте ход расследования в новом интерфейсе Мыслей.\\n- Сразитесь с тремя боссами, каждый из которых станет испытанием вашего мастерства.\\n\\nНаграды:\\nКарта заняла 4 место на конкусе WaterWorld 2023.\\n\\nУстановка: скачанный архив распакуйте в корневую папку Serious Sam: The Second Encounter.\",\"en\":\"Heming Hitrowski presents a unique map for Serious Sam: The Second Encounter as part of the WaterWorld 2023 competition.\\n\\nDive into an exhilarating adventure by taking on the role of Andrew Stokes, one of the few who survived the zombie apocalypse. Your mission becomes even more intriguing when a question demanding an answer arises: who is Andrew Stokes, really?\\n\\nMap Features:\\n- Driveable vehicles in Serious Sam! Cruise through the night city in various cars and boats!\\n- A mission system that heightens the sense of risk and importance of every action you take.\\n- Interact with NPCs, explore the city with a mini-map, and track your investigation progress in a new Thoughts interface.\\n- Battle three bosses, each challenging your skill and strategy.\\n\\nAwards:\\nThe map took 4th place at the WaterWorld 2023 competition.\\n\\nInstallation: Unpack the downloaded archive into the root folder of Serious Sam: The Second Encounter.\",\"fr\":\"Heming Hitrowski présente une carte unique pour Serious Sam : The Second Encounter dans le cadre du concours WaterWorld 2023.\\n\\nPlongez dans une aventure captivante en endossant le rôle d'Andrew Stokes, l'un des rares à avoir survécu à l'apocalypse zombie. Votre mission devient encore plus intrigante lorsque vous êtes confronté à une énigme à résoudre : qui est réellement Andrew Stokes ?\\n\\nCaractéristiques de la carte :\\n- Des véhicules contrôlables dans Serious Sam ! Parcourez la ville nocturne en divers véhicules et bateaux !\\n- Un système de missions qui intensifie le sentiment de risque et l'importance de chaque action.\\n- Interagissez avec les NPC, explorez la ville à l'aide d'une mini-carte, et enregistrez le progrès de votre enquête dans la nouvelle interface des Pensées.\\n- Affrontez trois boss, chacun étant un défi à votre habileté.\\n\\nRécompenses :\\nLa carte a obtenu la 4e place au concours WaterWorld 2023.\\n\\nInstallation : décompressez l'archive téléchargée dans le dossier racine de Serious Sam : The Second Encounter.\"}",
+      "authors": [
+        {
+          "id": 20,
+          "createdDate": "2024-02-07T14:04:24.032444",
+          "changedDate": "2024-04-25T21:06:52.107651",
+          "name": "Heming Hitrowski",
+          "transliteratedName": "heming-hitrowski",
+          "previousNames": null,
+          "description": "\"Это я, Хэх!\"",
+          "avatar": "https://grorepository.ru/api/file/41390152-2e33-4033-a23a-6f963f2361ce",
+          "fields": "{\"site\": \"https://grorepository.ru\", \"youtube\": \"https://youtube.com/@Hitrowski?si=USn6GsjWCs4Es0QN\"}",
+          "mods": null,
+          "modAuthorType": 0
+        },
+        {
+          "id": 3,
+          "createdDate": "2024-02-07T14:04:23.932462",
+          "changedDate": "2024-04-30T15:54:53.764414",
+          "name": "art-serious",
+          "transliteratedName": "art-serious",
+          "previousNames": null,
+          "description": null,
+          "avatar": "https://grorepository.ru/api/file/1b0742ea-6b1b-4b13-9756-9f1d51ac9ea3",
+          "fields": "{\"youtube\": \"https://www.youtube.com/channel/UCCMxHJZvBal0v9wlM6YYe1A\"}",
+          "mods": null,
+          "modAuthorType": 1
+        },
+        {
+          "id": 305,
+          "createdDate": "2024-02-23T00:18:46.338257",
+          "changedDate": "2024-02-23T00:18:46.338254",
+          "name": "MuxaX",
+          "transliteratedName": "muxax",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 1
+        }
+      ],
+      "type": 0,
+      "version": "0.9",
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/4b0951dd-0111-4c8e-af8e-9c2d01e73070",
+          "previewLink": "https://grorepository.ru/api/file/703d5e20-1037-42ea-afa7-ee8cfccd2178",
+          "size": 148692,
+          "type": 1,
+          "sortOrder": 2
+        },
+        {
+          "link": "https://grorepository.ru/api/file/9996728c-0c35-415c-a767-e52695e12c20",
+          "previewLink": "https://grorepository.ru/api/file/40c32c78-4e6c-4418-b853-1c409282bd96",
+          "size": 199441,
+          "type": 1,
+          "sortOrder": 3
+        },
+        {
+          "link": "https://grorepository.ru/api/file/000efa5a-41e9-4cbe-b778-5ed16072631c",
+          "previewLink": "https://grorepository.ru/api/file/16608ab1-8a70-48f0-8079-fac5f25e6a42",
+          "size": 248893,
+          "type": 1,
+          "sortOrder": 4
+        },
+        {
+          "link": "https://grorepository.ru/api/file/2556b8a2-acb5-40cf-96eb-0b5a7cbcb957",
+          "previewLink": "https://grorepository.ru/api/file/394f8659-7f3b-444b-9c3e-30060b16278d",
+          "size": 120093,
+          "type": 1,
+          "sortOrder": 5
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        1,
+        10,
+        3,
+        52,
+        102
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2023-10-07T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 488,
+      "createdDate": "2024-06-02T13:42:40.230399",
+      "changedDate": "2024-06-02T13:42:40.23041",
+      "title": "DEPTH 13",
+      "transliteratedTitle": "depth-13",
+      "description": "i18n{\"ru\":\"09.06.2090. На подводной станции Эрса происходит катастрофа. Главному герою предстоит столкнуться с тварями, которыми наполнена станция, а также выяснить причину катастрофы. \\nДойдите до истины и узнайте больше об экспериментах на станции, о тюрьме и Беферндийской впадине, обнаруженной учеными в южной части Тихого океана. \\nНа карте есть возможность прогуляться по дну океана. Главное, не забудьте надеть скафандр! \\nПрисутствуют элементы хоррора! \\nЖанр: хоррор, шутер, головоломка.\"}",
+      "authors": [
+        {
+          "id": 165,
+          "createdDate": "2024-02-07T14:04:25.346114",
+          "changedDate": "2024-05-13T09:58:10.2551",
+          "name": "CR!STALLL",
+          "transliteratedName": "cristalll",
+          "previousNames": null,
+          "description": "Делаю всякое с движком Serious Engine",
+          "avatar": "https://grorepository.ru/api/file/dfe4dfc8-cb7d-41e0-9273-bc4ef1f16714",
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": null,
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/3b22977d-8666-441a-b5ec-81b8e1846231",
+          "previewLink": "https://grorepository.ru/api/file/2aa7eda2-919a-43e7-85b9-5cfd1558e2a3",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/727d0e17-e611-45fb-9124-9849a701b478",
+          "previewLink": "https://grorepository.ru/api/file/2ae3e867-24f1-437c-b457-9762ff02e7ab",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/824db761-0cd7-46fe-b108-717465949e1c",
+          "previewLink": "https://grorepository.ru/api/file/7907a9c4-eab8-4ef8-9bfe-16dd025bdcf5",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/49598a03-8162-43ff-9786-2ce0ea18cdc1",
+          "previewLink": "https://grorepository.ru/api/file/a7d3ee76-39c3-45e5-b452-527b265dce1e",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/66273fe3-dd29-41bc-ba11-875e80598792",
+          "previewLink": "https://grorepository.ru/api/file/2f0e5184-9ace-4b8f-8ebc-bb5bb7093322",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/81c71e33-032b-4fb0-82d7-91de9186abe3",
+          "previewLink": "https://grorepository.ru/api/file/5f197818-b621-4a70-9762-caf6f31b9889",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/bec36cc8-807e-4fd9-903b-fc7a1679f9a1",
+          "previewLink": "https://grorepository.ru/api/file/849cf185-877e-488a-b5d8-fade926eb79d",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/67cc6de1-7394-4d97-857b-59f54540c49d",
+          "previewLink": "https://grorepository.ru/api/file/54da4e51-06f0-4f51-8708-61a392c117da",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/b85e6cca-30e3-477d-9116-0035e6f4d02f",
+          "previewLink": "https://grorepository.ru/api/file/0558442b-2720-42fa-a14f-e537acd006e3",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/da03035f-8133-424b-9814-8854386f0f47",
+          "previewLink": "https://grorepository.ru/api/file/a7e91b98-c59f-441f-9157-a7ec0eda2697",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/aa7d1c27-3716-40d8-bd01-8ae97fe4a4f6",
+          "previewLink": "https://grorepository.ru/api/file/8a951de7-b3bd-409e-9b86-caa14b02ea1e",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        102,
+        1,
+        3,
+        11,
+        27
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2023-10-07T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 484,
+      "createdDate": "2024-02-23T02:12:50.421566",
+      "changedDate": "2024-10-27T15:14:02.707197",
+      "title": "Break The Loop",
+      "transliteratedTitle": "break-the-loop",
+      "description": "i18n{\"ru\":\"Сэм попадает во временную петлю в канун Нового года. Раз за разом он и все люди на Земле проживают последний день в году. Но однажды на помощь приходит кто-то неизвестный, и очередной день у Сэма становится более волшебным и интересным. \\n\\nВам предстоит отправиться в другие волшебные миры, чтобы найти решение проблемы с временной петлей. Узнайте больше о мире Нового года. \\nПогрузитесь в сюжет с помощью диалогов, озвученных нейросетью. \\n\\nЖанр: приключение.\\n\\nРабота заняла 1 место на конкурсе Jingle Bombs 2022 на Serioussite.ru\",\"en\":\"Sam gets caught in a time loop on the eve of the New Year. Time and again, he and all the people on Earth live through the last day of the year. But one day, someone unknown comes to the rescue, making Sam's day more magical and interesting.\\n\\nYou are about to embark on a journey to other magical worlds to find a solution to the time loop problem. Learn more about the world of the New Year.\\nImmerse yourself in the story through dialogues voiced by a neural network.\\n\\nGenre: Adventure.\\n\\nThis map took 1st place at Jingle Bombs 2022 map competition on Serioussite.ru\"}",
+      "authors": [
+        {
+          "id": 165,
+          "createdDate": "2024-02-07T14:04:25.346114",
+          "changedDate": "2024-05-13T09:58:10.2551",
+          "name": "CR!STALLL",
+          "transliteratedName": "cristalll",
+          "previousNames": null,
+          "description": "Делаю всякое с движком Serious Engine",
+          "avatar": "https://grorepository.ru/api/file/dfe4dfc8-cb7d-41e0-9273-bc4ef1f16714",
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": null,
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/fca21f58-3c74-4ca2-984e-d0e5a677d822",
+          "previewLink": "https://grorepository.ru/api/file/75532a2b-1985-4e13-9bf0-d7b54c81e6db",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/e155332f-99dd-4222-bfd6-0f1295238f67",
+          "previewLink": "https://grorepository.ru/api/file/e71d5956-e0b6-4f44-9c50-81d8dbea09f9",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/6bab9302-03d2-48b1-a62a-f9d4007a2b5d",
+          "previewLink": "https://grorepository.ru/api/file/097a14d6-38a1-4cfa-83f0-caba28fe613e",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/26cdd806-36d9-41bf-bba9-b785fed299af",
+          "previewLink": "https://grorepository.ru/api/file/a591f9a7-fd55-402e-ade9-c0c54d2fa7a5",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/df8668f8-bca4-4667-b3c1-57957648427c",
+          "previewLink": "https://grorepository.ru/api/file/76e26302-a912-46f5-a7fc-dab95d045234",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/246990a0-ac13-49c7-a592-1a23ee52bd4d",
+          "previewLink": "https://grorepository.ru/api/file/06b0a076-ef9d-4194-af3c-be842190ffdd",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/0d9b4192-9714-490a-805a-bedf243b54dd",
+          "previewLink": "https://grorepository.ru/api/file/4f511404-6ddb-41f3-a05b-8a7d26c59ecc",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        16,
+        12,
+        1,
+        306,
+        10
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2022-12-30T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 481,
+      "createdDate": "2024-02-23T00:23:03.588799",
+      "changedDate": "2024-05-11T16:54:19.801916",
+      "title": "Шоколадный мир Билли Бонки",
+      "transliteratedTitle": "shokoladnyy-mir-billi-bonki",
+      "description": "i18n{\"ru\":\"Сэм как всегда хотел сгладить вечер пятницы за пивом и шоколадкой, но в шоколадке он нашёл золотой билет в шоколадный мир Билли Бонки!\"}",
+      "authors": [
+        {
+          "id": 305,
+          "createdDate": "2024-02-23T00:18:46.338257",
+          "changedDate": "2024-02-23T00:18:46.338254",
+          "name": "MuxaX",
+          "transliteratedName": "muxax",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": null,
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/15c53746-e434-4de1-b03a-53330e032d20",
+          "previewLink": "https://grorepository.ru/api/file/db302da2-c276-4dd2-a879-287fc3db4d5d",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/03198705-9bd9-4a24-82cc-b82471753ccd",
+          "previewLink": "https://grorepository.ru/api/file/08a397a8-7b9e-4512-9ab7-7e093953c6a6",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/9e207dda-0038-4d49-be0d-06d8dc101e86",
+          "previewLink": "https://grorepository.ru/api/file/ec349fe8-fed0-4a5e-a545-56a474d15053",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/e05158bd-494f-46ed-9ee2-b2fd81eb6e21",
+          "previewLink": "https://grorepository.ru/api/file/bac203b7-5469-4fa3-a9f2-790a9a92f866",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/6de2767d-4ef7-43fc-b8c0-fe2934dde4a1",
+          "previewLink": "https://grorepository.ru/api/file/ca278640-7b57-405a-83c3-b84689b0cb94",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/dcd2b90c-d28e-481f-b9fb-ee177450c518",
+          "previewLink": "https://grorepository.ru/api/file/35df6bb3-1955-43f6-b0dd-4354f0d8f74d",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/e044bafc-0149-4e9f-970e-17a06db54fc4",
+          "previewLink": "https://grorepository.ru/api/file/fe8f6f74-9a8a-4de6-aaed-df47a43232c6",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/36aa5c80-2cc8-4465-97a8-e3b3775bfd9c",
+          "previewLink": "https://grorepository.ru/api/file/5805b6b2-f065-4029-bcd0-c446ecc37947",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        103,
+        1,
+        28
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2022-10-07T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 452,
+      "createdDate": "2024-02-22T21:41:36.512258",
+      "changedDate": "2024-06-02T13:45:27.480964",
+      "title": "На поверхности",
+      "transliteratedTitle": "na-poverkhnosti",
+      "description": "i18n{\"ru\":\"art-serious, Cofein и Heming Hitrowski представляют уникальное двухчасовое приключение по летающим островам. \\\"На поверхности\\\" - это динамичный маппак, который соединяет в себе элементы квеста и экшена.\\n\\nЗемля пережила катастрофу после инопланетного вторжения. Поверхность планеты оказалась взорвана и сожжена дотла, уцелели только отдельные куски поверхности, застывшие в воздухе. На них начала заново формироваться цивилизация.\\nГлавные герои - команда искателей приключений - прибывают на остров Омрол в поисках заработка и припасов. Нанятые для сопровождения ученого в поисках артефакта, они решают глубже исследовать руины, где находят не только врагов, но и ценные артефакты...\\n\\nОсобенности карты:\\n- Уникальная система диалогов: открывает новый способ общения в мире Serious Sam, заменяя традиционные сообщения в ИНЕРТАН.\\n- Находите ценности прошлого на островах и продавайте их в городе, чтобы получить лучшее снаряжение и апгрейды оружия.\\n- Новые противники, каждый из которых станет испытанием вашего мастерства.\\n- Новые виды оружия, такие как M4A1 с подствольным гранатометом или лазерный пистолет MR MK2, скорость стрельбы которого зависит от скорости вашего пальца!\\n\\nНаграды:\\nКарта заняла второе место на конкурсе Please Fly 2022.\\n\\nУстановка: скачанный архив распакуйте в корневую папку Serious Sam: The Second Encounter.\"}",
+      "authors": [
+        {
+          "id": 20,
+          "createdDate": "2024-02-07T14:04:24.032444",
+          "changedDate": "2024-04-25T21:06:52.107651",
+          "name": "Heming Hitrowski",
+          "transliteratedName": "heming-hitrowski",
+          "previousNames": null,
+          "description": "\"Это я, Хэх!\"",
+          "avatar": "https://grorepository.ru/api/file/41390152-2e33-4033-a23a-6f963f2361ce",
+          "fields": "{\"site\": \"https://grorepository.ru\", \"youtube\": \"https://youtube.com/@Hitrowski?si=USn6GsjWCs4Es0QN\"}",
+          "mods": null,
+          "modAuthorType": 0
+        },
+        {
+          "id": 3,
+          "createdDate": "2024-02-07T14:04:23.932462",
+          "changedDate": "2024-04-30T15:54:53.764414",
+          "name": "art-serious",
+          "transliteratedName": "art-serious",
+          "previousNames": null,
+          "description": null,
+          "avatar": "https://grorepository.ru/api/file/1b0742ea-6b1b-4b13-9756-9f1d51ac9ea3",
+          "fields": "{\"youtube\": \"https://www.youtube.com/channel/UCCMxHJZvBal0v9wlM6YYe1A\"}",
+          "mods": null,
+          "modAuthorType": 0
+        },
+        {
+          "id": 83,
+          "createdDate": "2024-02-07T14:04:24.713972",
+          "changedDate": "2024-05-03T16:40:14.691899",
+          "name": "Cofein",
+          "transliteratedName": "cofein",
+          "previousNames": null,
+          "description": null,
+          "avatar": "https://grorepository.ru/api/file/80b9505d-5d4f-4e93-876a-5f2c8e428161",
+          "fields": "{}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": "0.9",
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/67bf7fd1-e7db-4d53-aa89-b954171b10a2",
+          "previewLink": "https://grorepository.ru/api/file/5bfff89d-70f6-41d3-a4df-5bea8926f170",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/84b14689-098a-45d6-bdc2-c3638b5caeba",
+          "previewLink": "https://grorepository.ru/api/file/dc4d6714-d5c8-4f5d-91d1-cc6755b6683b",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/e22381ce-cf41-4d73-9532-fbc65923baff",
+          "previewLink": "https://grorepository.ru/api/file/924c2b7c-7e02-4f66-8012-f6045b3f588c",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/0e226983-7a8a-4541-b930-994c31756e55",
+          "previewLink": "https://grorepository.ru/api/file/21d29f68-d509-468c-8234-6fd0fb14623c",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/e9230012-3e90-458a-bc3e-18f8150e5b34",
+          "previewLink": "https://grorepository.ru/api/file/5222c492-2bd5-4e24-bea1-72b5843fd8b8",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/9645cfff-7629-4d0e-bd20-93b30f513d1f",
+          "previewLink": "https://grorepository.ru/api/file/8ea56b40-66de-48b3-ab09-8002e49966b1",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/d3dc7e7e-e157-43be-81e4-b5b2228b872b",
+          "previewLink": "https://grorepository.ru/api/file/5d2dd293-0057-4ad7-ad75-5b0e4c8ccbbc",
+          "size": null,
+          "type": 1,
+          "sortOrder": 0
+        }
+      ],
+      "rating": 0,
+      "subcategory": 0,
+      "tagIds": [
+        10,
+        3,
+        1,
+        103
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2022-09-25T00:00:00",
+      "fields": null
+    },
+    {
+      "id": 1106,
+      "createdDate": "2024-05-13T00:05:32.779046",
+      "changedDate": "2025-11-01T17:28:22.164114",
+      "title": "Ancient Rome Mappack",
+      "transliteratedTitle": "ancient-rome-mappack",
+      "description": "i18n{\"en\":\"This mappack contains levels from Serious Sam Next Encounter Ancient Rome Chapter, put in right order and you can find 2 cut levels.\\n\\nThank you for the help in mappack:\\n- Rakanishu - levels design\\n- Spy's Creed and Zdzichu - models\\n\\nHave fun! \",\"ru\":\"Этот маппак содержит уровни из главы Древний Рим игры Serious Sam Next Encounter в правильном порядке с двумя вырезанными уровнями.\\n\\nСпасибо за помощь с маппаком:\\n- Rakanishu - дизайн уровней\\n- Spy's Creed и Zdzichu - модели\\n\\nПриятной игры!\"}",
+      "authors": [
+        {
+          "id": 552,
+          "createdDate": "2024-05-12T23:00:23.516817",
+          "changedDate": "2024-05-22T13:02:58.287072",
+          "name": "Mkbewe",
+          "transliteratedName": "mkbewe",
+          "previousNames": null,
+          "description": null,
+          "avatar": null,
+          "fields": "{\"youtube\": \"https://www.youtube.com/@seriousmkbewe\"}",
+          "mods": null,
+          "modAuthorType": 0
+        }
+      ],
+      "type": 0,
+      "version": null,
+      "game": 1,
+      "links": [],
+      "media": [
+        {
+          "link": "https://grorepository.ru/api/file/5db6382f-fef8-4255-909c-b0ea43e8322f",
+          "previewLink": "https://grorepository.ru/api/file/c0340e83-7f53-4558-95a6-2f8581e7f698",
+          "size": 307112,
+          "type": 1,
+          "sortOrder": 0
+        },
+        {
+          "link": "https://grorepository.ru/api/file/30eb25a8-4a16-4dd8-83ef-698d57f86c47",
+          "previewLink": "https://grorepository.ru/api/file/ed32145c-a93c-4984-bf28-cdc3f91e3945",
+          "size": 481295,
+          "type": 1,
+          "sortOrder": 1
+        },
+        {
+          "link": "https://grorepository.ru/api/file/1b39ab89-2d77-4cfe-8bad-9ed1641ef65c",
+          "previewLink": "https://grorepository.ru/api/file/d6e187bb-e09d-4069-8a11-071d4d72f96f",
+          "size": 419687,
+          "type": 1,
+          "sortOrder": 2
+        },
+        {
+          "link": "https://grorepository.ru/api/file/f45824a7-f12d-4368-aa77-c7920917361b",
+          "previewLink": "https://grorepository.ru/api/file/b64dda6f-4c76-4fae-94a0-72947877374c",
+          "size": 446605,
+          "type": 1,
+          "sortOrder": 3
+        },
+        {
+          "link": "https://grorepository.ru/api/file/34937c76-d9a1-4ac3-b378-fe2011415b09",
+          "previewLink": "https://grorepository.ru/api/file/ce8c2d43-377e-4260-a25a-2d804ca59c94",
+          "size": 465372,
+          "type": 1,
+          "sortOrder": 4
+        },
+        {
+          "link": "https://grorepository.ru/api/file/9ac73538-bc5c-4d36-aaae-aaf437e8f5cf",
+          "previewLink": "https://grorepository.ru/api/file/7fcccaf6-a283-4409-8579-cac79af5d313",
+          "size": 366112,
+          "type": 1,
+          "sortOrder": 5
+        },
+        {
+          "link": "https://grorepository.ru/api/file/bae41386-894b-44c6-94c6-bffbcd2c906f",
+          "previewLink": "https://grorepository.ru/api/file/71da4a5b-926d-4ff6-9378-23def548473f",
+          "size": 453817,
+          "type": 1,
+          "sortOrder": 6
+        },
+        {
+          "link": "https://grorepository.ru/api/file/8f6d8eb0-659d-430c-af68-3ccd8d825e45",
+          "previewLink": "https://grorepository.ru/api/file/cac16366-bbb2-4bfb-9435-3d196063da99",
+          "size": 420406,
+          "type": 1,
+          "sortOrder": 7
+        }
+      ],
+      "rating": 0,
+      "subcategory": 2,
+      "tagIds": [
+        5,
+        252,
+        309
+      ],
+      "modFolder": null,
+      "downloadCount": 0,
+      "originalCreatedDate": "2022-01-02T00:00:00",
+      "fields": null
+    }
+  ],
+  "tags": []
+}
