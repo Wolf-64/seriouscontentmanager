@@ -6,7 +6,11 @@ import java.util.Locale;
 
 public enum Language {
     ENGLISH(Locale.ENGLISH),
-    GERMAN(Locale.GERMAN);
+    GERMAN(Locale.GERMAN),
+    FRENCH(Locale.FRENCH),
+    ITALIAN(Locale.ITALIAN),
+    SPANISH(Locale.of("es")),
+    RUSSIAN(Locale.of("ru"));
 
     @Getter
     final Locale locale;
