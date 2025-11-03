@@ -1,6 +1,5 @@
 package com.wlf.app.main.net;
 
-import com.wlf.app.main.data.ContentLanguage;
 import com.wlf.common.controls.AccentedProgressBar;
 import com.wlf.app.main.data.ContentModel;
 import lombok.Setter;
@@ -8,10 +7,8 @@ import lombok.Setter;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;

@@ -19,7 +19,6 @@ module seriouscontentmanager {
     requires javafx.web;
     requires java.sql;
     requires java.net.http;
-    requires async.http.client;
     requires org.apache.commons.exec;
     requires java.logging;
 
