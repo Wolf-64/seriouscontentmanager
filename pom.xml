@@ -13,7 +13,7 @@
 
     <properties>
         <app.version>${project.version}</app.version>
-        <app.name>lightweightFX</app.name>
+        <app.name>Serious Content Manager</app.name>
 
         <project.mainClass>com.wlf.app.App</project.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -191,7 +191,7 @@
                     <stripDebug>true</stripDebug>
                     <noManPages>true</noManPages>
                     <launcher>${app.name}</launcher>
-                    <mainClass>lightweightfx/${project.mainClass}</mainClass>
+                    <mainClass>seriouscontentmanager/${project.mainClass}</mainClass>
                     <jlinkImageName>SeriousContentManager</jlinkImageName>
                     <jlinkZipName>SeriousContentManager</jlinkZipName>
                 </configuration>
@@ -203,8 +203,8 @@
                         <configuration>
                             <mainClass>${project.mainClass}</mainClass>
                             <launcher>${app.name}</launcher>
-                            <jlinkZipName>lightweightfx</jlinkZipName>
-                            <jlinkImageName>lightweightfx</jlinkImageName>
+                            <jlinkZipName>SeriousContentManager</jlinkZipName>
+                            <jlinkImageName>SeriousContentManager</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
