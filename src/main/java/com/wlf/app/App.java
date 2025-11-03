@@ -23,7 +23,6 @@ public class App extends javafx.application.Application {
     public static Stage MAINSTAGE;
     public static Scene MAINSCENE;
 
-    public static String APP_TITLE = "Lightweight FX";
     public static Image APP_ICON = Utils.getImageResource("programicon.png");
     public static FrameController FRAME_CONTROLLER;
     public static BaseController<?> MAIN_CONTROLLER;
@@ -61,7 +60,7 @@ public class App extends javafx.application.Application {
         controller.setStage(stage);
         controller.setScene(scene);
 
-        stage.setTitle(APP_TITLE + getAppVersion());
+        stage.setTitle(getAppName() + " v" + getAppVersion());
 
         stage.getIcons().add(APP_ICON);
         stage.setScene(scene);
@@ -98,7 +97,22 @@ public class App extends javafx.application.Application {
     }
 
     public static String getAppVersion() {
-        return App.class.getPackage().getImplementationVersion();
+        try (var is = App.class.getResourceAsStream("/meta.properties")) {
+            var props = new java.util.Properties();
+            props.load(is);
+            return props.getProperty("app.version");
+        } catch (Exception e) {
+            return "dev";
+        }
     }
 
+    public static String getAppName() {
+        try (var is = App.class.getResourceAsStream("/meta.properties")) {
+            var props = new java.util.Properties();
+            props.load(is);
+            return props.getProperty("app.name");
+        } catch (Exception e) {
+            return "unknown app";
+        }
+    }
 }
