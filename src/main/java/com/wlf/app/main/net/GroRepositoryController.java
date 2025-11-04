@@ -4,32 +4,37 @@ import com.wlf.app.App;
 import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
 import com.wlf.common.BaseController;
-import com.wlf.common.controls.AccentedProgressBar;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import lombok.Getter;
 import lombok.Setter;
+import org.controlsfx.control.TaskProgressView;
+import org.controlsfx.glyphfont.FontAwesome;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 
 public class GroRepositoryController extends BaseController<DataModel> {
@@ -48,9 +53,10 @@ public class GroRepositoryController extends BaseController<DataModel> {
     @FXML
     private ProgressBar downloadProgress;
 
-    @Getter
-    @Setter
-    private ObservableList<DownloadModel> activeDownloads = FXCollections.observableArrayList();
+    @FXML
+    private TaskProgressView<Task<ContentModel>> downloadTaskView;
+    private ExecutorService executorService = Executors.newCachedThreadPool();
+    private final List<Downloader> activeDownloads = new ArrayList<>();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
 
@@ -65,7 +71,24 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     @Override
     protected void initialize() {
+        FontAwesome fontAwesome = new FontAwesome();
+        downloadTaskView.setGraphicFactory(task -> {
+            org.controlsfx.glyphfont.Glyph result = fontAwesome.create(FontAwesome.Glyph.DOWNLOAD)
+                    .size(24)
+                    .color(Color.BLUE);
 
+            result.setEffect(new DropShadow(8, Color.GRAY));
+            result.setAlignment(Pos.CENTER);
+
+            /*
+             * We have to make sure all glyps have the same size. Otherwise
+             * the progress cells will not be aligned properly.
+             */
+            result.setPrefSize(24, 24);
+
+            return result;
+        });
+        downloadTaskView.getStylesheets().clear();
     }
 
     // need to defer this to runtime as the WebView must be instantiated on the FX application thread
@@ -94,6 +117,17 @@ public class GroRepositoryController extends BaseController<DataModel> {
     }
 
     private void onDownloadRequestReceived() {
+        if (configuration.get().getDirectoryDownloads() == null || configuration.get().getDirectoryDownloads().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "No download directory set!\nCheck your settings.").show();
+            browser.get().load(lastLocation);
+            return;
+        }
+        if (!Files.exists(Path.of(configuration.get().getDirectoryDownloads()))) {
+            new Alert(Alert.AlertType.ERROR, "Download directory does not exist!\nCheck your settings.").show();
+            browser.get().load(lastLocation);
+            return;
+        }
+
         // Check for temp download dir
         Path path = Path.of(TMP_DONWLOADS);
         if (!Files.exists(path)) {
@@ -153,9 +187,11 @@ public class GroRepositoryController extends BaseController<DataModel> {
         }
 
         // check for already active download of the same file
+        ModInfo finalModInfo1 = modInfo;
         if (activeDownloads.stream()
-                .anyMatch(download ->
-                        download.getDownloadURL().equals(lastLocation) && download.getProgress() < 1)) {
+                .anyMatch(downloader ->
+                        downloader.getModInfo().getTitle().equals(finalModInfo1.getTitle())
+                                && downloader.isRunning())) {
             log.warning("Content '" + modName + "' already in download list.");
             new Alert(Alert.AlertType.WARNING, "File already downloading!").show();
             browser.get().load(lastLocation);
@@ -179,69 +215,38 @@ public class GroRepositoryController extends BaseController<DataModel> {
             return;
         }
 
-        DownloadModel downloadModel = new DownloadModel();
-        downloadModel.setFileName(modName);
-        downloadModel.setDownloadURL(lastLocation);
-
-        activeDownloads.add(downloadModel);
         downloadProgress.setProgress(0.0);
 
         // fire request and download file
-        Downloader downloader = new Downloader(downloadURI);
+        Downloader downloader = new Downloader(modInfo, downloadURI, TMP_DONWLOADS);
         downloader.setUpdateIntervalMillis(1000L);
-        downloader.setOnStart((model) -> {
-            downloadModel.setFileName(String.format("%s (%S)", model.getName(), model.getDownloadedFileName()));
-        });
-        downloader.setOnProgress((totalBytes, bytesReceived, progress) -> {
-            onDownloadProgress(downloadModel, totalBytes, bytesReceived, progress);
-        });
+        downloader.setOnSucceeded((workerStateEvent -> {
+            try {
+                ContentModel contentModel = downloader.get();
+                if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
+                    FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
+                    getModel().getContent().add(contentModel);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
-        //reset progress bar on finish
-        downloader.setOnCompleted((filePath, downloadedContentModel) -> {
-            onDownloadFinished(downloadModel, filePath, downloadedContentModel);
-        });
-        downloader.setOnError((e) -> {
-            log.severe(e.toString());
-            downloadModel.setStatus(e.getMessage());
-            downloadModel.setProgress(AccentedProgressBar.FAILED_PROGRESS);
-        });
-        downloadModel.setDownloader(downloader);
-        downloader.download(modInfo, linkIndex, TMP_DONWLOADS);
+            if (activeDownloads.stream().allMatch(FutureTask::isDone)) {
+                executorService.close();
+            }
+        }));
+        downloader.setOnFailed((workerStateEvent -> {
+            log.severe(workerStateEvent.getSource().getException().toString());
+        }));
+        activeDownloads.add(downloader);
+        downloadTaskView.getTasks().add(downloader);
+        executorService.submit(downloader);
 
         downloadInProgress = true;
         setStopDownloadButtonDisabled(false);
 
         browser.get().load(lastLocation);
     }
-
-    private void onDownloadProgress(DownloadModel downloadModel, long fileSize, long bytesReceived, double progressPercent) {
-        Platform.runLater(() -> {
-            double totalMb = (double) bytesReceived / (1024 * 1024);
-            downloadModel.setDownloadedMb(BigDecimal.valueOf(totalMb).setScale(2, RoundingMode.HALF_UP) + "mb");
-            downloadModel.setProgress(progressPercent);
-            if (downloadModel.getMaxMb() == null) {
-                downloadModel.setMaxMb(BigDecimal.valueOf(fileSize / (1024 * 1024)).setScale(2, RoundingMode.HALF_UP) + "mb");
-            }
-            downloadProgress.setProgress(progressPercent);
-        });
-    }
-
-    private void onDownloadFinished(DownloadModel downloadModel, String filePath, ContentModel downloadedContentModel) {
-        Platform.runLater(() -> downloadProgress.setProgress(0));
-        downloadInProgress = false;
-        if (filePath != null) {
-            downloadModel.setStatus("Finished!");
-            downloadModel.setProgress(AccentedProgressBar.SUCCESSFUL_PROGRESS);
-        }
-        setStopDownloadButtonDisabled(true);
-        // is null when download has been cancelled
-        if (filePath != null) {
-            FileHandler.registerNewFile(downloadedContentModel, filePath);
-            // downloadedContentModel.completedProperty().addListener(getListItemListener(downloadedContentModel));
-            getModel().getContent().add(downloadedContentModel);
-        }
-    }
-
 
     @FXML
     public void onBrowserBack(ActionEvent event) {
@@ -266,11 +271,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     @FXML
     public void onStopDownloads(ActionEvent event) {
-        for (var download : activeDownloads) {
-            if (download.getDownloader() != null) {
-                download.getDownloader().stopDownload();
-                download.setStatus("Stopped.");
-            }
+        for (Downloader downloader : activeDownloads) {
+            downloader.cancel(true);
         }
     }
 
@@ -280,10 +282,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
     public void onPauseDownloads(ActionEvent event) {
         pauseToggle = !pauseToggle;
         for (var download : activeDownloads) {
-            if (download.getDownloader() != null) {
-                download.getDownloader().setPause(pauseToggle);
-                download.setStatus(pauseToggle ? "Paused." : "Downloading...");
-            }
+            download.setPause(pauseToggle);
+            //download.setStatus(pauseToggle ? "Paused." : "Downloading...");
         }
     }
 
