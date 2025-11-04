@@ -46,11 +46,11 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
 
     @FXML
-    ProgressBar downloadProgress;
+    private ProgressBar downloadProgress;
 
     @Getter
     @Setter
-    private ObservableList<DownloadModel> activeDonwloads = FXCollections.observableArrayList();
+    private ObservableList<DownloadModel> activeDownloads = FXCollections.observableArrayList();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
 
@@ -153,7 +153,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
         }
 
         // check for already active download of the same file
-        if (activeDonwloads.stream().anyMatch(download -> download.getDownloadURL().equals(lastLocation))) {
+        if (activeDownloads.stream()
+                .anyMatch(download ->
+                        download.getDownloadURL().equals(lastLocation) && download.getProgress() < 1)) {
             log.warning("Content '" + modName + "' already in download list.");
             new Alert(Alert.AlertType.WARNING, "File already downloading!").show();
             browser.get().load(lastLocation);
@@ -181,7 +183,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
         downloadModel.setFileName(modName);
         downloadModel.setDownloadURL(lastLocation);
 
-        activeDonwloads.add(downloadModel);
+        activeDownloads.add(downloadModel);
         downloadProgress.setProgress(0.0);
 
         // fire request and download file
@@ -264,7 +266,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     @FXML
     public void onStopDownloads(ActionEvent event) {
-        for (var download : activeDonwloads) {
+        for (var download : activeDownloads) {
             if (download.getDownloader() != null) {
                 download.getDownloader().stopDownload();
                 download.setStatus("Stopped.");
@@ -277,7 +279,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     @FXML
     public void onPauseDownloads(ActionEvent event) {
         pauseToggle = !pauseToggle;
-        for (var download : activeDonwloads) {
+        for (var download : activeDownloads) {
             if (download.getDownloader() != null) {
                 download.getDownloader().setPause(pauseToggle);
                 download.setStatus(pauseToggle ? "Paused." : "Downloading...");

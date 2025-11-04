@@ -104,18 +104,11 @@ public class Downloader extends Thread implements Runnable {
 
                     while (pause) {
                         synchronized (pauseLock) {
-                            pauseLock.wait(); // *thread naps happily*
+                            pauseLock.wait();
                         }
                     }
 
                     if (stop) {
-                        if (onProgress != null) {
-                            onProgress.accept(totalBytes, bytesReadTotal, AccentedProgressBar.WARNING_PROGRESS);
-                        }
-                        if (onCompleted != null) {
-                            onCompleted.accept(null, null);
-                        }
-                        Files.delete(Path.of(destinationFolder + File.separator + filename));
                         break;
                     }
                 }
@@ -130,6 +123,19 @@ public class Downloader extends Thread implements Runnable {
         } catch (Exception e) {
             if (onError != null) {
                 onError.accept(e);
+            }
+        } finally {
+            if (stop) {
+                if (onProgress != null) {
+                    onProgress.accept(1, 1, AccentedProgressBar.WARNING_PROGRESS);
+                }
+                if (onCompleted != null) {
+                    onCompleted.accept(null, null);
+                }
+
+                try {
+                    Files.deleteIfExists(Path.of(destinationFolder + File.separator + filename));
+                } catch (IOException ignored) { }
             }
         }
     }

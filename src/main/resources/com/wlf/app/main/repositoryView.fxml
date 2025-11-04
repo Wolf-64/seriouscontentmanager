@@ -95,7 +95,7 @@
               <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                   <center>
                       <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Downloads" BorderPane.alignment="TOP_LEFT">
-                          <TableView items="${controller.activeDonwloads}">
+                          <TableView items="${controller.activeDownloads}">
                               <columns>
                                   <TableColumn prefWidth="430.0" text="%downloads.fileName">
                                       <cellValueFactory>
