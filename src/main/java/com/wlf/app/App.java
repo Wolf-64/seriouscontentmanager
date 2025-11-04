@@ -77,6 +77,8 @@ public class App extends javafx.application.Application {
         } else {
             MAINSCENE.getStylesheets().clear();
             Application.setUserAgentStylesheet(theme.getTheme().getUserAgentStylesheet());
+            // controlsFX doesn't apply atlanta styles everywhere, so we manually need to override some
+            MAINSCENE.getStylesheets().add(App.class.getResource("/com/wlf/common/themes/controlsfx-override.css").toExternalForm());
         }
         Config.getInstance().setActiveTheme(theme);
     }
