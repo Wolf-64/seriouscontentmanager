@@ -60,8 +60,6 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
 
-    private boolean downloadInProgress;
-
     private String lastLocation;
 
     private final String GRO_REPOSITORY_URL = "https://grorepository.ru/mods";
@@ -117,58 +115,20 @@ public class GroRepositoryController extends BaseController<DataModel> {
     }
 
     private void onDownloadRequestReceived() {
-        if (configuration.get().getDirectoryDownloads() == null || configuration.get().getDirectoryDownloads().isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "No download directory set!\nCheck your settings.").show();
-            browser.get().load(lastLocation);
+        if (!checkPrerequisitesForDownload()) {
             return;
-        }
-        if (!Files.exists(Path.of(configuration.get().getDirectoryDownloads()))) {
-            new Alert(Alert.AlertType.ERROR, "Download directory does not exist!\nCheck your settings.").show();
-            browser.get().load(lastLocation);
-            return;
-        }
-
-        // Check for temp download dir
-        Path path = Path.of(TMP_DONWLOADS);
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectory(path);
-            } catch (IOException e) {
-                App.showError(e);
-                return;
-            }
         }
 
         String modName = lastLocation.substring(lastLocation.lastIndexOf('/') + 1);
 
-        ModInfo modInfo = null;
+        ModInfo modInfo;
+        URI downloadURI;
         ContentLanguage language = ContentLanguage.DEFAULT_OR_RU;
-        URI downloadURI = null;
         try (Requester requester = new Requester()) {
             modInfo = requester.requestModInfo(modName);
             if (modInfo.getLinks().size() > 1) {
-                List<ContentLanguage> availableLanguages = modInfo.getLinks().stream()
-                        .map(ModInfo.Link::getType)
-                        .toList();
-                ChoiceDialog<ContentLanguage> dlg = new ChoiceDialog<>();
-                dlg.getItems().setAll(availableLanguages);
-                dlg.setSelectedItem(dlg.getItems().get(0));
-                dlg.initOwner(App.MAINSTAGE.getOwner());
-                dlg.setTitle("Language Select");
-                dlg.getDialogPane().setContentText("Select language:");
-                dlg.setResultConverter((ButtonType type) -> {
-                    ButtonBar.ButtonData data = type == null ? null : type.getButtonData();
-                    if (data == ButtonBar.ButtonData.OK_DONE) {
-                        return dlg.getSelectedItem();
-                    } else {
-                        return null;
-                    }
-                });
-                Optional<ContentLanguage> result = dlg.showAndWait();
-                if (result.isPresent()) {
-                    language = result.get();
-                } else {
-                    browser.get().load(lastLocation);
+                language = selectLanguage(modInfo);
+                if (language == null) {
                     return;
                 }
             }
@@ -179,35 +139,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
         }
 
         // check for already active download of the same file
-        ModInfo finalModInfo1 = modInfo;
-        if (activeDownloads.stream()
-                .anyMatch(downloader ->
-                        downloader.getModInfo().getTitle().equals(finalModInfo1.getTitle())
-                                && downloader.isRunning())) {
-            log.warning("Content '" + modName + "' already in download list.");
-            new Alert(Alert.AlertType.WARNING, "File already downloading!").show();
-            browser.get().load(lastLocation);
-            //onBrowserBack(null);
+        if (!validateForDownload(modInfo)) {
             return;
         }
-
-        // check existence in model
-        ModInfo finalModInfo = modInfo;
-        if (getModel().getContent().stream().anyMatch(content ->
-                content.getName().equals(finalModInfo.getTitle()))) {
-            log.warning("Content '" + modName + "' already in download list.");
-            new Alert(Alert.AlertType.INFORMATION, "File already in library!").show();
-            return;
-        }
-
-        // we don't support skins or resources for simplicity
-        if (modInfo.getType().ordinal() >= Type.SKIN.ordinal()) {
-            new Alert(Alert.AlertType.WARNING, "Content type not supported: " + modInfo.getType().getName()).show();
-            browser.get().load(lastLocation);
-            return;
-        }
-
-        downloadProgress.setProgress(0.0);
 
         // fire request and download file
         Downloader downloader = new Downloader(modInfo, downloadURI, TMP_DONWLOADS);
@@ -234,10 +168,93 @@ public class GroRepositoryController extends BaseController<DataModel> {
         downloadTaskView.getTasks().add(downloader);
         executorService.submit(downloader);
 
-        downloadInProgress = true;
         setStopDownloadButtonDisabled(false);
 
         browser.get().load(lastLocation);
+    }
+
+    private boolean validateForDownload(ModInfo modInfo) {
+        if (activeDownloads.stream()
+                .anyMatch(downloader ->
+                        downloader.getModInfo().getTitle().equals(modInfo.getTitle())
+                                && downloader.isRunning())) {
+            log.warning("Content '" + modInfo.getTitle() + "' already in download list.");
+            new Alert(Alert.AlertType.WARNING, "File already downloading!").show();
+            browser.get().load(lastLocation);
+            //onBrowserBack(null);
+            return true;
+        }
+
+        // check existence in model
+        ModInfo finalModInfo = modInfo;
+        if (getModel().getContent().stream().anyMatch(content ->
+                content.getName().equals(finalModInfo.getTitle()))) {
+            log.warning("Content '" + modInfo.getTitle() + "' already in download list.");
+            new Alert(Alert.AlertType.INFORMATION, "File already in library!").show();
+            return true;
+        }
+
+        // we don't support skins or resources for simplicity
+        if (modInfo.getType().ordinal() >= Type.SKIN.ordinal()) {
+            new Alert(Alert.AlertType.WARNING, "Content type not supported: " + modInfo.getType().getName()).show();
+            browser.get().load(lastLocation);
+            return true;
+        }
+        return false;
+    }
+
+    private ContentLanguage selectLanguage(ModInfo modInfo) {
+        ContentLanguage language;
+        List<ContentLanguage> availableLanguages = modInfo.getLinks().stream()
+                .map(ModInfo.Link::getType)
+                .toList();
+        ChoiceDialog<ContentLanguage> dlg = new ChoiceDialog<>();
+        dlg.getItems().setAll(availableLanguages);
+        dlg.setSelectedItem(dlg.getItems().get(0));
+        dlg.initOwner(App.MAINSTAGE.getOwner());
+        dlg.setTitle("Language Select");
+        dlg.getDialogPane().setContentText("Select language:");
+        dlg.setResultConverter((ButtonType type) -> {
+            ButtonBar.ButtonData data = type == null ? null : type.getButtonData();
+            if (data == ButtonBar.ButtonData.OK_DONE) {
+                return dlg.getSelectedItem();
+            } else {
+                return null;
+            }
+        });
+        Optional<ContentLanguage> result = dlg.showAndWait();
+        if (result.isPresent()) {
+            language = result.get();
+        } else {
+            browser.get().load(lastLocation);
+            return null;
+        }
+        return language;
+    }
+
+    private boolean checkPrerequisitesForDownload() {
+        if (configuration.get().getDirectoryDownloads() == null || configuration.get().getDirectoryDownloads().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "No download directory set!\nCheck your settings.").show();
+            browser.get().load(lastLocation);
+            return false;
+        }
+        if (!Files.exists(Path.of(configuration.get().getDirectoryDownloads()))) {
+            new Alert(Alert.AlertType.ERROR, "Download directory does not exist!\nCheck your settings.").show();
+            browser.get().load(lastLocation);
+            return false;
+        }
+
+        // Check for temp download dir
+        Path path = Path.of(TMP_DONWLOADS);
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+                App.showError(e);
+                return false;
+            }
+        }
+        return true;
     }
 
     @FXML
