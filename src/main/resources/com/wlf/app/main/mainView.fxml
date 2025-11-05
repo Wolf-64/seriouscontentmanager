@@ -172,7 +172,7 @@
                             <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="250.0" text="%actions.playTSE" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                 <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/game.png" />
+                                        <Image url="@icons/tse.png" />
                                     </ImageView>
                                 </graphic>
                             </Button>

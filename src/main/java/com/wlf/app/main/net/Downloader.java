@@ -45,6 +45,7 @@ public class Downloader extends Task<ContentModel> {
         this.modInfo = modInfo;
         this.downloadURI = fileUri;
         this.downloadDirectory = downloadDirectory;
+        updateMessage("Waiting to download \"" + modInfo.getTitle() + "\" ...");
     }
 
     @Override

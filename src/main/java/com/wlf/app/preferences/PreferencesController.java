@@ -7,12 +7,12 @@ import com.wlf.app.main.data.Game;
 import com.wlf.common.BaseController;
 import com.wlf.common.controls.ValidatingTextField;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -41,10 +41,15 @@ public class PreferencesController extends BaseController<Config> {
     private ValidatingTextField vtfTFEPath, vtfTSEPath, vtfDownloadsPath;
 
     @FXML
+    public CheckBox cbAutoClearList;
+    @FXML
     Button btnBrowseDirectoryDownloads;
     @FXML Button btnBrowseDirectoryTFE;
     @FXML Button btnBrowseDirectoryTSE;
     @FXML Button btnSaveConfig;
+
+    @FXML
+    private Spinner<Integer> spinMaxDownloads;
 
 
     public PreferencesController() {
@@ -67,12 +72,16 @@ public class PreferencesController extends BaseController<Config> {
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> App.setTheme(newValue));
 
+        spinMaxDownloads.getValueFactory().valueProperty().bindBidirectional(getModel().maxDownloadsProperty());
+
         vtfDownloadsPath.textProperty().bindBidirectional(getModel().directoryDownloadsProperty());
         vtfDownloadsPath.setValidator(this::validateDownloadsPath);
         vtfTFEPath.textProperty().bindBidirectional(getModel().directoryTFEProperty());
         vtfTFEPath.setValidator(this::validateTFEPath);
         vtfTSEPath.textProperty().bindBidirectional(getModel().directoryTSEProperty());
         vtfTSEPath.setValidator(this::validateTSEPath);
+
+        cbAutoClearList.selectedProperty().bindBidirectional(getModel().autoClearFinishedDownloadsProperty());
 
         validateGamePaths();
 

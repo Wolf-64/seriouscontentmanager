@@ -40,6 +40,8 @@ public class Config extends BaseModel {
     @Getter @Setter
     private boolean devMode;
 
+    private final ObjectProperty<Integer> maxDownloads = new SimpleObjectProperty<>(2);
+    private final BooleanProperty autoClearFinishedDownloads = new SimpleBooleanProperty(false);
     private final StringProperty directoryDownloads = new SimpleStringProperty();
     private final StringProperty directoryTFE = new SimpleStringProperty();
     private final StringProperty directoryTSE = new SimpleStringProperty();
@@ -183,6 +185,30 @@ public class Config extends BaseModel {
 
     public void setTseDirectoryValid(boolean tseDirectoryValid) {
         this.tseDirectoryValid.set(tseDirectoryValid);
+    }
+
+    public Integer getMaxDownloads() {
+        return maxDownloads.get();
+    }
+
+    public ObjectProperty<Integer> maxDownloadsProperty() {
+        return maxDownloads;
+    }
+
+    public void setMaxDownloads(Integer maxDownloads) {
+        this.maxDownloads.set(maxDownloads);
+    }
+
+    public boolean isAutoClearFinishedDownloads() {
+        return autoClearFinishedDownloads.get();
+    }
+
+    public BooleanProperty autoClearFinishedDownloadsProperty() {
+        return autoClearFinishedDownloads;
+    }
+
+    public void setAutoClearFinishedDownloads(boolean autoClearFinishedDownloads) {
+        this.autoClearFinishedDownloads.set(autoClearFinishedDownloads);
     }
 }
 

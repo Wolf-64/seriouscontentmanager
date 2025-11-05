@@ -32,10 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class GroRepositoryController extends BaseController<DataModel> {
@@ -52,11 +49,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
 
     @FXML
-    private ProgressBar downloadProgress;
-
-    @FXML
     private TaskProgressView<Task<ContentModel>> downloadTaskView;
-    private ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(getConfiguration().getMaxDownloads());
     private final List<Downloader> activeDownloads = new ArrayList<>();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
@@ -88,6 +82,17 @@ public class GroRepositoryController extends BaseController<DataModel> {
             return result;
         });
         downloadTaskView.getStylesheets().clear();
+
+        getConfiguration().maxDownloadsProperty().addListener(((observableValue, oldValue, newValue) -> {
+            // thread pool value constraints don't allow setting core size higher than max and vice versa, so order matters
+            if (oldValue > newValue) {
+                executorService.setCorePoolSize(newValue);
+                executorService.setMaximumPoolSize(newValue);
+            } else {
+                executorService.setMaximumPoolSize(newValue);
+                executorService.setCorePoolSize(newValue);
+            }
+        }));
 
         getOnCloseRequestCallbacks().add(windowEvent -> executorService.shutdown());
     }
@@ -163,8 +168,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 throw new RuntimeException(e);
             }
 
-            if (activeDownloads.stream().allMatch(FutureTask::isDone)) {
-                executorService.close();
+            if (getConfiguration().isAutoClearFinishedDownloads()) {
+                downloadTaskView.getTasks().remove(downloader);
             }
         }));
         downloader.setOnFailed((workerStateEvent -> {
@@ -272,6 +277,13 @@ public class GroRepositoryController extends BaseController<DataModel> {
             }
         }
         return true;
+    }
+
+    @FXML
+    public void onClearDownloadList() {
+        for (Downloader downloader : activeDownloads.stream().filter(FutureTask::isDone).toList()) {
+            downloadTaskView.getTasks().remove(downloader);
+        }
     }
 
     @FXML
