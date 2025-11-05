@@ -45,11 +45,6 @@ public final class FrameController extends BaseController<BaseModel> {
         loader.loadAsync();
     }
 
-    @Override
-    public void afterInit() {
-    }
-
-
     public void setLoading(boolean value) {
         loadingMask.setVisible(value);
     }
@@ -95,10 +90,5 @@ public final class FrameController extends BaseController<BaseModel> {
         }
 
  */
-    }
-
-    @Override
-    protected void closeRequest(WindowEvent windowEvent) {
-
     }
 }

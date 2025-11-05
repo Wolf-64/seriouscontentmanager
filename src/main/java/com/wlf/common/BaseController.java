@@ -21,7 +21,7 @@ public abstract class BaseController<T extends BaseModel> {
     protected ObjectProperty<T> model = new SimpleObjectProperty<>();
 
     @Getter @Setter
-    private List<Consumer<Event>> onBackCallbacks = new ArrayList<>();
+    private static List<Consumer<WindowEvent>> onCloseRequestCallbacks = new ArrayList<>();
 
     @Setter
     private Runnable onBack;
@@ -46,11 +46,14 @@ public abstract class BaseController<T extends BaseModel> {
         getStage().setOnCloseRequest(this::closeRequest);
     }
 
-    protected void closeRequest(WindowEvent windowEvent) {
+    private void closeRequest(WindowEvent windowEvent) {
         for (OverlayStage<?> overlayStage : overlays) {
             if (overlayStage.isShowing()) {
                 overlayStage.close();
             }
+        }
+        for (Consumer<WindowEvent> callback : onCloseRequestCallbacks) {
+            callback.accept(windowEvent);
         }
     }
 
