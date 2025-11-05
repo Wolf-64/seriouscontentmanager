@@ -101,6 +101,9 @@ public class AppLoader<T extends BaseController<?>> {
         if (onSucceededConsumer != null) {
             onSucceededConsumer.accept(controller);
         }
+        controller.setStage(App.MAINSTAGE);
+        controller.setScene(App.MAINSCENE);
+        controller.afterInit();
         App.FRAME_CONTROLLER.setLoading(false);
     }
 
