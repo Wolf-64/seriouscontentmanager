@@ -143,7 +143,6 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
         ModInfo modInfo = null;
         ContentLanguage language = ContentLanguage.DEFAULT_OR_RU;
-        int linkIndex = 0;
         URI downloadURI = null;
         try (Requester requester = new Requester()) {
             modInfo = requester.requestModInfo(modName);
@@ -168,13 +167,6 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 Optional<ContentLanguage> result = dlg.showAndWait();
                 if (result.isPresent()) {
                     language = result.get();
-                    ContentLanguage finalLanguage = language;
-                    Optional<ModInfo.Link> link = modInfo.getLinks().stream()
-                            .filter(lnk -> lnk.getType() == finalLanguage)
-                            .findFirst();
-                    if (link.isPresent()) {
-                        linkIndex = modInfo.getLinks().indexOf(link.get());
-                    }
                 } else {
                     browser.get().load(lastLocation);
                     return;
@@ -283,7 +275,6 @@ public class GroRepositoryController extends BaseController<DataModel> {
         pauseToggle = !pauseToggle;
         for (var download : activeDownloads) {
             download.setPause(pauseToggle);
-            //download.setStatus(pauseToggle ? "Paused." : "Downloading...");
         }
     }
 
