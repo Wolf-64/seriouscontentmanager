@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.WindowEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.controlsfx.control.TaskProgressView;
@@ -87,6 +88,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
             return result;
         });
         downloadTaskView.getStylesheets().clear();
+
+        getOnCloseRequestCallbacks().add(windowEvent -> executorService.shutdown());
     }
 
     // need to defer this to runtime as the WebView must be instantiated on the FX application thread
@@ -116,9 +119,11 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     private void onDownloadRequestReceived() {
         if (!checkPrerequisitesForDownload()) {
+            browser.get().load(lastLocation);
             return;
         }
 
+        // get transliterated mod name to fetch metadata with API
         String modName = lastLocation.substring(lastLocation.lastIndexOf('/') + 1);
 
         ModInfo modInfo;
@@ -135,15 +140,16 @@ public class GroRepositoryController extends BaseController<DataModel> {
             downloadURI = requester.requestDownloadURI(modInfo.getId(), language);
         } catch (IOException | InterruptedException e) {
             App.showError(e);
+            browser.get().load(lastLocation);
             return;
         }
 
-        // check for already active download of the same file
         if (!validateForDownload(modInfo)) {
+            browser.get().load(lastLocation);
             return;
         }
 
-        // fire request and download file
+        // Download file via task and add to queue
         Downloader downloader = new Downloader(modInfo, downloadURI, TMP_DONWLOADS);
         downloader.setUpdateIntervalMillis(1000L);
         downloader.setOnSucceeded((workerStateEvent -> {
@@ -173,6 +179,11 @@ public class GroRepositoryController extends BaseController<DataModel> {
         browser.get().load(lastLocation);
     }
 
+    /**
+     * Check database or active downloads for the presence of the same mod via metadata before starting a download.
+     * @param modInfo
+     * @return
+     */
     private boolean validateForDownload(ModInfo modInfo) {
         if (activeDownloads.stream()
                 .anyMatch(downloader ->
@@ -180,9 +191,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
                                 && downloader.isRunning())) {
             log.warning("Content '" + modInfo.getTitle() + "' already in download list.");
             new Alert(Alert.AlertType.WARNING, "File already downloading!").show();
-            browser.get().load(lastLocation);
-            //onBrowserBack(null);
-            return true;
+            return false;
         }
 
         // check existence in model
@@ -191,18 +200,23 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 content.getName().equals(finalModInfo.getTitle()))) {
             log.warning("Content '" + modInfo.getTitle() + "' already in download list.");
             new Alert(Alert.AlertType.INFORMATION, "File already in library!").show();
-            return true;
+            return false;
         }
 
         // we don't support skins or resources for simplicity
         if (modInfo.getType().ordinal() >= Type.SKIN.ordinal()) {
             new Alert(Alert.AlertType.WARNING, "Content type not supported: " + modInfo.getType().getName()).show();
-            browser.get().load(lastLocation);
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
+    /**
+     * Shows language selector for maps/mods that have different downloads for different languages, since
+     * we can't make out which button was pressed through WebView.
+     * @param modInfo
+     * @return
+     */
     private ContentLanguage selectLanguage(ModInfo modInfo) {
         ContentLanguage language;
         List<ContentLanguage> availableLanguages = modInfo.getLinks().stream()
@@ -232,15 +246,18 @@ public class GroRepositoryController extends BaseController<DataModel> {
         return language;
     }
 
+    /**
+     * Checks for the existance of all necessary paths before any download should be attempted.
+     * @return
+     */
     private boolean checkPrerequisitesForDownload() {
-        if (configuration.get().getDirectoryDownloads() == null || configuration.get().getDirectoryDownloads().isEmpty()) {
+        if (configuration.get().getDirectoryDownloads() == null
+                || configuration.get().getDirectoryDownloads().isEmpty()) {
             new Alert(Alert.AlertType.WARNING, "No download directory set!\nCheck your settings.").show();
-            browser.get().load(lastLocation);
             return false;
         }
         if (!Files.exists(Path.of(configuration.get().getDirectoryDownloads()))) {
             new Alert(Alert.AlertType.ERROR, "Download directory does not exist!\nCheck your settings.").show();
-            browser.get().load(lastLocation);
             return false;
         }
 

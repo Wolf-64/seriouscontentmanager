@@ -54,6 +54,13 @@ public class Requester implements Closeable {
         return null;
     }
 
+    /**
+     * Sends request to grorepository API, fetching all metadata for a given mod
+     * @param modName
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public ModInfo requestModInfo(String modName) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(MOD_API_URL + modName))
@@ -73,6 +80,14 @@ public class Requester implements Closeable {
         return null;
     }
 
+    /**
+     * Requests the actual file download URL via grorepository API that can be used to initiate downloads.
+     * @param modId
+     * @param language
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public URI requestDownloadURI(long modId, ContentLanguage language) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(DOWNLOAD_API_URL
