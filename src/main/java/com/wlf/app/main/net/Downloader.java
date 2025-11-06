@@ -4,6 +4,7 @@ import com.wlf.app.main.data.ContentFile;
 import com.wlf.common.controls.AccentedProgressBar;
 import com.wlf.app.main.data.ContentModel;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FileUtils;
@@ -45,7 +46,8 @@ public class Downloader extends Task<ContentModel> {
         this.modInfo = modInfo;
         this.downloadURI = fileUri;
         this.downloadDirectory = downloadDirectory;
-        updateMessage("Waiting to download \"" + modInfo.getTitle() + "\" ...");
+        baseMessage = "Waiting to download \"" + modInfo.getTitle() + "\" ...";
+        updateMessage(baseMessage);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class Downloader extends Task<ContentModel> {
             } else {
                 throw new Exception("Could not get file info!");
             }
+
         }
 
         baseMessage = "Downloading \"" + filename + "\"";
@@ -126,6 +129,15 @@ public class Downloader extends Task<ContentModel> {
             synchronized (pauseLock) {
                 pauseLock.notifyAll();
             }
+        }
+    }
+
+    @Override
+    protected void setException(Throwable t) {
+        super.setException(t);
+        if (getState() != Worker.State.CANCELLED) {
+            updateMessage(baseMessage + " ... failed: " + t.getLocalizedMessage());
+            done();
         }
     }
 

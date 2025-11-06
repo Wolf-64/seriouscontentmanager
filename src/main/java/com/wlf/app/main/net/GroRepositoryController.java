@@ -4,6 +4,7 @@ import com.wlf.app.App;
 import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
 import com.wlf.common.BaseController;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -54,6 +55,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private final List<Downloader> activeDownloads = new ArrayList<>();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
+    private final BooleanProperty loadingIndicatorVisible = new SimpleBooleanProperty(false);
 
     private String lastLocation;
 
@@ -122,6 +124,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
         browser.get().load(GRO_REPOSITORY_URL);
     }
 
+    record DownloadPrep(ModInfo modInfo, URI fileUri) {}
+
     private void onDownloadRequestReceived() {
         if (!checkPrerequisitesForDownload()) {
             browser.get().load(lastLocation);
@@ -131,61 +135,91 @@ public class GroRepositoryController extends BaseController<DataModel> {
         // get transliterated mod name to fetch metadata with API
         String modName = lastLocation.substring(lastLocation.lastIndexOf('/') + 1);
 
-        ModInfo modInfo;
-        URI downloadURI;
-        ContentLanguage language = ContentLanguage.DEFAULT_OR_RU;
-        try (Requester requester = new Requester()) {
-            modInfo = requester.requestModInfo(modName);
-            if (modInfo.getLinks().size() > 1) {
-                language = selectLanguage(modInfo);
-                if (language == null) {
-                    return;
+        CompletableFuture.supplyAsync(() -> {
+            Platform.runLater(() -> loadingIndicatorVisible.set(true));
+
+            // 1. Fetch metadata
+            try (Requester requester = new Requester()) {
+                return requester.requestModInfo(modName);
+            } catch (IOException | InterruptedException e) {
+                log.severe(e.toString());
+                App.showError(e);
+                return null;
+            }
+        }).thenCompose(modInfo -> {
+            // 2. Maybe ask for a language (UI step)
+            if (modInfo.isMultilingual()) {
+                CompletableFuture<ContentLanguage> langFuture = new CompletableFuture<>();
+                Platform.runLater(() -> {
+                    ContentLanguage language = selectLanguage(modInfo);
+                    if (language == null) {
+                        language = ContentLanguage.DEFAULT_OR_RU;
+                    }
+                    langFuture.complete(language);
+                });
+                return langFuture.thenApply(lang -> {
+                    try (Requester requester = new Requester()) {
+                        URI downloadURI = requester.requestDownloadURI(modInfo.getId(), lang);
+                        return new DownloadPrep(modInfo, downloadURI);
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } else {
+                return CompletableFuture.supplyAsync(() -> {
+                    try (Requester requester = new Requester()) {
+                        URI downloadURI = requester.requestDownloadURI(modInfo.getId(), ContentLanguage.DEFAULT_OR_RU);
+                        return new DownloadPrep(modInfo, downloadURI);
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        }).thenAccept(prep -> {
+            // 3. Download file
+            // Download file via task and add to queue
+            Downloader downloader = new Downloader(prep.modInfo, prep.fileUri, TMP_DONWLOADS);
+            downloader.setUpdateIntervalMillis(1000L);
+            downloader.setOnSucceeded((workerStateEvent -> {
+                try {
+                    ContentModel contentModel = downloader.get();
+                    if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
+                        FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
+                        getModel().getContent().add(contentModel);
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
                 }
-            }
-            downloadURI = requester.requestDownloadURI(modInfo.getId(), language);
-        } catch (IOException | InterruptedException e) {
-            App.showError(e);
-            browser.get().load(lastLocation);
-            return;
-        }
 
-        if (!validateForDownload(modInfo)) {
-            browser.get().load(lastLocation);
-            return;
-        }
-
-        // Download file via task and add to queue
-        Downloader downloader = new Downloader(modInfo, downloadURI, TMP_DONWLOADS);
-        downloader.setUpdateIntervalMillis(1000L);
-        downloader.setOnSucceeded((workerStateEvent -> {
-            try {
-                ContentModel contentModel = downloader.get();
-                if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
-                    FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
-                    getModel().getContent().add(contentModel);
+                if (getConfiguration().isAutoClearFinishedDownloads()) {
+                    downloadTaskView.getTasks().remove(downloader);
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            }));
+            downloader.setOnFailed((workerStateEvent -> {
+                log.severe(workerStateEvent.getSource().getException().toString());
+            }));
+            activeDownloads.add(downloader);
+            Platform.runLater(() -> {
+                downloadTaskView.getTasks().add(downloader);
+                setStopDownloadButtonDisabled(false);
 
-            if (getConfiguration().isAutoClearFinishedDownloads()) {
-                downloadTaskView.getTasks().remove(downloader);
-            }
-        }));
-        downloader.setOnFailed((workerStateEvent -> {
-            log.severe(workerStateEvent.getSource().getException().toString());
-        }));
-        activeDownloads.add(downloader);
-        downloadTaskView.getTasks().add(downloader);
-        executorService.submit(downloader);
+                browser.get().load(lastLocation);
+                loadingIndicatorVisible.set(false);
+            });
 
-        setStopDownloadButtonDisabled(false);
-
-        browser.get().load(lastLocation);
+            executorService.submit(downloader);
+        }).exceptionally(ex -> {
+            Platform.runLater(() -> {
+                loadingIndicatorVisible.set(false);
+                App.showError((Exception) ex);
+            });
+            return null;
+        });
     }
 
     /**
      * Check database or active downloads for the presence of the same mod via metadata before starting a download.
+     *
      * @param modInfo
      * @return
      */
@@ -219,6 +253,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     /**
      * Shows language selector for maps/mods that have different downloads for different languages, since
      * we can't make out which button was pressed through WebView.
+     *
      * @param modInfo
      * @return
      */
@@ -253,6 +288,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     /**
      * Checks for the existance of all necessary paths before any download should be attempted.
+     *
      * @return
      */
     private boolean checkPrerequisitesForDownload() {
@@ -347,5 +383,17 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     public void setStopDownloadButtonDisabled(boolean stopDownloadButtonDisabled) {
         this.stopDownloadButtonDisabled.set(stopDownloadButtonDisabled);
+    }
+
+    public boolean isLoadingIndicatorVisible() {
+        return loadingIndicatorVisible.get();
+    }
+
+    public BooleanProperty loadingIndicatorVisibleProperty() {
+        return loadingIndicatorVisible;
+    }
+
+    public void setLoadingIndicatorVisible(boolean loadingIndicatorVisible) {
+        this.loadingIndicatorVisible.set(loadingIndicatorVisible);
     }
 }

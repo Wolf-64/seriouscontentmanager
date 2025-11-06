@@ -13,87 +13,100 @@
 <?import org.controlsfx.control.TaskProgressView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="584.0" prefWidth="1077.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.net.GroRepositoryController">
+<?import javafx.scene.layout.StackPane?>
+<?import org.controlsfx.control.MaskerPane?>
+<BorderPane prefHeight="584.0" prefWidth="1077.0" xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.net.GroRepositoryController">
     <center>
-        <SplitPane dividerPositions="0.741307371349096" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.741307371349096" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0"
+                   BorderPane.alignment="CENTER">
             <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                 <center>
-                    <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gro Repository" BorderPane.alignment="TOP_CENTER">
-                        <BorderPane fx:id="webViewContainer">
-                            <center>
-                                <!-- will be loaded at runtime upon activating the tab and inserted here -->
-                            </center>
-                            <top>
-                                <BorderPane prefHeight="25.0" prefWidth="1107.0" BorderPane.alignment="CENTER">
-                                    <center>
-                                        <Label text="${controller.browser.location}" BorderPane.alignment="CENTER" />
-                                    </center>
-                                    <left>
-                                        <HBox prefHeight="25.0" prefWidth="77.0" spacing="8.0" BorderPane.alignment="CENTER">
-                                            <Button mnemonicParsing="false" onAction="#onBrowserBack">
-                                                <graphic>
-                                                    <FontIcon iconLiteral="fas-arrow-left" iconSize="24" />
-                                                </graphic>
-                                            </Button>
-                                            <Button mnemonicParsing="false" onAction="#onBrowserForward">
-                                                <graphic>
-                                                    <FontIcon iconLiteral="fas-arrow-right" iconSize="24" />
-                                                </graphic>
-                                            </Button>
-                                        </HBox>
-                                    </left>
-                                    <right>
-                                        <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="36.0" BorderPane.alignment="CENTER">
-                                            <Button mnemonicParsing="false" onAction="#onBrowserRefresh">
-                                                <graphic>
-                                                    <FontIcon iconLiteral="fas-redo" iconSize="24" />
-                                                </graphic>
-                                            </Button>
-                                        </HBox>
-                                    </right>
-                                </BorderPane>
-                            </top>
-                        </BorderPane>
+                    <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                text="Gro Repository" BorderPane.alignment="TOP_CENTER">
+                        <StackPane>
+                            <BorderPane fx:id="webViewContainer">
+                                <top>
+                                    <BorderPane prefHeight="25.0" prefWidth="1107.0" BorderPane.alignment="CENTER">
+                                        <center>
+                                            <Label text="${controller.browser.location}" BorderPane.alignment="CENTER"/>
+                                        </center>
+                                        <left>
+                                            <HBox prefHeight="25.0" prefWidth="77.0" spacing="8.0"
+                                                  BorderPane.alignment="CENTER">
+                                                <Button mnemonicParsing="false" onAction="#onBrowserBack">
+                                                    <graphic>
+                                                        <FontIcon iconLiteral="fas-arrow-left" iconSize="24"/>
+                                                    </graphic>
+                                                </Button>
+                                                <Button mnemonicParsing="false" onAction="#onBrowserForward">
+                                                    <graphic>
+                                                        <FontIcon iconLiteral="fas-arrow-right" iconSize="24"/>
+                                                    </graphic>
+                                                </Button>
+                                            </HBox>
+                                        </left>
+                                        <right>
+                                            <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="36.0"
+                                                  BorderPane.alignment="CENTER">
+                                                <Button mnemonicParsing="false" onAction="#onBrowserRefresh">
+                                                    <graphic>
+                                                        <FontIcon iconLiteral="fas-redo" iconSize="24"/>
+                                                    </graphic>
+                                                </Button>
+                                            </HBox>
+                                        </right>
+                                    </BorderPane>
+                                </top>
+                                <center>
+                                    <!-- will be loaded at runtime upon activating the tab and inserted here -->
+                                </center>
+                            </BorderPane>
+                            <MaskerPane visible="${controller.loadingIndicatorVisible}"/>
+                        </StackPane>
                     </TitledPane>
                 </center>
             </BorderPane>
             <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                 <center>
-                    <TaskProgressView fx:id="downloadTaskView" retainTasks="true" BorderPane.alignment="CENTER" />
+                    <TaskProgressView fx:id="downloadTaskView" retainTasks="true" BorderPane.alignment="CENTER"/>
                 </center>
             </BorderPane>
         </SplitPane>
     </center>
-   <bottom>
-      <GridPane maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <children>
+    <bottom>
+        <GridPane maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
                 <HBox spacing="8.0">
-                    <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" mnemonicParsing="false" onAction="#onPauseDownloads">
+                    <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" mnemonicParsing="false"
+                            onAction="#onPauseDownloads">
                         <tooltip>
-                            <Tooltip text="%downloads.pause.tooltip" />
+                            <Tooltip text="%downloads.pause.tooltip"/>
                         </tooltip>
                         <graphic>
-                            <FontIcon iconLiteral="fas-pause" />
+                            <FontIcon iconLiteral="fas-pause"/>
                         </graphic>
                     </Button>
-                    <Button disable="${controller.stopDownloadButtonDisabled}" mnemonicParsing="false" onAction="#onStopDownloads">
+                    <Button disable="${controller.stopDownloadButtonDisabled}" mnemonicParsing="false"
+                            onAction="#onStopDownloads">
                         <tooltip>
-                            <Tooltip text="%downloads.stop.tooltip" />
+                            <Tooltip text="%downloads.stop.tooltip"/>
                         </tooltip>
                         <graphic>
-                            <FontIcon iconLiteral="fas-stop" />
+                            <FontIcon iconLiteral="fas-stop"/>
                         </graphic>
                     </Button>
                 </HBox>
-            <Button mnemonicParsing="false" onAction="#onClearDownloadList" text="%downloads.clear" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
-         </children>
-      </GridPane>
-   </bottom>
+                <Button mnemonicParsing="false" onAction="#onClearDownloadList" text="%downloads.clear"
+                        GridPane.columnIndex="1" GridPane.halignment="RIGHT"/>
+            </children>
+        </GridPane>
+    </bottom>
 </BorderPane>

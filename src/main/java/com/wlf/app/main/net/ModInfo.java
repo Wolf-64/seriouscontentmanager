@@ -49,6 +49,10 @@ public class ModInfo {
     /** Unknown */
     private String fields;
 
+    public boolean isMultilingual() {
+        return links != null && links.size() > 1;
+    }
+
     @Data
     public static class Author {
         /** GroRepository content ID */
