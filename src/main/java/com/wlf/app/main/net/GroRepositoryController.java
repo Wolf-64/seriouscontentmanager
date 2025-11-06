@@ -97,6 +97,11 @@ public class GroRepositoryController extends BaseController<DataModel> {
         }));
 
         getOnCloseRequestCallbacks().add(windowEvent -> executorService.shutdown());
+
+        // relevant on reloads - do we have active downloads? need to re-add them to the view
+        if (!activeDownloads.isEmpty()) {
+            Platform.runLater(() -> downloadTaskView.getTasks().addAll(activeDownloads));
+        }
     }
 
     // need to defer this to runtime as the WebView must be instantiated on the FX application thread
