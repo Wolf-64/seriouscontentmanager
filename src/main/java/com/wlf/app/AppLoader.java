@@ -8,14 +8,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.Parent;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
+@Slf4j
 public class AppLoader<T extends BaseController<?>> {
     private final static Map<String, Consumer<Parent>> loadedGuis = new HashMap<>();
+    private final static Map<String, BaseController<?>> loadedControllers = new HashMap<>();
 
     private final Task<Void> loaderTask;
     @Getter
@@ -37,9 +40,13 @@ public class AppLoader<T extends BaseController<?>> {
                     App.FRAME_CONTROLLER.setLoading(true);
                 }
                 FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
+                if (loadedControllers.containsKey(fxml)) {
+                    loader.setControllerFactory((clazz) -> loadedControllers.get(fxml));
+                }
                 loader.setResources(getI18NResourceForLocale(guiName, Config.getInstance().getLanguage().getLocale()));
                 gui = loader.load();
                 controller = loader.getController();
+                loadedControllers.put(fxml, controller);
                 return null;
             }
         };
@@ -70,6 +77,7 @@ public class AppLoader<T extends BaseController<?>> {
         loader.setResources(getI18NResourceForLocale(guiName, Config.getInstance().getLanguage().getLocale()));
         gui = loader.load();
         controller = loader.getController();
+        loadedControllers.put(fxml, controller);
 
         return gui;
     }
