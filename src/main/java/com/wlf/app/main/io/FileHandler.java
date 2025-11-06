@@ -2,20 +2,14 @@ package com.wlf.app.main.io;
 
 import com.wlf.app.main.data.*;
 import com.wlf.app.preferences.Config;
-import org.apache.commons.exec.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -68,7 +62,7 @@ public class FileHandler {
             }
 
             Path newFileLocation = Files.move(filePath, Path.of(downloads.toString() + "/" + filePath.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
-            ContentModel newFile = new ContentModel();
+            ContentEntity newFile = new ContentEntity();
             newFile.setName(name);
             newFile.setOrigin(originURL);
             newFile.setDownloadedFileName(newFileLocation.getFileName().toString());
@@ -79,7 +73,7 @@ public class FileHandler {
         
     }
 
-    public static void registerNewFile(ContentModel contentModel, String file) {
+    public static void registerNewFile(ContentEntity contentEntity, String file) {
         try {
             // move to downloads
             Path tempFilePath = Path.of(file);
@@ -93,9 +87,9 @@ public class FileHandler {
 
             if (newFile != null) {
                 move(tempFilePath, newFile.toPath());
-                contentModel.setDownloadedFile(newFile);
-                contentModel.setDownloadedFileName(newFile.getName());
-                DBManager.getInstance().registerNewFile(contentModel);
+                contentEntity.setDownloadedFile(newFile);
+                contentEntity.setDownloadedFileName(newFile.getName());
+                DBManager.getInstance().registerNewFile(contentEntity);
             } else {
                 log.warning("Could not register new file: Unrecognized format.");
             }
@@ -115,59 +109,59 @@ public class FileHandler {
         }
     }
 
-    public static void installContent(ContentModel contentModel) {
+    public static void installContent(ContentEntity contentEntity) {
         try {
-            Path sourcePath = contentModel.getDownloadedFile().toPath();
-            Path targetPath = Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName());
+            Path sourcePath = contentEntity.getDownloadedFile().toPath();
+            Path targetPath = Path.of(contentEntity.getGame().getGameFolder() + "/" + contentEntity.getDownloadedFileName());
             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-            contentModel.setInstalled(true);
+            contentEntity.setInstalled(true);
 
             // register new deployment on DB
-            DBManager.getInstance().update(contentModel);
+            DBManager.getInstance().update(contentEntity);
         } catch (IOException e) {
             log.warning(e.toString());
         }
     }
 
-    public static void installContent(ContentModel contentModel, Path targetLocation) {
+    public static void installContent(ContentEntity contentEntity, Path targetLocation) {
         try {
-            Path sourcePath = contentModel.getDownloadedFile().toPath();
+            Path sourcePath = contentEntity.getDownloadedFile().toPath();
             Files.copy(sourcePath, targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            contentModel.setInstalled(true);
-            contentModel.setInstallFileLocation(targetLocation.toFile());
+            contentEntity.setInstalled(true);
+            contentEntity.setInstallFileLocation(targetLocation.toFile());
 
             // register new deployment on DB
-            DBManager.getInstance().update(contentModel);
+            DBManager.getInstance().update(contentEntity);
         } catch (IOException e) {
             log.warning(e.toString());
         }
     }
 
-    public static void createTempMod(ContentModel contentModel) {
+    public static void createTempMod(ContentEntity contentEntity) {
         try {
-            log.info("Creating temp mod directory: " + getTempModDir(contentModel.getGame()).toPath());
-            removeTempModFolder(contentModel); // if leftover
-            Path modDir = Files.createDirectory(getTempModDir(contentModel.getGame()).toPath());
+            log.info("Creating temp mod directory: " + getTempModDir(contentEntity.getGame()).toPath());
+            removeTempModFolder(contentEntity); // if leftover
+            Path modDir = Files.createDirectory(getTempModDir(contentEntity.getGame()).toPath());
 
             // Set mod description to map name
-            String descriptionContent = contentModel.getName() + " (SCM)";
-            Files.writeString(getTempModDescriptor(contentModel.getGame()).toPath(), descriptionContent);
+            String descriptionContent = contentEntity.getName() + " (SCM)";
+            Files.writeString(getTempModDescriptor(contentEntity.getGame()).toPath(), descriptionContent);
 
             // exclude base game levels to only display custom map
             String excludeList = "Levels";
-            Files.writeString(getTempModExlusionList(contentModel.getGame()).toPath(), excludeList);
+            Files.writeString(getTempModExlusionList(contentEntity.getGame()).toPath(), excludeList);
             String include = "SaveGame\nControls";
-            Files.writeString(getTempModInclusionList(contentModel.getGame()).toPath(), include);
-            Files.writeString(getTempModInclusionListWrite(contentModel.getGame()).toPath(), include);
+            Files.writeString(getTempModInclusionList(contentEntity.getGame()).toPath(), include);
+            Files.writeString(getTempModInclusionListWrite(contentEntity.getGame()).toPath(), include);
 
-            Files.createDirectories(getTempModDataVar(contentModel.getGame()).toPath());
-            Files.writeString(getTempModModNameVar(contentModel.getGame()).toPath(), descriptionContent);
-            if (contentModel.getVersion() != null) {
-                Files.writeString(getTempModSamVersionVar(contentModel.getGame()).toPath(), contentModel.getVersion());
+            Files.createDirectories(getTempModDataVar(contentEntity.getGame()).toPath());
+            Files.writeString(getTempModModNameVar(contentEntity.getGame()).toPath(), descriptionContent);
+            if (contentEntity.getVersion() != null) {
+                Files.writeString(getTempModSamVersionVar(contentEntity.getGame()).toPath(), contentEntity.getVersion());
             }
 
             // define new game map name if only one map
-            Path levelName = contentModel.getDownloadedFile().findFirstLevel();
+            Path levelName = contentEntity.getDownloadedFile().findFirstLevel();
             if (levelName != null) {
                 String relativePath = levelName.toString().substring(1);
                 if (relativePath.startsWith("\\")) {
@@ -175,22 +169,22 @@ public class FileHandler {
                 }
                 relativePath = relativePath.replace("\\", "\\\\"); // backslashes in string need to be escaped for the file as well
                 String startingMapEntry = "sam_strFirstLevel = \"" + relativePath + "\";";
-                Files.createDirectory(getTempModScripts(contentModel.getGame()).toPath());
-                Files.writeString(getTempModGameStartupIni(contentModel.getGame()).toPath(), startingMapEntry);
+                Files.createDirectory(getTempModScripts(contentEntity.getGame()).toPath());
+                Files.writeString(getTempModGameStartupIni(contentEntity.getGame()).toPath(), startingMapEntry);
             }
 
-            File target = new File(modDir + File.separator + contentModel.getDownloadedFileName());
-            if (contentModel.getDownloadedFile() instanceof GroFile) {
-                installContent(contentModel, target.toPath());
-            } else if (contentModel.getDownloadedFile() instanceof ZipFile) {
+            File target = new File(modDir + File.separator + contentEntity.getDownloadedFileName());
+            if (contentEntity.getDownloadedFile() instanceof GroFile) {
+                installContent(contentEntity, target.toPath());
+            } else if (contentEntity.getDownloadedFile() instanceof ZipFile) {
                 // extract into mod dir
-                extractZip(contentModel.getDownloadedFile(), modDir.toFile());
+                extractZip(contentEntity.getDownloadedFile(), modDir.toFile());
 
-                contentModel.setInstalled(true);
-                contentModel.setInstallFileLocation(target);
+                contentEntity.setInstalled(true);
+                contentEntity.setInstallFileLocation(target);
 
                 // register new deployment on DB
-                DBManager.getInstance().update(contentModel);
+                DBManager.getInstance().update(contentEntity);
             } else {
                 // we can't do anything here really
             }
@@ -251,25 +245,25 @@ public class FileHandler {
         return destFile;
     }
 
-    private static void removeTempModFolder(ContentModel contentModel) throws IOException {
-        if (getTempModDir(contentModel.getGame()).exists()) {
-            try (Stream<Path> pathStream = Files.walk(getTempModDir(contentModel.getGame()).toPath())) {
+    private static void removeTempModFolder(ContentEntity contentEntity) throws IOException {
+        if (getTempModDir(contentEntity.getGame()).exists()) {
+            try (Stream<Path> pathStream = Files.walk(getTempModDir(contentEntity.getGame()).toPath())) {
                 log.info("Removing temp mod files...");
                 pathStream.sorted(Comparator.reverseOrder())
                         .map(Path::toFile)
                         .forEach(File::delete);
-                Files.delete(getTempModDescriptor(contentModel.getGame()).toPath());
+                Files.delete(getTempModDescriptor(contentEntity.getGame()).toPath());
             }
         }
     }
 
-    public static void removeTempMod(ContentModel contentModel) {
+    public static void removeTempMod(ContentEntity contentEntity) {
         try {
-            removeTempModFolder(contentModel);
+            removeTempModFolder(contentEntity);
             log.info("... done.");
-            contentModel.setInstallFileLocation(null);
-            contentModel.setInstalled(false);
-            DBManager.getInstance().update(contentModel);
+            contentEntity.setInstallFileLocation(null);
+            contentEntity.setInstalled(false);
+            DBManager.getInstance().update(contentEntity);
         } catch (IOException ex) {
             log.severe(ex.toString());
         }
@@ -285,23 +279,23 @@ public class FileHandler {
         return null;
     }
 
-    public static void removeContent(ContentModel contentModel) {
+    public static void removeContent(ContentEntity contentEntity) {
         try {
-            Files.delete(Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName()));
-            contentModel.setInstalled(false);
-            DBManager.getInstance().update(contentModel);
+            Files.delete(Path.of(contentEntity.getGame().getGameFolder() + "/" + contentEntity.getDownloadedFileName()));
+            contentEntity.setInstalled(false);
+            DBManager.getInstance().update(contentEntity);
         } catch (IOException e) {
             log.warning(e.toString());
         }
     }
 
-    public static void deleteContent(ContentModel contentModel) {
+    public static void deleteContent(ContentEntity contentEntity) {
         try {
-            if (contentModel.isInstalled()) {
-                removeContent(contentModel);
+            if (contentEntity.isInstalled()) {
+                removeContent(contentEntity);
             }
-            DBManager.getInstance().delete(contentModel);
-            Files.delete(Path.of(config.getDirectoryDownloads() + "/" + contentModel.getDownloadedFileName()));
+            DBManager.getInstance().delete(contentEntity);
+            Files.delete(Path.of(config.getDirectoryDownloads() + "/" + contentEntity.getDownloadedFileName()));
         } catch (IOException e) {
             log.warning(e.toString());
         }

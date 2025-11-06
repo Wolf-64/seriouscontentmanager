@@ -17,8 +17,8 @@ import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ContentModel {
-    public static final Logger log = Logger.getLogger(ContentModel.class.getSimpleName());
+public class ContentEntity {
+    public static final Logger log = Logger.getLogger(ContentEntity.class.getSimpleName());
 
     private static final Config config = Config.getInstance();
 
@@ -40,6 +40,10 @@ public class ContentModel {
     private final ObjectProperty<LocalDateTime> dateAdded = new SimpleObjectProperty<>();
     /** The original creation date of this content */
     private final ObjectProperty<LocalDate> dateCreated = new SimpleObjectProperty<>();
+    /** The original creation date of this content */
+    private final ObjectProperty<LocalDateTime> dateCompleted = new SimpleObjectProperty<>();
+    /** The original creation date of this content */
+    private final ObjectProperty<LocalDateTime> dateLastPlayed = new SimpleObjectProperty<>();
     /** The rating that has been given to the content */
     private final DoubleProperty rating = new SimpleDoubleProperty();
     /** Absolute path of the content's file (gro or zip) after download */
@@ -62,7 +66,7 @@ public class ContentModel {
     @Getter @Setter
     private Long id;
 
-    public ContentModel() {    }
+    public ContentEntity() {    }
 
     public boolean canInstallToTfe() {
         return !isInstalled() && config.isTfeDirectoryValid();
@@ -109,7 +113,7 @@ public class ContentModel {
      * @param json response from grorepository
      * @return
      */
-    public ContentModel fromJSON(JsonNode json) {
+    public ContentEntity fromJSON(JsonNode json) {
         origin.set(Requester.MOD_SITE_URL + json.get("transliteratedTitle").asText());
         repoId = json.get("id").asText();
         name.set(json.get("title").asText());
@@ -127,7 +131,7 @@ public class ContentModel {
         return this;
     }
 
-    public ContentModel fromModInfo(ModInfo modInfo) {
+    public ContentEntity fromModInfo(ModInfo modInfo) {
         origin.set(Requester.MOD_SITE_URL + modInfo.getTransliteratedTitle());
         repoId = "" + modInfo.getId();
         name.set(modInfo.getTitle());
@@ -328,5 +332,29 @@ public class ContentModel {
 
     public void setInstallFileLocation(File installFileLocation) {
         this.installFileLocation.set(installFileLocation);
+    }
+
+    public LocalDateTime getDateCompleted() {
+        return dateCompleted.get();
+    }
+
+    public ObjectProperty<LocalDateTime> dateCompletedProperty() {
+        return dateCompleted;
+    }
+
+    public void setDateCompleted(LocalDateTime dateCompleted) {
+        this.dateCompleted.set(dateCompleted);
+    }
+
+    public LocalDateTime getDateLastPlayed() {
+        return dateLastPlayed.get();
+    }
+
+    public ObjectProperty<LocalDateTime> dateLastPlayedProperty() {
+        return dateLastPlayed;
+    }
+
+    public void setDateLastPlayed(LocalDateTime dateLastPlayed) {
+        this.dateLastPlayed.set(dateLastPlayed);
     }
 }

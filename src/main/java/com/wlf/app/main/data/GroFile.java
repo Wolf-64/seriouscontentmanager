@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 
 public class GroFile extends ContentFile {
@@ -15,8 +14,8 @@ public class GroFile extends ContentFile {
 
 
     @Override
-    public ContentModel analyzeContent() {
-        final ContentModel model = new ContentModel();
+    public ContentEntity analyzeContent() {
+        final ContentEntity model = new ContentEntity();
         model.setDownloadedFile(this);
         model.setDownloadedFileName(this.getName());
         model.setName(getName().substring(0, getName().lastIndexOf('.')));

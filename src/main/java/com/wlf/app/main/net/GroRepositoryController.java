@@ -19,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.WindowEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.controlsfx.control.TaskProgressView;
@@ -50,7 +49,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
 
     @FXML
-    private TaskProgressView<Task<ContentModel>> downloadTaskView;
+    private TaskProgressView<Task<ContentEntity>> downloadTaskView;
     private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(getConfiguration().getMaxDownloads());
     private final List<Downloader> activeDownloads = new ArrayList<>();
 
@@ -121,8 +120,6 @@ public class GroRepositoryController extends BaseController<DataModel> {
             } catch (NoSuchElementException ignored) {
             }
         }));
-
-        App.FRAME_CONTROLLER.setLoading(false);
     }
 
     public void loadGroRepo() {
@@ -187,10 +184,10 @@ public class GroRepositoryController extends BaseController<DataModel> {
             downloader.setUpdateIntervalMillis(1000L);
             downloader.setOnSucceeded((workerStateEvent -> {
                 try {
-                    ContentModel contentModel = downloader.get();
-                    if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
-                        FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
-                        getModel().getContent().add(contentModel);
+                    ContentEntity contentEntity = downloader.get();
+                    if (Files.exists(Path.of(contentEntity.getDownloadedFile().getAbsolutePath()))) {
+                        FileHandler.registerNewFile(contentEntity, contentEntity.getDownloadedFile().getAbsolutePath());
+                        getModel().getContent().add(contentEntity);
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);

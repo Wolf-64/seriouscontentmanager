@@ -1,8 +1,7 @@
 package com.wlf.app.main.net;
 
 import com.wlf.app.main.data.ContentFile;
-import com.wlf.common.controls.AccentedProgressBar;
-import com.wlf.app.main.data.ContentModel;
+import com.wlf.app.main.data.ContentEntity;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import lombok.Getter;
@@ -16,13 +15,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public class Downloader extends Task<ContentModel> {
+public class Downloader extends Task<ContentEntity> {
     public static final Logger log = Logger.getLogger(Downloader.class.getSimpleName());
 
     private URI downloadURI;
@@ -51,17 +47,17 @@ public class Downloader extends Task<ContentModel> {
     }
 
     @Override
-    protected ContentModel call() throws Exception {
+    protected ContentEntity call() throws Exception {
         // fetch metadata and request download
         String filename;
-        ContentModel currentDownloadingContentModel;
+        ContentEntity currentDownloadingContentEntity;
         try (Requester requester = new Requester()) {
-            currentDownloadingContentModel = new ContentModel().fromModInfo(modInfo);
+            currentDownloadingContentEntity = new ContentEntity().fromModInfo(modInfo);
             if (downloadURI != null) {
                 Requester.FileInfo fileInfo = requester.requestFileInfo(downloadURI);
                 filename = fileInfo.getFileName();
-                currentDownloadingContentModel.setDownloadedFileName(filename);
-                currentDownloadingContentModel.setDownloadedFile(new ContentFile(Path.of(downloadDirectory, filename).toString()));
+                currentDownloadingContentEntity.setDownloadedFileName(filename);
+                currentDownloadingContentEntity.setDownloadedFile(new ContentFile(Path.of(downloadDirectory, filename).toString()));
             } else {
                 throw new Exception("Could not get file info!");
             }
@@ -119,7 +115,7 @@ public class Downloader extends Task<ContentModel> {
         updateProgress(totalBytes, totalBytes);
         updateMessage(baseMessage + " ... done!");
         done();
-        return currentDownloadingContentModel;
+        return currentDownloadingContentEntity;
     }
 
     public void setPause(boolean value) {

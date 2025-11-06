@@ -2,49 +2,32 @@ package com.wlf.app.main;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.main.net.GroRepositoryController;
 import com.wlf.app.preferences.Config;
 import com.wlf.app.preferences.PreferencesController;
 import com.wlf.common.BaseController;
-import com.wlf.common.BaseModel;
-import com.wlf.common.controls.AccentedProgressBar;
 import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
 import com.wlf.app.main.io.GameHandler;
-import com.wlf.app.main.net.Downloader;
 
-import com.wlf.app.main.net.Requester;
 import com.wlf.common.util.LocalDateTimeStringConverter;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.WindowEvent;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 
 public class PrimaryController extends BaseController<DataModel> {
@@ -72,13 +55,13 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     ToggleGroup tgGame, tgType, tgMode;
     @FXML
-    TableView<ContentModel> table;
+    TableView<ContentEntity> table;
     @FXML
-    TableColumn<ContentModel, Void> actionColumn;
+    TableColumn<ContentEntity, Void> actionColumn;
     @FXML
-    TableColumn<ContentModel, LocalDateTime> colDateAdded;
+    TableColumn<ContentEntity, LocalDateTime> colDateAdded;
     @FXML
-    TableColumn<ContentModel, String> colDateCreated;
+    TableColumn<ContentEntity, String> colDateCreated;
 
     // --- TableView context menu ---
     @FXML
@@ -96,7 +79,7 @@ public class PrimaryController extends BaseController<DataModel> {
     private final BooleanProperty removeDisabled = new SimpleBooleanProperty();
     private final BooleanProperty removeVisible = new SimpleBooleanProperty(true);
 
-    private final ObjectProperty<ContentModel> currentSelection = new SimpleObjectProperty<>();
+    private final ObjectProperty<ContentEntity> currentSelection = new SimpleObjectProperty<>();
 
     @FXML
     public void initialize() {
@@ -111,7 +94,6 @@ public class PrimaryController extends BaseController<DataModel> {
         loaderGroRepo.setOnSucceeded((controller) -> {
             repoController = controller;
             repoController.setModel(getModel());
-            App.FRAME_CONTROLLER.setLoading(true);
             // defer instantiation of WebView after render
             Platform.runLater(() -> {
                 Platform.runLater(repoController::initWebView);
@@ -138,7 +120,7 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
 
-    private InvalidationListener getListItemListener(ContentModel object) {
+    private InvalidationListener getListItemListener(ContentEntity object) {
         return observable -> dbManager.update(object);
     }
 
@@ -304,7 +286,7 @@ public class PrimaryController extends BaseController<DataModel> {
         menuItemRemove.setDisable(true);
 
         if (currentSelection.get() != null) {
-            ContentModel selection = currentSelection.get();
+            ContentEntity selection = currentSelection.get();
             menuItemInstall.setDisable(!selection.canInstall());
             menuItemRemove.setDisable(!selection.canRemove());
         }
@@ -443,11 +425,11 @@ public class PrimaryController extends BaseController<DataModel> {
         return installMultiVisible;
     }
 
-    public ContentModel getCurrentSelection() {
+    public ContentEntity getCurrentSelection() {
         return currentSelection.get();
     }
 
-    public ObjectProperty<ContentModel> currentSelectionProperty() {
+    public ObjectProperty<ContentEntity> currentSelectionProperty() {
         return currentSelection;
     }
 }

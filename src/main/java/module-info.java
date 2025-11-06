@@ -22,6 +22,7 @@ module seriouscontentmanager {
     requires org.apache.commons.exec;
     requires java.logging;
     requires org.apache.commons.io;
+    requires org.xerial.sqlitejdbc;
 
     opens com.wlf.app.preferences to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;
