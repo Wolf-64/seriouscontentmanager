@@ -49,7 +49,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private final ObjectProperty<WebEngine> browser = new SimpleObjectProperty<>();
 
     @FXML
-    private TaskProgressView<Task<ContentEntity>> downloadTaskView;
+    private TaskProgressView<Task<ContentModel>> downloadTaskView;
     private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(getConfiguration().getMaxDownloads());
     private final List<Downloader> activeDownloads = new ArrayList<>();
 
@@ -184,10 +184,12 @@ public class GroRepositoryController extends BaseController<DataModel> {
             downloader.setUpdateIntervalMillis(1000L);
             downloader.setOnSucceeded((workerStateEvent -> {
                 try {
-                    ContentEntity contentEntity = downloader.get();
-                    if (Files.exists(Path.of(contentEntity.getDownloadedFile().getAbsolutePath()))) {
-                        FileHandler.registerNewFile(contentEntity, contentEntity.getDownloadedFile().getAbsolutePath());
-                        getModel().getContent().add(contentEntity);
+                    ContentModel contentModel = downloader.get();
+                    if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
+                        var entity = ContentMapper.INSTANCE.toEntity(contentModel);
+                        ContentRepository.getInstance().save(entity);
+                        //FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
+                        getModel().getContent().add(contentModel);
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);

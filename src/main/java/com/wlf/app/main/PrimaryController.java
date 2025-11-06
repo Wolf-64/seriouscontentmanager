@@ -55,13 +55,13 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     ToggleGroup tgGame, tgType, tgMode;
     @FXML
-    TableView<ContentEntity> table;
+    TableView<ContentModel> table;
     @FXML
-    TableColumn<ContentEntity, Void> actionColumn;
+    TableColumn<ContentModel, Void> actionColumn;
     @FXML
-    TableColumn<ContentEntity, LocalDateTime> colDateAdded;
+    TableColumn<ContentModel, LocalDateTime> colDateAdded;
     @FXML
-    TableColumn<ContentEntity, String> colDateCreated;
+    TableColumn<ContentModel, String> colDateCreated;
 
     // --- TableView context menu ---
     @FXML
@@ -79,7 +79,7 @@ public class PrimaryController extends BaseController<DataModel> {
     private final BooleanProperty removeDisabled = new SimpleBooleanProperty();
     private final BooleanProperty removeVisible = new SimpleBooleanProperty(true);
 
-    private final ObjectProperty<ContentEntity> currentSelection = new SimpleObjectProperty<>();
+    private final ObjectProperty<ContentModel> currentSelection = new SimpleObjectProperty<>();
 
     @FXML
     public void initialize() {
@@ -112,15 +112,18 @@ public class PrimaryController extends BaseController<DataModel> {
 
         // load existing entries from DB
         setModel(new DataModel());
-        getModel().getContent().addAll(dbManager.getAllFileEntries());
-        getModel().getContent().forEach(item ->
-                item.completedProperty().addListener(getListItemListener(item)));
+
+        for (ContentEntity entity : ContentRepository.getInstance().findAll()) {
+            ContentModel contentModel = ContentMapper.INSTANCE.toGui(entity);
+            contentModel.completedProperty().addListener(getListItemListener(contentModel));
+            getModel().getContent().add(contentModel);
+        }
 
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
     }
 
 
-    private InvalidationListener getListItemListener(ContentEntity object) {
+    private InvalidationListener getListItemListener(ContentModel object) {
         return observable -> dbManager.update(object);
     }
 
@@ -286,7 +289,7 @@ public class PrimaryController extends BaseController<DataModel> {
         menuItemRemove.setDisable(true);
 
         if (currentSelection.get() != null) {
-            ContentEntity selection = currentSelection.get();
+            ContentModel selection = currentSelection.get();
             menuItemInstall.setDisable(!selection.canInstall());
             menuItemRemove.setDisable(!selection.canRemove());
         }
@@ -425,11 +428,11 @@ public class PrimaryController extends BaseController<DataModel> {
         return installMultiVisible;
     }
 
-    public ContentEntity getCurrentSelection() {
+    public ContentModel getCurrentSelection() {
         return currentSelection.get();
     }
 
-    public ObjectProperty<ContentEntity> currentSelectionProperty() {
+    public ObjectProperty<ContentModel> currentSelectionProperty() {
         return currentSelection;
     }
 }

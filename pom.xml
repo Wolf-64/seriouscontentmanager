@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wlf</groupId>
     <artifactId>SeriousContentManager</artifactId>
@@ -43,10 +43,10 @@
             <version>${version.javafx}</version>
         </dependency>
         <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-web</artifactId>
-        <version>${version.javafx}</version>
-    </dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>${version.javafx}</version>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
@@ -58,11 +58,11 @@
             <version>${version.controlsfx}</version>
         </dependency>
         <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${version.lombok}</version>
-                <scope>provided</scope>
-            </dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${version.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -144,6 +144,26 @@
             <artifactId>commons-io</artifactId>
             <version>2.20.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.5.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>6.5.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -162,6 +182,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${version.lombok}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.6.0</version>
                         </path>
                     </annotationProcessorPaths>
                     <release>25</release>
@@ -198,6 +223,13 @@
                     <mainClass>seriouscontentmanager/${project.mainClass}</mainClass>
                     <jlinkImageName>SeriousContentManager</jlinkImageName>
                     <jlinkZipName>SeriousContentManager</jlinkZipName>
+                    <options>
+                        <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
+                        <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
+                        <option>--enable-native-access=javafx.web</option>
+                        <option>--enable-native-access=org.xerial.sqlitejdbc</option>
+                        <option>--enable-native-access=javafx.graphics</option>
+                    </options>
                 </configuration>
                 <executions>
                     <execution>
@@ -212,6 +244,13 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <options>
+                                <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
+                                <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
+                                <option>--enable-native-access=javafx.web</option>
+                                <option>--enable-native-access=org.xerial.sqlitejdbc</option>
+                                <option>--enable-native-access=javafx.graphics</option>
+                            </options>
                         </configuration>
                     </execution>
                     <execution>
@@ -221,6 +260,11 @@
                         <configuration>
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:5050</option>
+                                <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
+                                <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
+                                <option>--enable-native-access=javafx.web</option>
+                                <option>--enable-native-access=org.xerial.sqlitejdbc</option>
+                                <option>--enable-native-access=javafx.graphics</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
                         </configuration>
@@ -231,6 +275,11 @@
                         <configuration>
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</option>
+                                <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
+                                <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
+                                <option>--enable-native-access=javafx.web</option>
+                                <option>--enable-native-access=org.xerial.sqlitejdbc</option>
+                                <option>--enable-native-access=javafx.graphics</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
                         </configuration>

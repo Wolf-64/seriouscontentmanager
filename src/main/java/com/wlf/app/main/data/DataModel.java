@@ -7,6 +7,6 @@ import lombok.Getter;
 
 public class DataModel extends BaseModel {
     @Getter
-    private final ObservableList<ContentEntity> content = FXCollections.observableArrayList();
+    private final ObservableList<ContentModel> content = FXCollections.observableArrayList();
 
 }

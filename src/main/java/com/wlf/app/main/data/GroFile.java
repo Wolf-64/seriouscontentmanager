@@ -14,8 +14,8 @@ public class GroFile extends ContentFile {
 
 
     @Override
-    public ContentEntity analyzeContent() {
-        final ContentEntity model = new ContentEntity();
+    public ContentModel analyzeContent() {
+        final ContentModel model = new ContentModel();
         model.setDownloadedFile(this);
         model.setDownloadedFileName(this.getName());
         model.setName(getName().substring(0, getName().lastIndexOf('.')));

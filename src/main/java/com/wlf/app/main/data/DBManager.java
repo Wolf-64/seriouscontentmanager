@@ -48,12 +48,13 @@ public class DBManager {
 
         //create DB structure if not present
         if (dbMissing) {
-            createTableMod();
-            createTableDeployment();
+            ContentRepository.getInstance();
+            //createTableMod();
+            //createTableDeployment();
         }
     }
 
-    public synchronized void registerNewFile(ContentEntity fe) {
+    public synchronized void registerNewFile(ContentModel fe) {
         String sql = "INSERT INTO Mod(Name, FileName, URL, GameID, ModeID, TypeID, DateAdded) " +
                 "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
@@ -78,8 +79,8 @@ public class DBManager {
         }
     }
 
-    public synchronized void update(ContentEntity contentEntity) {
-        if (contentEntity.getId() != null) {
+    public synchronized void update(ContentModel contentModel) {
+        if (contentModel.getId() != null) {
             String sql = "UPDATE Mod set " +
                     "Name = ?, " +
                     "FileName = ?, " +
@@ -95,17 +96,17 @@ public class DBManager {
 
             try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, contentEntity.getName());
-                pstmt.setString(2, contentEntity.getDownloadedFileName());
-                pstmt.setString(3, contentEntity.getOrigin());
-                pstmt.setInt(4, contentEntity.getGame().ordinal());
-                pstmt.setInt(5, contentEntity.getModes().ordinal());
-                pstmt.setInt(6, contentEntity.getType().ordinal());
-                pstmt.setString(7, contentEntity.getDateAdded() != null ? contentEntity.getDateAdded().toString() : null);
-                pstmt.setBoolean(8, contentEntity.isInstalled());
-                pstmt.setBoolean(9, contentEntity.isCompleted());
-                pstmt.setDouble(10, contentEntity.getRating());
-                pstmt.setLong(11, contentEntity.getId());
+                pstmt.setString(1, contentModel.getName());
+                pstmt.setString(2, contentModel.getDownloadedFileName());
+                pstmt.setString(3, contentModel.getOrigin());
+                pstmt.setInt(4, contentModel.getGame().ordinal());
+                pstmt.setInt(5, contentModel.getModes().ordinal());
+                pstmt.setInt(6, contentModel.getType().ordinal());
+                pstmt.setString(7, contentModel.getDateAdded() != null ? contentModel.getDateAdded().toString() : null);
+                pstmt.setBoolean(8, contentModel.isInstalled());
+                pstmt.setBoolean(9, contentModel.isCompleted());
+                pstmt.setDouble(10, contentModel.getRating());
+                pstmt.setLong(11, contentModel.getId());
                 int rowsUpdated = pstmt.executeUpdate();
                 log.log(Level.INFO, "Rows udpated: {0}", rowsUpdated);
             } catch (SQLException e) {
@@ -114,20 +115,20 @@ public class DBManager {
         }
     }
 
-    public synchronized void delete(ContentEntity contentEntity) {
+    public synchronized void delete(ContentModel contentModel) {
         String sql = "DELETE FROM Mod WHERE ModID = ?";
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, contentEntity.getId());
+            pstmt.setLong(1, contentModel.getId());
             pstmt.execute();
         } catch (SQLException e) {
             log.severe(e.getMessage());
         }
     }
 
-    public synchronized List<ContentEntity> getFileEntries(Filter filter) {
-        List<ContentEntity> entries = new ArrayList<>();
+    public synchronized List<ContentModel> getFileEntries(Filter filter) {
+        List<ContentModel> entries = new ArrayList<>();
 
         String query = "SELECT * FROM Mod WHERE " +
                 "name LIKE ? " +
@@ -167,8 +168,10 @@ public class DBManager {
         return entries;
     }
 
-    public synchronized List<ContentEntity> getAllFileEntries() {
-        List<ContentEntity> entries = new ArrayList<>();
+    public synchronized List<ContentModel> getAllFileEntries() {
+        List<ContentModel> entries = new ArrayList<>();
+
+
 
         try (Connection connection = DriverManager.getConnection(CONNECTION_STRING)) {
             Statement stmt = connection.createStatement();
@@ -183,8 +186,8 @@ public class DBManager {
         return entries;
     }
 
-    private ContentEntity extractFileEntry(ResultSet rs) throws SQLException {
-        ContentEntity fe = new ContentEntity();
+    private ContentModel extractFileEntry(ResultSet rs) throws SQLException {
+        ContentModel fe = new ContentModel();
         fe.setId(rs.getLong("ModId"));
         fe.setName(rs.getString("name"));
         fe.setDownloadedFileName(rs.getString("FileName"));
@@ -253,7 +256,7 @@ public class DBManager {
     }
 
     @Deprecated
-    public void updateFileEntry(ContentEntity fe) {
+    public void updateFileEntry(ContentModel fe) {
         String sql = "UPDATE Mod set name = ? where ModID = ?";
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);

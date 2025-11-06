@@ -14,7 +14,7 @@ public class ContentFile extends File {
         super(pathname);
     }
 
-    public ContentEntity analyzeContent() {
+    public ContentModel analyzeContent() {
         throw new UnsupportedOperationException("Not implemented.");
     }
 

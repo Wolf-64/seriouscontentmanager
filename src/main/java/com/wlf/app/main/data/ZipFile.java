@@ -12,8 +12,8 @@ public class ZipFile extends ContentFile {
     }
 
     @Override
-    public ContentEntity analyzeContent() {
-        final ContentEntity model = new ContentEntity();
+    public ContentModel analyzeContent() {
+        final ContentModel model = new ContentModel();
         model.setDownloadedFile(this);
         model.setDownloadedFileName(this.getName());
         try {
