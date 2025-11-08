@@ -186,9 +186,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 try {
                     ContentModel contentModel = downloader.get();
                     if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
-                        var entity = ContentMapper.INSTANCE.toEntity(contentModel);
-                        ContentRepository.getInstance().save(entity);
-                        //FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
+                        FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
                         getModel().getContent().add(contentModel);
                     }
                 } catch (InterruptedException | ExecutionException e) {

@@ -66,7 +66,8 @@ public class FileHandler {
             newFile.setName(name);
             newFile.setOrigin(originURL);
             newFile.setDownloadedFileName(newFileLocation.getFileName().toString());
-            DBManager.getInstance().registerNewFile(newFile);
+            long id = ContentRepository.getInstance().save(ContentMapper.INSTANCE.toEntity(newFile));
+            newFile.setId(id);
         } catch (IOException e) {
             log.severe(e.toString());
         }     
@@ -82,14 +83,15 @@ public class FileHandler {
                 Files.createDirectory(downloads);
             }
 
-            String downloadPathName = downloads + "/" + tempFilePath.getFileName();
-            ContentFile newFile = categorizeFile(downloadPathName);
+            Path downloadPath = Path.of(downloads.toString(), tempFilePath.getFileName().toString());
+            ContentFile newFile = categorizeFile(downloadPath);
 
             if (newFile != null) {
                 move(tempFilePath, newFile.toPath());
                 contentModel.setDownloadedFile(newFile);
                 contentModel.setDownloadedFileName(newFile.getName());
-                DBManager.getInstance().registerNewFile(contentModel);
+                Long id = ContentRepository.getInstance().save(ContentMapper.INSTANCE.toEntity(contentModel));
+                contentModel.setId(id);
             } else {
                 log.warning("Could not register new file: Unrecognized format.");
             }
@@ -98,11 +100,11 @@ public class FileHandler {
         }
     }
 
-    public static ContentFile categorizeFile(String filePath) {
-        if (filePath.toLowerCase().endsWith(".gro")) {
-            return new GroFile(filePath);
-        } else if (filePath.toLowerCase().endsWith(".zip")) {
-            return new ZipFile(filePath);
+    public static ContentFile categorizeFile(Path filePath) {
+        if (filePath.getFileName().toString().toLowerCase().endsWith(".gro")) {
+            return new GroFile(filePath.toString());
+        } else if (filePath.getFileName().toString().toLowerCase().endsWith(".zip")) {
+            return new ZipFile(filePath.toString());
         } else {
             // not recognized, what do?
             return null;
@@ -112,12 +114,12 @@ public class FileHandler {
     public static void installContent(ContentModel contentModel) {
         try {
             Path sourcePath = contentModel.getDownloadedFile().toPath();
-            Path targetPath = Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName());
+            Path targetPath = Path.of(contentModel.getGame().getGameFolder(), contentModel.getDownloadedFileName());
             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
             contentModel.setInstalled(true);
 
             // register new deployment on DB
-            DBManager.getInstance().update(contentModel);
+            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
         } catch (IOException e) {
             log.warning(e.toString());
         }
@@ -131,7 +133,7 @@ public class FileHandler {
             contentModel.setInstallFileLocation(targetLocation.toFile());
 
             // register new deployment on DB
-            DBManager.getInstance().update(contentModel);
+            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
         } catch (IOException e) {
             log.warning(e.toString());
         }
@@ -184,7 +186,7 @@ public class FileHandler {
                 contentModel.setInstallFileLocation(target);
 
                 // register new deployment on DB
-                DBManager.getInstance().update(contentModel);
+                ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
             } else {
                 // we can't do anything here really
             }
@@ -263,7 +265,7 @@ public class FileHandler {
             log.info("... done.");
             contentModel.setInstallFileLocation(null);
             contentModel.setInstalled(false);
-            DBManager.getInstance().update(contentModel);
+            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
         } catch (IOException ex) {
             log.severe(ex.toString());
         }
@@ -283,7 +285,7 @@ public class FileHandler {
         try {
             Files.delete(Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName()));
             contentModel.setInstalled(false);
-            DBManager.getInstance().update(contentModel);
+            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
         } catch (IOException e) {
             log.warning(e.toString());
         }
@@ -294,8 +296,8 @@ public class FileHandler {
             if (contentModel.isInstalled()) {
                 removeContent(contentModel);
             }
-            DBManager.getInstance().delete(contentModel);
-            Files.delete(Path.of(config.getDirectoryDownloads() + "/" + contentModel.getDownloadedFileName()));
+            ContentRepository.getInstance().delete(ContentMapper.INSTANCE.toEntity(contentModel));
+            Files.delete(Path.of(config.getDirectoryDownloads(), contentModel.getDownloadedFileName()));
         } catch (IOException e) {
             log.warning(e.toString());
         }

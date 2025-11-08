@@ -2,6 +2,7 @@ package com.wlf.app.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
@@ -69,7 +70,6 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     MenuItem menuItemRemove;
 
-    private final DBManager dbManager = DBManager.getInstance();
     private GroRepositoryController repoController;
 
     private final BooleanProperty installDisabled = new SimpleBooleanProperty();
@@ -114,7 +114,7 @@ public class PrimaryController extends BaseController<DataModel> {
         setModel(new DataModel());
 
         for (ContentEntity entity : ContentRepository.getInstance().findAll()) {
-            ContentModel contentModel = ContentMapper.INSTANCE.toGui(entity);
+            ContentModel contentModel = ContentMapper.INSTANCE.toGuiModel(entity);
             contentModel.completedProperty().addListener(getListItemListener(contentModel));
             getModel().getContent().add(contentModel);
         }
@@ -124,7 +124,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
 
     private InvalidationListener getListItemListener(ContentModel object) {
-        return observable -> dbManager.update(object);
+        return observable -> ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(object));
     }
 
     @FXML
@@ -181,10 +181,9 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
     private void deploy(Game game) {
-        String modPath = config.get().getDirectoryDownloads() + "/" + currentSelection.get().getDownloadedFileName();
-        log.log(Level.INFO, "Deploying {0}...", modPath);
-        File mod = new File(modPath);
-        if (mod.exists()) {
+        Path modPath = Path.of(config.get().getDirectoryDownloads(), currentSelection.get().getDownloadedFileName());
+        log.log(Level.INFO, "Deploying {0}...", modPath);;
+        if (Files.exists(modPath)) {
             // check file type
             if (currentSelection.get().isGro()) {
                 Path installPath = Path.of(game.getGameFolder() + "/" + currentSelection.get().getDownloadedFileName());
@@ -192,7 +191,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
                 FileHandler.installContent(currentSelection.get());
                 currentSelection.get().setInstalled(true);
-                dbManager.update(currentSelection.get());
+                ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(currentSelection.get()));
             }
         }
     }
@@ -264,13 +263,13 @@ public class PrimaryController extends BaseController<DataModel> {
         }
 
         currentSelection.get().setInstalled(false);
-        dbManager.update(currentSelection.get());
+        ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(currentSelection.get()));
     }
 
     @FXML
     public void onMarkComplete(ActionEvent actionEvent) {
         currentSelection.get().setCompleted(!currentSelection.get().isCompleted());
-        dbManager.update(currentSelection.get());
+        ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(currentSelection.get()));
     }
 
     @FXML
@@ -343,7 +342,8 @@ public class PrimaryController extends BaseController<DataModel> {
     });
 
     private void applyFilter() {
-        getModel().getContent().setAll(dbManager.getFileEntries(getTableFilter()));
+        // TODO filtering with new EM
+        //getModel().getContent().setAll(dbManager.getFileEntries(getTableFilter()));
     }
 
     // ------------------------ FX Boilerplate ------------------------
