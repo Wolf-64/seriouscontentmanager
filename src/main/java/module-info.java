@@ -27,7 +27,9 @@ module seriouscontentmanager {
     requires jdk.zipfs;
     requires jakarta.persistence;
     requires jakarta.transaction;
-    requires org.mapstruct;
+    requires org.eclipse.persistence.jpa;
+    requires org.eclipse.persistence.core;
+    requires static org.mapstruct;
 
     opens com.wlf.app.preferences to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;

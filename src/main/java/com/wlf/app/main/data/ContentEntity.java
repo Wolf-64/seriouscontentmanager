@@ -5,24 +5,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import com.wlf.app.preferences.Config;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "Mod")
 @Getter @Setter
 public class ContentEntity {
-    public static final Logger log = Logger.getLogger(ContentModel.class.getSimpleName());
-
-    private static final Config config = Config.getInstance();
-
     /** Name of the map/mod/character model */
     private String name;
     /** Filename of either the .gro or zip-file that was downloaded */

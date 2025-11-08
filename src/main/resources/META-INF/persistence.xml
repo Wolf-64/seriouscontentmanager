@@ -1,25 +1,15 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              version="3.0">
     <persistence-unit name="app">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>com.wlf.app.main.data.ContentEntity</class>
         <properties>
-            <!-- SQLite JDBC connection -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:./files.db"/>
+            <property name="eclipselink.weaving" value="false"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:files.db"/>
             <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
-
-            <!-- Hibernate dialect -->
-            <property name="hibernate.dialect" value="org.hibernate.community.dialect.SQLiteDialect"/>
-
-            <!-- Optional: auto-create tables -->
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-
-            <!-- Logging output (good for debugging) -->
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-
-            <property name="hibernate.archive.autodetection" value="class,hbm"/>
-            <property name="hibernate.transaction.coordinator_class" value="jdbc"/>
+            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
         </properties>
     </persistence-unit>
 </persistence>
