@@ -113,8 +113,7 @@ public class PrimaryController extends BaseController<DataModel> {
         // load existing entries from DB
         setModel(new DataModel());
 
-        for (ContentEntity entity : ContentRepository.getInstance().findAll()) {
-            ContentModel contentModel = ContentMapper.INSTANCE.toGuiModel(entity);
+        for (ContentModel contentModel : ContentRepository.getInstance().findAll()) {
             contentModel.completedProperty().addListener(getListItemListener(contentModel));
             getModel().getContent().add(contentModel);
         }
@@ -124,7 +123,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
 
     private InvalidationListener getListItemListener(ContentModel object) {
-        return observable -> ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(object));
+        return observable -> ContentRepository.getInstance().update(object);
     }
 
     @FXML
@@ -191,7 +190,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
                 FileHandler.installContent(currentSelection.get());
                 currentSelection.get().setInstalled(true);
-                ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(currentSelection.get()));
+                ContentRepository.getInstance().update(currentSelection.get());
             }
         }
     }
@@ -263,13 +262,13 @@ public class PrimaryController extends BaseController<DataModel> {
         }
 
         currentSelection.get().setInstalled(false);
-        ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(currentSelection.get()));
+        ContentRepository.getInstance().update(currentSelection.get());
     }
 
     @FXML
     public void onMarkComplete(ActionEvent actionEvent) {
         currentSelection.get().setCompleted(!currentSelection.get().isCompleted());
-        ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(currentSelection.get()));
+        ContentRepository.getInstance().update(currentSelection.get());
     }
 
     @FXML

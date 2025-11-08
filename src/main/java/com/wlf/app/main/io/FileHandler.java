@@ -66,8 +66,7 @@ public class FileHandler {
             newFile.setName(name);
             newFile.setOrigin(originURL);
             newFile.setDownloadedFileName(newFileLocation.getFileName().toString());
-            long id = ContentRepository.getInstance().save(ContentMapper.INSTANCE.toEntity(newFile));
-            newFile.setId(id);
+            ContentRepository.getInstance().save(newFile);
         } catch (IOException e) {
             log.severe(e.toString());
         }     
@@ -90,8 +89,7 @@ public class FileHandler {
                 move(tempFilePath, newFile.toPath());
                 contentModel.setDownloadedFile(newFile);
                 contentModel.setDownloadedFileName(newFile.getName());
-                Long id = ContentRepository.getInstance().save(ContentMapper.INSTANCE.toEntity(contentModel));
-                contentModel.setId(id);
+                ContentRepository.getInstance().save(contentModel);
             } else {
                 log.warning("Could not register new file: Unrecognized format.");
             }
@@ -119,7 +117,7 @@ public class FileHandler {
             contentModel.setInstalled(true);
 
             // register new deployment on DB
-            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
+            ContentRepository.getInstance().update(contentModel);
         } catch (IOException e) {
             log.warning(e.toString());
         }
@@ -133,7 +131,7 @@ public class FileHandler {
             contentModel.setInstallFileLocation(targetLocation.toFile());
 
             // register new deployment on DB
-            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
+            ContentRepository.getInstance().update(contentModel);
         } catch (IOException e) {
             log.warning(e.toString());
         }
@@ -186,7 +184,7 @@ public class FileHandler {
                 contentModel.setInstallFileLocation(target);
 
                 // register new deployment on DB
-                ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
+                ContentRepository.getInstance().update(contentModel);
             } else {
                 // we can't do anything here really
             }
@@ -265,7 +263,7 @@ public class FileHandler {
             log.info("... done.");
             contentModel.setInstallFileLocation(null);
             contentModel.setInstalled(false);
-            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
+            ContentRepository.getInstance().update(contentModel);
         } catch (IOException ex) {
             log.severe(ex.toString());
         }
@@ -285,7 +283,7 @@ public class FileHandler {
         try {
             Files.delete(Path.of(contentModel.getGame().getGameFolder() + "/" + contentModel.getDownloadedFileName()));
             contentModel.setInstalled(false);
-            ContentRepository.getInstance().update(ContentMapper.INSTANCE.toEntity(contentModel));
+            ContentRepository.getInstance().update(contentModel);
         } catch (IOException e) {
             log.warning(e.toString());
         }
@@ -296,7 +294,7 @@ public class FileHandler {
             if (contentModel.isInstalled()) {
                 removeContent(contentModel);
             }
-            ContentRepository.getInstance().delete(ContentMapper.INSTANCE.toEntity(contentModel));
+            ContentRepository.getInstance().delete(contentModel);
             Files.delete(Path.of(config.getDirectoryDownloads(), contentModel.getDownloadedFileName()));
         } catch (IOException e) {
             log.warning(e.toString());

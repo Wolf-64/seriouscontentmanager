@@ -21,29 +21,37 @@ public class ContentRepository {
         this.emf = emf;
     }
 
-    public List<ContentEntity> findAll() {
+    public List<ContentModel> findAll() {
         return executeAndReturn((em) -> {
             TypedQuery<ContentEntity> query = em.createQuery("SELECT u FROM ContentEntity u", ContentEntity.class);
-            return query.getResultList();
+            return query.getResultList().stream().map(ContentMapper.INSTANCE::toGuiModel).toList();
         });
     }
 
-    public ContentEntity findById(Long id) {
-        return executeAndReturn((em) -> em.find(ContentEntity.class, id));
-    }
-
-    public long save(ContentEntity content) {
+    public ContentModel findById(Long id) {
         return executeAndReturn((em) -> {
-            em.persist(content);
-            return content.getId();
+            ContentEntity entity = em.find(ContentEntity.class, id);
+            ContentModel model = null;
+            if (entity != null) {
+                model = ContentMapper.INSTANCE.toGuiModel(entity);
+            }
+            return model;
         });
     }
 
-    public void update(ContentEntity content) {
-        execute((em) -> em.merge(content));
+    public void save(ContentModel content) {
+        execute((em) -> {
+            ContentEntity entity = ContentMapper.INSTANCE.toEntity(content);
+            em.persist(entity);
+            content.setId(entity.getId());
+        });
     }
 
-    public void delete(ContentEntity content) {
+    public void update(ContentModel content) {
+        execute((em) -> em.merge(ContentMapper.INSTANCE.toEntity(content)));
+    }
+
+    public void delete(ContentModel content) {
         execute((em) -> {
             ContentEntity managed = em.find(ContentEntity.class, content.getId());
 
