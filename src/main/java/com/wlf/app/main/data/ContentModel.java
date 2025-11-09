@@ -156,6 +156,10 @@ public class ContentModel {
         return downloadedFile.get() instanceof ZipFile;
     }
 
+    public record Filter(String name, Game game, Type type, Mode mode, LocalDate createDateFrom, LocalDate createDateTo) {}
+
+    // ---------------------------- FX Boilerplate --------------------------------
+
     public String getName() {
         return name.get();
     }

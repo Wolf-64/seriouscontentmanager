@@ -80,6 +80,10 @@ public class PrimaryController extends BaseController<DataModel> {
     private final BooleanProperty removeVisible = new SimpleBooleanProperty(true);
 
     private final ObjectProperty<ContentModel> currentSelection = new SimpleObjectProperty<>();
+    ChangeListener<Object> filterListener = ((observable, oldVal, newVal) -> {
+        applyFilter();
+    });
+
 
     @FXML
     public void initialize() {
@@ -119,6 +123,55 @@ public class PrimaryController extends BaseController<DataModel> {
         }
 
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
+    }
+
+    private void initBindings() {
+        getTableFilter().setGameSelected(((Game) tgGame.getSelectedToggle().getUserData()).ordinal());
+        getTableFilter().setTypeSelected(((Type) tgType.getSelectedToggle().getUserData()).ordinal());
+        getTableFilter().setModeSelected(((Mode) tgMode.getSelectedToggle().getUserData()).ordinal());
+        cbInstalled.selectedProperty().bindBidirectional(getTableFilter().installedProperty());
+        cbCompleted.selectedProperty().bindBidirectional(getTableFilter().completedProperty());
+        //tfNameFilter.textProperty().bindBidirectional(getTableFilter().nameProperty());
+        tfNameFilter.setOnAction((evt) -> applyFilter());
+        tfNameFilter.focusedProperty().addListener(((observableValue, oldValue, newValue) -> {
+            if (!newValue) {
+                applyFilter();
+            }
+        }));
+
+        tgGame.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
+            getTableFilter().setGameSelected(((Game) newVal.getUserData()).ordinal());
+        });
+        tgMode.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
+            getTableFilter().setModeSelected(((Mode) newVal.getUserData()).ordinal());
+        });
+        tgType.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
+            getTableFilter().setTypeSelected(((Type) newVal.getUserData()).ordinal());
+        });
+
+        getTableFilter().gameSelectedProperty().addListener(filterListener);
+        getTableFilter().typeSelectedProperty().addListener(filterListener);
+        getTableFilter().modeSelectedProperty().addListener(filterListener);
+        getTableFilter().installedProperty().addListener(filterListener);
+        getTableFilter().completedProperty().addListener(filterListener);
+        //getTableFilter().nameProperty().addListener(filterListener);
+
+        table.getSelectionModel().selectedItemProperty().addListener(((observable, oldVal, newVal) -> {
+            currentSelection.set(newVal);
+        }));
+
+        // deploy function in button column or per right/double click?
+        /*
+        actionColumn.setCellFactory(param -> {
+            ButtonCellFactory<FileEntry> factory = new ButtonCellFactory<>();
+            factory.setButtonText("▶\uFE0F");
+            factory.setActionConsumer(item -> {
+                log.info(item.getName());
+            });
+
+            return factory.call(param);
+        });
+         */
     }
 
 
@@ -181,7 +234,8 @@ public class PrimaryController extends BaseController<DataModel> {
 
     private void deploy(Game game) {
         Path modPath = Path.of(config.get().getDirectoryDownloads(), currentSelection.get().getDownloadedFileName());
-        log.log(Level.INFO, "Deploying {0}...", modPath);;
+        log.log(Level.INFO, "Deploying {0}...", modPath);
+        ;
         if (Files.exists(modPath)) {
             // check file type
             if (currentSelection.get().isGro()) {
@@ -293,55 +347,13 @@ public class PrimaryController extends BaseController<DataModel> {
         }
     }
 
-    private void initBindings() {
-        getTableFilter().setGameSelected(((Game) tgGame.getSelectedToggle().getUserData()).ordinal());
-        getTableFilter().setTypeSelected(((Type) tgType.getSelectedToggle().getUserData()).ordinal());
-        getTableFilter().setModeSelected(((Mode) tgMode.getSelectedToggle().getUserData()).ordinal());
-        cbInstalled.selectedProperty().bindBidirectional(getTableFilter().installedProperty());
-        cbCompleted.selectedProperty().bindBidirectional(getTableFilter().completedProperty());
-        tfNameFilter.textProperty().bindBidirectional(getTableFilter().nameProperty());
-
-        tgGame.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setGameSelected(((Game) newVal.getUserData()).ordinal());
-        });
-        tgMode.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setModeSelected(((Mode) newVal.getUserData()).ordinal());
-        });
-        tgType.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setTypeSelected(((Type) newVal.getUserData()).ordinal());
-        });
-
-        getTableFilter().gameSelectedProperty().addListener(filterListener);
-        getTableFilter().typeSelectedProperty().addListener(filterListener);
-        getTableFilter().modeSelectedProperty().addListener(filterListener);
-        getTableFilter().installedProperty().addListener(filterListener);
-        getTableFilter().completedProperty().addListener(filterListener);
-        getTableFilter().nameProperty().addListener(filterListener);
-
-        table.getSelectionModel().selectedItemProperty().addListener(((observable, oldVal, newVal) -> {
-            currentSelection.set(newVal);
-        }));
-
-        // deploy function in button column or per right/double click?
-        /*
-        actionColumn.setCellFactory(param -> {
-            ButtonCellFactory<FileEntry> factory = new ButtonCellFactory<>();
-            factory.setButtonText("▶\uFE0F");
-            factory.setActionConsumer(item -> {
-                log.info(item.getName());
-            });
-
-            return factory.call(param);
-        });
-         */
-    }
-
-    ChangeListener<Object> filterListener = ((observable, oldVal, newVal) -> {
-        applyFilter();
-    });
-
     private void applyFilter() {
-        // TODO filtering with new EM
+        ContentEntity filter = new ContentEntity();
+        filter.setName(getTableFilter().getName());
+        filter.setGame(Game.values()[getTableFilter().getGameSelected()]);
+        filter.setType(Type.values()[getTableFilter().getTypeSelected()]);
+        filter.setModes(Mode.values()[getTableFilter().getModeSelected()]);
+        getModel().getContent().setAll(ContentRepository.getInstance().filterByExample(filter));
         //getModel().getContent().setAll(dbManager.getFileEntries(getTableFilter()));
     }
 

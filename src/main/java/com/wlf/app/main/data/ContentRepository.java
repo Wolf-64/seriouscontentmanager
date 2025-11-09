@@ -1,7 +1,12 @@
 package com.wlf.app.main.data;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,6 +41,36 @@ public class ContentRepository {
                 model = ContentMapper.INSTANCE.toGuiModel(entity);
             }
             return model;
+        });
+    }
+
+    public List<ContentModel> filterByExample(ContentEntity filter) {
+        return executeAndReturn(em -> {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<ContentEntity> query = criteriaBuilder.createQuery(ContentEntity.class);
+            Root<ContentEntity> root = query.from(ContentEntity.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            for (var field : filter.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(filter);
+                    if (value == null) continue;
+
+                    if (value instanceof String s) {
+                        if (!s.isBlank()) {
+                            predicates.add(criteriaBuilder.like(root.get(field.getName()), "%" + s + "%"));
+                        }
+                    } else {
+                        predicates.add(criteriaBuilder.equal(root.get(field.getName()), value));
+                    }
+
+                } catch (IllegalAccessException ignored) {}
+            }
+
+            query.where(predicates.toArray(Predicate[]::new));
+            return em.createQuery(query).getResultList().stream().map(ContentMapper.INSTANCE::toGuiModel).toList();
         });
     }
 
