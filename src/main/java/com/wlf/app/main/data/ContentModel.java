@@ -134,10 +134,9 @@ public class ContentModel {
         origin.set(Requester.MOD_SITE_URL + modInfo.getTransliteratedTitle());
         repoId = "" + modInfo.getId();
         name.set(modInfo.getTitle());
-        // enum ordinal + 1 since grorepo API doesn't have any "undefined" values, which we need though
-        type.set(Type.values()[modInfo.getType().ordinal() + 1]); // 0 map 2 skin 1 mod
-        game.set(Game.values()[modInfo.getGame().ordinal() + 1]); // 0 TFE? 1 TSE 2 both?
-        modes.set(Mode.values()[modInfo.getSubcategory().ordinal() + 1]); // mode? 4 all, 2 = sp + coop
+        type.set(modInfo.getType()); // 0 map 2 skin 1 mod
+        game.set(modInfo.getGame()); // 0 TFE? 1 TSE 2 both?
+        modes.set(modInfo.getSubcategory()); // mode? 4 all, 2 = sp + coop
         size.set(modInfo.getLinks().getFirst().getSize());
         try {
             version.set(modInfo.getVersion());
