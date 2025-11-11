@@ -236,6 +236,7 @@
                         <option>--enable-native-access=org.xerial.sqlitejdbc</option>
                         <option>--enable-native-access=javafx.graphics</option>
                         <option>--include-locales=en</option>
+                        <option>--enable-preview</option>
                     </options>
                 </configuration>
                 <executions>
@@ -257,6 +258,7 @@
                                 <option>--enable-native-access=javafx.web</option>
                                 <option>--enable-native-access=org.xerial.sqlitejdbc</option>
                                 <option>--enable-native-access=javafx.graphics</option>
+                                <option>--enable-preview</option>
                             </options>
                         </configuration>
                     </execution>
@@ -273,6 +275,7 @@
                                 <option>--enable-native-access=javafx.web</option>
                                 <option>--enable-native-access=org.xerial.sqlitejdbc</option>
                                 <option>--enable-native-access=javafx.graphics</option>
+                                <option>--enable-preview</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
                         </configuration>
@@ -288,6 +291,7 @@
                                 <option>--enable-native-access=javafx.web</option>
                                 <option>--enable-native-access=org.xerial.sqlitejdbc</option>
                                 <option>--enable-native-access=javafx.graphics</option>
+                                <option>--enable-preview</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
                         </configuration>

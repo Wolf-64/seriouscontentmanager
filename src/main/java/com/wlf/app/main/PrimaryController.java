@@ -38,7 +38,7 @@ public class PrimaryController extends BaseController<DataModel> {
     private final ObjectProperty<Config> config = new SimpleObjectProperty<>(Config.getInstance());
 
     @FXML
-    private final ObjectProperty<Filter> tableFilter = new SimpleObjectProperty<>(new Filter());
+    private final ObjectProperty<ContentModel> tableFilter = new SimpleObjectProperty<>(new ContentModel());
 
     @FXML
     TabPane tabPane;
@@ -126,9 +126,9 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
     private void initBindings() {
-        getTableFilter().setGameSelected(((Game) tgGame.getSelectedToggle().getUserData()).ordinal());
-        getTableFilter().setTypeSelected(((Type) tgType.getSelectedToggle().getUserData()).ordinal());
-        getTableFilter().setModeSelected(((Mode) tgMode.getSelectedToggle().getUserData()).ordinal());
+        getTableFilter().setGame(((Game) tgGame.getSelectedToggle().getUserData()));
+        getTableFilter().setType(((Type) tgType.getSelectedToggle().getUserData()));
+        getTableFilter().setModes(((Mode) tgMode.getSelectedToggle().getUserData()));
         cbInstalled.selectedProperty().bindBidirectional(getTableFilter().installedProperty());
         cbCompleted.selectedProperty().bindBidirectional(getTableFilter().completedProperty());
         //tfNameFilter.textProperty().bindBidirectional(getTableFilter().nameProperty());
@@ -138,20 +138,21 @@ public class PrimaryController extends BaseController<DataModel> {
                 applyFilter();
             }
         }));
+        tfNameFilter.textProperty().bindBidirectional(getTableFilter().nameProperty());
 
         tgGame.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setGameSelected(((Game) newVal.getUserData()).ordinal());
+            getTableFilter().setGame((Game) newVal.getUserData());
         });
         tgMode.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setModeSelected(((Mode) newVal.getUserData()).ordinal());
+            getTableFilter().setModes((Mode) newVal.getUserData());
         });
         tgType.selectedToggleProperty().addListener((property, oldVal, newVal) -> {
-            getTableFilter().setTypeSelected(((Type) newVal.getUserData()).ordinal());
+            getTableFilter().setType((Type) newVal.getUserData());
         });
 
-        getTableFilter().gameSelectedProperty().addListener(filterListener);
-        getTableFilter().typeSelectedProperty().addListener(filterListener);
-        getTableFilter().modeSelectedProperty().addListener(filterListener);
+        getTableFilter().gameProperty().addListener(filterListener);
+        getTableFilter().typeProperty().addListener(filterListener);
+        getTableFilter().modesProperty().addListener(filterListener);
         getTableFilter().installedProperty().addListener(filterListener);
         getTableFilter().completedProperty().addListener(filterListener);
         //getTableFilter().nameProperty().addListener(filterListener);
@@ -348,12 +349,7 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
     private void applyFilter() {
-        ContentEntity filter = new ContentEntity();
-        filter.setName(getTableFilter().getName());
-        filter.setGame(Game.values()[getTableFilter().getGameSelected()]);
-        filter.setType(Type.values()[getTableFilter().getTypeSelected()]);
-        filter.setModes(Mode.values()[getTableFilter().getModeSelected()]);
-        getModel().getContent().setAll(ContentRepository.getInstance().filterByExample(filter));
+        getModel().getContent().setAll(ContentRepository.getInstance().filterByExample(tableFilter.get().toFilter()));
         //getModel().getContent().setAll(dbManager.getFileEntries(getTableFilter()));
     }
 
@@ -371,16 +367,12 @@ public class PrimaryController extends BaseController<DataModel> {
         return config;
     }
 
-    public Filter getTableFilter() {
+    public ContentModel getTableFilter() {
         return tableFilter.get();
     }
 
-    public ObjectProperty<Filter> tableFilterProperty() {
+    public ObjectProperty<ContentModel> tableFilterProperty() {
         return tableFilter;
-    }
-
-    public void setTableFilter(Filter tableFilter) {
-        this.tableFilter.set(tableFilter);
     }
 
     public boolean isInstallDisabled() {
