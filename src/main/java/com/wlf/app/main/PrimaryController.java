@@ -41,34 +41,34 @@ public class PrimaryController extends BaseController<DataModel> {
     private final ObjectProperty<ContentModel> tableFilter = new SimpleObjectProperty<>(new ContentModel());
 
     @FXML
-    TabPane tabPane;
+    private TabPane tabPane;
     @FXML
-    Tab settings, grorepo;
+    private Tab settings, grorepo;
 
     // --- Filter ---
     @FXML
-    TextField tfNameFilter;
+    private TextField tfNameFilter;
     @FXML
-    RadioButton rbTfe, rbTse, rbMaps, rbMods, rbSp, rbCoop, rbDm;
+    private RadioButton rbTfe, rbTse, rbMaps, rbMods, rbSp, rbCoop, rbDm;
     @FXML
-    CheckBox cbInstalled, cbCompleted;
+    private CheckBox cbInstalled, cbCompleted;
 
     @FXML
-    ToggleGroup tgGame, tgType, tgMode;
+    private ToggleGroup tgGame, tgType, tgMode;
     @FXML
-    TableView<ContentModel> table;
+    private TableView<ContentModel> table;
     @FXML
-    TableColumn<ContentModel, Void> actionColumn;
+    private TableColumn<ContentModel, Void> actionColumn;
     @FXML
-    TableColumn<ContentModel, LocalDateTime> colDateAdded;
+    private TableColumn<ContentModel, LocalDateTime> colDateAdded;
     @FXML
-    TableColumn<ContentModel, String> colDateCreated;
+    private TableColumn<ContentModel, String> colDateCreated;
 
     // --- TableView context menu ---
     @FXML
-    MenuItem menuItemInstall;
+    private MenuItem menuItemInstall;
     @FXML
-    MenuItem menuItemRemove;
+    private MenuItem menuItemRemove;
 
     private GroRepositoryController repoController;
 
@@ -131,7 +131,6 @@ public class PrimaryController extends BaseController<DataModel> {
         getTableFilter().setModes(((Mode) tgMode.getSelectedToggle().getUserData()));
         cbInstalled.selectedProperty().bindBidirectional(getTableFilter().installedProperty());
         cbCompleted.selectedProperty().bindBidirectional(getTableFilter().completedProperty());
-        //tfNameFilter.textProperty().bindBidirectional(getTableFilter().nameProperty());
         tfNameFilter.setOnAction((evt) -> applyFilter());
         tfNameFilter.focusedProperty().addListener(((observableValue, oldValue, newValue) -> {
             if (!newValue) {
@@ -155,10 +154,10 @@ public class PrimaryController extends BaseController<DataModel> {
         getTableFilter().modesProperty().addListener(filterListener);
         getTableFilter().installedProperty().addListener(filterListener);
         getTableFilter().completedProperty().addListener(filterListener);
-        //getTableFilter().nameProperty().addListener(filterListener);
 
         table.getSelectionModel().selectedItemProperty().addListener(((observable, oldVal, newVal) -> {
             currentSelection.set(newVal);
+
         }));
 
         // deploy function in button column or per right/double click?

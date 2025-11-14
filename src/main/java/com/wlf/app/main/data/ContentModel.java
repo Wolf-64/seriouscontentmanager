@@ -160,7 +160,7 @@ public class ContentModel {
         return downloadedFile.get() instanceof ZipFile;
     }
 
-    public record Filter(String name, Game game, Type type, Mode mode, boolean installed, boolean completed, LocalDate createDateFrom, LocalDate createDateTo) {}
+    public record Filter(String name, Game game, Type type, Mode modes, boolean installed, boolean completed, LocalDate dateCreatedFrom, LocalDate dateCreatedTo) {}
 
     // ---------------------------- FX Boilerplate --------------------------------
 

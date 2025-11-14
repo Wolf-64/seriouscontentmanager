@@ -5,10 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,12 +29,16 @@ public class ContentEntity {
     /** Whether the content was manually marked as completed */
     private Boolean completed;
     /** The date this content has been added/downloaded to the library */
+    @Convert(converter = LocalDateTimeStringConverter.class)
     private LocalDateTime dateAdded;
     /** The original creation date of this content */
+    @Convert(converter = LocalDateStringConverter.class)
     private LocalDate dateCreated;
     /** The original creation date of this content */
+    @Convert(converter = LocalDateTimeStringConverter.class)
     private LocalDateTime dateCompleted;
     /** The original creation date of this content */
+    @Convert(converter = LocalDateTimeStringConverter.class)
     private LocalDateTime dateLastPlayed;
     /** The rating that has been given to the content */
     private Double rating;

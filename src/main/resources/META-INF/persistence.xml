@@ -2,6 +2,8 @@
     <persistence-unit name="app">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>com.wlf.app.main.data.ContentEntity</class>
+        <class>com.wlf.app.main.data.LocalDateStringConverter</class>
+        <class>com.wlf.app.main.data.LocalDateTimeStringConverter</class>
         <properties>
             <property name="eclipselink.weaving" value="false"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:files.db"/>
@@ -10,6 +12,7 @@
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
             <property name="eclipselink.logging.level" value="INFO"/>
             <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.target-database" value="Database"/>
         </properties>
     </persistence-unit>
 </persistence>

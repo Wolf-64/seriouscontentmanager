@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -89,6 +90,7 @@ public class FileHandler {
                 move(tempFilePath, newFile.toPath());
                 contentModel.setDownloadedFile(newFile);
                 contentModel.setDownloadedFileName(newFile.getName());
+                contentModel.setDateAdded(LocalDateTime.now());
                 ContentRepository.getInstance().save(contentModel);
             } else {
                 log.warning("Could not register new file: Unrecognized format.");

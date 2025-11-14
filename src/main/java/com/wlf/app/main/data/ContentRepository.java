@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -54,63 +55,48 @@ public class ContentRepository {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if (filter.name() != null && !filter.name().isEmpty()) {
-                predicates.add(criteriaBuilder.like(root.get("name"), "%" + filter.name() + "%"));
-            }
-            if (filter.game() != Game.ANY) {
-                predicates.add(criteriaBuilder.equal(root.get("game"), filter.game()));
-            }
-            if (filter.type() != Type.UNDEFINED) {
-                predicates.add(criteriaBuilder.equal(root.get("type"), filter.type()));
-            }
-            if (filter.mode() != Mode.ALL) {
-                predicates.add(criteriaBuilder.equal(root.get("modes"), filter.mode()));
-            }
-            if (filter.mode() != Mode.ALL) {
-                predicates.add(criteriaBuilder.equal(root.get("modes"), filter.mode()));
-            }
-            if (filter.installed()) {
-                predicates.add(criteriaBuilder.equal(root.get("installed"), 1));
-            }
-            if (filter.completed()) {
-                predicates.add(criteriaBuilder.equal(root.get("completed"), 1));
-            }
-            /*
             for (var field : filter.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
                 try {
                     Object value = field.get(filter);
+
                     if (value == null) continue;
 
                     if (value instanceof String s) {
                         if (!s.isBlank()) {
                             predicates.add(criteriaBuilder.like(root.get(field.getName()), "%" + s + "%"));
                         }
+                    } else if (Number.class.isAssignableFrom(field.getType())
+                            && value instanceof Number n
+                            && n.doubleValue() > 0) {
+                        predicates.add(criteriaBuilder.equal(root.get(field.getName()), value));
                     } else if (value instanceof Game game) {
                         if (game != Game.ANY) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), "%" + game.ordinal() + "%"));
+                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), game));
                         }
                     } else if (value instanceof Type type) {
                         if (type != Type.UNDEFINED) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), "%" + type.ordinal() + "%"));
+                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), type));
                         }
                     } else if (value instanceof Mode mode) {
                         if (mode != Mode.ALL) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), "%" + mode.ordinal() + "%"));
+                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), mode));
                         }
                     } else if (value instanceof boolean b) {
                         if (b) {
                             predicates.add(criteriaBuilder.equal(root.get(field.getName()), 1));
                         }
-                    } else {
-                        predicates.add(criteriaBuilder.equal(root.get(field.getName()), value));
                     }
                 } catch (IllegalAccessException exception) {
                     log.warn(exception.toString());
                 }
             }
 
-             */
+            if (filter.dateCreatedFrom() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateCreated"), filter.dateCreatedFrom()));
+            } else if (filter.dateCreatedTo() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dateCreated"), filter.dateCreatedTo()));
+            }
 
             query.where(predicates.toArray(Predicate[]::new));
             return em.createQuery(query).getResultList().stream().map(ContentMapper.INSTANCE::toGuiModel).toList();
