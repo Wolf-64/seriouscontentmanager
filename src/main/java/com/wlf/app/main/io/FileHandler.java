@@ -265,6 +265,7 @@ public class FileHandler {
             log.info("... done.");
             contentModel.setInstallFileLocation(null);
             contentModel.setInstalled(false);
+            contentModel.setDateLastPlayed(LocalDateTime.now());
             ContentRepository.getInstance().update(contentModel);
         } catch (IOException ex) {
             log.severe(ex.toString());

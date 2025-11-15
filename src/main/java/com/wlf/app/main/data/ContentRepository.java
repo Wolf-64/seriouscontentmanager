@@ -32,7 +32,8 @@ public class ContentRepository {
     public List<ContentModel> findAll() {
         return executeAndReturn((em) -> {
             TypedQuery<ContentEntity> query = em.createQuery("SELECT u FROM ContentEntity u", ContentEntity.class);
-            return query.getResultList().stream().map(ContentMapper.INSTANCE::toGuiModel).toList();
+            var list = query.getResultList().stream().map(ContentMapper.INSTANCE::toGuiModel).toList();
+            return list;
         });
     }
 
@@ -112,10 +113,16 @@ public class ContentRepository {
     }
 
     public void update(ContentModel content) {
+        if (content.getId() == null) {
+            throw new IllegalArgumentException("Cannot update database entry with no ID!");
+        }
         execute((em) -> em.merge(ContentMapper.INSTANCE.toEntity(content)));
     }
 
     public void delete(ContentModel content) {
+        if (content.getId() == null) {
+            throw new IllegalArgumentException("Cannot delete database entry with no ID!");
+        }
         execute((em) -> {
             ContentEntity managed = em.find(ContentEntity.class, content.getId());
 

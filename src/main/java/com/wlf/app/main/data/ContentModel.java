@@ -65,7 +65,15 @@ public class ContentModel {
     @Getter @Setter
     private Long id;
 
-    public ContentModel() {    }
+    public ContentModel() {
+        // set completed date to "now" every time the box is checked
+        completedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (t1) {
+                setDateCompleted(LocalDateTime.now());
+            }
+            ContentRepository.getInstance().update(this);
+        }));
+    }
 
     public boolean canInstallToTfe() {
         return !isInstalled() && config.isTfeDirectoryValid();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -60,9 +61,9 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     private TableColumn<ContentModel, Void> actionColumn;
     @FXML
-    private TableColumn<ContentModel, LocalDateTime> colDateAdded;
+    private TableColumn<ContentModel, LocalDateTime> colDateAdded, colDateLastPlayed, colDateCompleted;
     @FXML
-    private TableColumn<ContentModel, String> colDateCreated;
+    private TableColumn<ContentModel, LocalDate> colDateCreated;
 
     // --- TableView context menu ---
     @FXML
@@ -118,11 +119,14 @@ public class PrimaryController extends BaseController<DataModel> {
         setModel(new DataModel());
 
         for (ContentModel contentModel : ContentRepository.getInstance().findAll()) {
-            contentModel.completedProperty().addListener(getListItemListener(contentModel));
+            //contentModel.completedProperty().addListener(getListItemListener(contentModel));
             getModel().getContent().add(contentModel);
         }
 
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
+        colDateCompleted.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
+        colDateLastPlayed.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
+        //colDateCreated.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
     }
 
     private void initBindings() {
@@ -157,7 +161,6 @@ public class PrimaryController extends BaseController<DataModel> {
 
         table.getSelectionModel().selectedItemProperty().addListener(((observable, oldVal, newVal) -> {
             currentSelection.set(newVal);
-
         }));
 
         // deploy function in button column or per right/double click?
