@@ -19,7 +19,7 @@ import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
 import com.wlf.app.main.io.GameHandler;
 
-import com.wlf.common.util.LocalDateTimeStringConverter;
+import com.wlf.common.util.LocalDateTimeConverter;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
@@ -30,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.WindowEvent;
+import javafx.util.converter.LocalDateStringConverter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 
 public class PrimaryController extends BaseController<DataModel> {
@@ -63,7 +64,7 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     private TableColumn<ContentModel, LocalDateTime> colDateAdded, colDateLastPlayed, colDateCompleted;
     @FXML
-    private TableColumn<ContentModel, LocalDate> colDateCreated;
+    private TableColumn<ContentModel, LocalDateTime> colDateCreated;
 
     // --- TableView context menu ---
     @FXML
@@ -123,10 +124,10 @@ public class PrimaryController extends BaseController<DataModel> {
             getModel().getContent().add(contentModel);
         }
 
-        colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
-        colDateCompleted.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
-        colDateLastPlayed.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
-        //colDateCreated.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeStringConverter()));
+        colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
+        colDateCompleted.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
+        colDateLastPlayed.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
+        colDateCreated.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
     }
 
     private void initBindings() {

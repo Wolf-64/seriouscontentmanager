@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wlf.common.util.LocalDateConverter;
+import com.wlf.common.util.LocalDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,21 +31,19 @@ public class ContentEntity {
     /** Whether the content was manually marked as completed */
     private Boolean completed;
     /** The date this content has been added/downloaded to the library */
-    @Convert(converter = LocalDateTimeStringConverter.class)
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime dateAdded;
     /** The original creation date of this content */
-    @Convert(converter = LocalDateStringConverter.class)
-    private LocalDate dateCreated;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime dateCreated;
     /** The original creation date of this content */
-    @Convert(converter = LocalDateTimeStringConverter.class)
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime dateCompleted;
     /** The original creation date of this content */
-    @Convert(converter = LocalDateTimeStringConverter.class)
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime dateLastPlayed;
     /** The rating that has been given to the content */
     private Double rating;
-    /** Absolute path of the content's file (gro or zip) after download */
-    private ContentFile downloadedFile;
     /** Absolute path of the content's file (gro) after installing */
     private File installFileLocation;
     /** All files that have been extracted from zipped content */

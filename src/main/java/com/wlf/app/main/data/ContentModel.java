@@ -38,7 +38,7 @@ public class ContentModel {
     /** The date this content has been added/downloaded to the library */
     private final ObjectProperty<LocalDateTime> dateAdded = new SimpleObjectProperty<>();
     /** The original creation date of this content */
-    private final ObjectProperty<LocalDate> dateCreated = new SimpleObjectProperty<>();
+    private final ObjectProperty<LocalDateTime> dateCreated = new SimpleObjectProperty<>();
     /** The original creation date of this content */
     private final ObjectProperty<LocalDateTime> dateCompleted = new SimpleObjectProperty<>();
     /** The original creation date of this content */
@@ -130,7 +130,7 @@ public class ContentModel {
         size.set(json.get("size").asLong());
         try {
             version.set(json.get("version").asText());
-            dateCreated.set(LocalDate.parse(json.get("originalCreatedDate").asText()));
+            dateCreated.set(LocalDateTime.parse(json.get("originalCreatedDate").asText()));
         } catch (DateTimeParseException ex) {
             log.warning(ex.getMessage());
         }
@@ -148,7 +148,7 @@ public class ContentModel {
         size.set(modInfo.getLinks().getFirst().getSize());
         try {
             version.set(modInfo.getVersion());
-            dateCreated.set(modInfo.getOriginalCreatedDate().toLocalDate());
+            dateCreated.set(modInfo.getOriginalCreatedDate());
         } catch (DateTimeParseException ex) {
             log.warning(ex.getMessage());
         }
@@ -168,7 +168,7 @@ public class ContentModel {
         return downloadedFile.get() instanceof ZipFile;
     }
 
-    public record Filter(String name, Game game, Type type, Mode modes, boolean installed, boolean completed, LocalDate dateCreatedFrom, LocalDate dateCreatedTo) {}
+    public record Filter(String name, Game game, Type type, Mode modes, boolean installed, boolean completed, LocalDateTime dateCreatedFrom, LocalDateTime dateCreatedTo) {}
 
     // ---------------------------- FX Boilerplate --------------------------------
 
@@ -329,11 +329,11 @@ public class ContentModel {
         return dateAdded;
     }
 
-    public LocalDate getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated.get();
     }
 
-    public ObjectProperty<LocalDate> dateCreatedProperty() {
+    public ObjectProperty<LocalDateTime> dateCreatedProperty() {
         return dateCreated;
     }
 

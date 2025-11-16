@@ -2,8 +2,8 @@
     <persistence-unit name="app">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>com.wlf.app.main.data.ContentEntity</class>
-        <class>com.wlf.app.main.data.LocalDateStringConverter</class>
-        <class>com.wlf.app.main.data.LocalDateTimeStringConverter</class>
+        <class>com.wlf.common.util.LocalDateConverter</class>
+        <class>com.wlf.common.util.LocalDateTimeConverter</class>
         <properties>
             <property name="eclipselink.weaving" value="false"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:files.db"/>

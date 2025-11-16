@@ -34,12 +34,12 @@ module seriouscontentmanager {
     opens com.wlf.app.preferences to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common.controls to com.fasterxml.jackson.databind,javafx.fxml;
-    opens com.wlf.common.util to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common.themes to com.fasterxml.jackson.databind, javafx.fxml;
     opens com.wlf.app to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main.data;
     opens com.wlf.app.main.io to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main.net to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
+    opens com.wlf.common.util;
 
 }
