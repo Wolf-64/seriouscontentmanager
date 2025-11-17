@@ -19,6 +19,7 @@ import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
 import com.wlf.app.main.io.GameHandler;
 
+import com.wlf.common.util.LocalDateConverter;
 import com.wlf.common.util.LocalDateTimeConverter;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -64,7 +65,7 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     private TableColumn<ContentModel, LocalDateTime> colDateAdded, colDateLastPlayed, colDateCompleted;
     @FXML
-    private TableColumn<ContentModel, LocalDateTime> colDateCreated;
+    private TableColumn<ContentModel, LocalDate> colDateCreated;
 
     // --- TableView context menu ---
     @FXML
@@ -124,10 +125,10 @@ public class PrimaryController extends BaseController<DataModel> {
             getModel().getContent().add(contentModel);
         }
 
+        colDateCreated.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateConverter()));
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
         colDateCompleted.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
         colDateLastPlayed.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
-        colDateCreated.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
     }
 
     private void initBindings() {

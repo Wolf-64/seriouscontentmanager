@@ -38,7 +38,7 @@ public class ContentModel {
     /** The date this content has been added/downloaded to the library */
     private final ObjectProperty<LocalDateTime> dateAdded = new SimpleObjectProperty<>();
     /** The original creation date of this content */
-    private final ObjectProperty<LocalDateTime> dateCreated = new SimpleObjectProperty<>();
+    private final ObjectProperty<LocalDate> dateCreated = new SimpleObjectProperty<>();
     /** The original creation date of this content */
     private final ObjectProperty<LocalDateTime> dateCompleted = new SimpleObjectProperty<>();
     /** The original creation date of this content */
@@ -115,29 +115,6 @@ public class ContentModel {
         };
     }
 
-    /**
-     *
-     * @param json response from grorepository
-     * @return
-     */
-    public ContentModel fromJSON(JsonNode json) {
-        origin.set(Requester.MOD_SITE_URL + json.get("transliteratedTitle").asText());
-        repoId = json.get("id").asText();
-        name.set(json.get("title").asText());
-        type.set(Type.values()[json.get("type").asInt()]); // 0 map 2 skin 1 mod
-        game.set(Game.values()[json.get("game").asInt()]); // 0 TFE? 1 TSE 2 both?
-        modes.set(Mode.values()[json.get("subcategory").asInt()]); // mode? 4 all, 2 = sp + coop
-        size.set(json.get("size").asLong());
-        try {
-            version.set(json.get("version").asText());
-            dateCreated.set(LocalDateTime.parse(json.get("originalCreatedDate").asText()));
-        } catch (DateTimeParseException ex) {
-            log.warning(ex.getMessage());
-        }
-
-        return this;
-    }
-
     public ContentModel fromModInfo(ModInfo modInfo) {
         origin.set(Requester.MOD_SITE_URL + modInfo.getTransliteratedTitle());
         repoId = "" + modInfo.getId();
@@ -146,12 +123,8 @@ public class ContentModel {
         game.set(modInfo.getGame()); // 0 TFE? 1 TSE 2 both?
         modes.set(modInfo.getSubcategory()); // mode? 4 all, 2 = sp + coop
         size.set(modInfo.getLinks().getFirst().getSize());
-        try {
-            version.set(modInfo.getVersion());
-            dateCreated.set(modInfo.getOriginalCreatedDate());
-        } catch (DateTimeParseException ex) {
-            log.warning(ex.getMessage());
-        }
+        version.set(modInfo.getVersion());
+        dateCreated.set(modInfo.getOriginalCreatedDate().toLocalDate());
 
         return this;
     }
@@ -168,7 +141,7 @@ public class ContentModel {
         return downloadedFile.get() instanceof ZipFile;
     }
 
-    public record Filter(String name, Game game, Type type, Mode modes, boolean installed, boolean completed, LocalDateTime dateCreatedFrom, LocalDateTime dateCreatedTo) {}
+    public record Filter(String name, Game game, Type type, Mode modes, boolean installed, boolean completed, LocalDate dateCreatedFrom, LocalDate dateCreatedTo) {}
 
     // ---------------------------- FX Boilerplate --------------------------------
 
@@ -329,12 +302,16 @@ public class ContentModel {
         return dateAdded;
     }
 
-    public LocalDateTime getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated.get();
     }
 
-    public ObjectProperty<LocalDateTime> dateCreatedProperty() {
+    public ObjectProperty<LocalDate> dateCreatedProperty() {
         return dateCreated;
+    }
+
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated.set(dateCreated);
     }
 
     public File getInstallFileLocation() {

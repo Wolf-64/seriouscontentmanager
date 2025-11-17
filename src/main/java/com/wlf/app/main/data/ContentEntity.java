@@ -34,8 +34,8 @@ public class ContentEntity {
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime dateAdded;
     /** The original creation date of this content */
-    @Convert(converter = LocalDateTimeConverter.class)
-    private LocalDateTime dateCreated;
+    @Convert(converter = LocalDateConverter.class)
+    private LocalDate dateCreated;
     /** The original creation date of this content */
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime dateCompleted;
