@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import javafx.beans.property.Property;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class ContentRepository {
         });
     }
 
-    public List<ContentModel> filterByExample(ContentModel.Filter filter) {
+    public List<ContentModel> filterByExample(TableFilter filter) {
         return executeAndReturn(em -> {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<ContentEntity> query = criteriaBuilder.createQuery(ContentEntity.class);
@@ -56,10 +57,11 @@ public class ContentRepository {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            for (var field : filter.getClass().getDeclaredFields()) {
-                field.setAccessible(true);
+            for (var property : filter.getClass().getDeclaredFields()) {
+                property.setAccessible(true);
                 try {
-                    Object value = field.get(filter);
+                    Property<?> field = (Property<?>) property.get(filter);
+                    Object value = field.getValue();
 
                     if (value == null) continue;
 
@@ -67,8 +69,7 @@ public class ContentRepository {
                         if (!s.isBlank()) {
                             predicates.add(criteriaBuilder.like(root.get(field.getName()), "%" + s + "%"));
                         }
-                    } else if (Number.class.isAssignableFrom(field.getType())
-                            && value instanceof Number n
+                    } else if (value instanceof Number n
                             && n.doubleValue() > 0) {
                         predicates.add(criteriaBuilder.equal(root.get(field.getName()), value));
                     } else if (value instanceof Game game) {
@@ -93,10 +94,10 @@ public class ContentRepository {
                 }
             }
 
-            if (filter.dateCreatedFrom() != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateCreated"), filter.dateCreatedFrom()));
-            } else if (filter.dateCreatedTo() != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dateCreated"), filter.dateCreatedTo()));
+            if (filter.getDateCreatedFrom() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateCreated"), filter.getDateCreatedFrom()));
+            } else if (filter.getDateCreatedTo() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dateCreated"), filter.getDateCreatedTo()));
             }
 
             query.where(predicates.toArray(Predicate[]::new));

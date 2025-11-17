@@ -1,6 +1,5 @@
 package com.wlf.app.main.data;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.wlf.app.main.net.ModInfo;
 import com.wlf.app.main.net.Requester;
 import com.wlf.app.preferences.Config;
@@ -13,7 +12,6 @@ import lombok.Setter;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.logging.Logger;
 
 public class ContentModel {
@@ -129,10 +127,6 @@ public class ContentModel {
         return this;
     }
 
-    public Filter toFilter() {
-        return new Filter(getName(), getGame(), getType(), getModes(), isInstalled(), isCompleted(), getDateCreated(), getDateCreated());
-    }
-
     public boolean isGro() {
         return downloadedFile.get() instanceof GroFile;
     }
@@ -140,8 +134,6 @@ public class ContentModel {
     public boolean isZip() {
         return downloadedFile.get() instanceof ZipFile;
     }
-
-    public record Filter(String name, Game game, Type type, Mode modes, boolean installed, boolean completed, LocalDate dateCreatedFrom, LocalDate dateCreatedTo) {}
 
     // ---------------------------- FX Boilerplate --------------------------------
 

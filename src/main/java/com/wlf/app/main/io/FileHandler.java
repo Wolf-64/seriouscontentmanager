@@ -91,6 +91,13 @@ public class FileHandler {
                 contentModel.setDownloadedFile(newFile);
                 contentModel.setDownloadedFileName(newFile.getName());
                 contentModel.setDateAdded(LocalDateTime.now());
+                // set completed date to "now" every time the box is checked
+                contentModel.completedProperty().addListener(((observableValue, aBoolean, t1) -> {
+                    if (t1) {
+                        contentModel.setDateCompleted(LocalDateTime.now());
+                    }
+                    ContentRepository.getInstance().update(contentModel);
+                }));
                 ContentRepository.getInstance().save(contentModel);
             } else {
                 log.warning("Could not register new file: Unrecognized format.");

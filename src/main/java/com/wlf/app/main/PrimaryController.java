@@ -31,7 +31,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.WindowEvent;
-import javafx.util.converter.LocalDateStringConverter;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 
 public class PrimaryController extends BaseController<DataModel> {
@@ -41,7 +40,7 @@ public class PrimaryController extends BaseController<DataModel> {
     private final ObjectProperty<Config> config = new SimpleObjectProperty<>(Config.getInstance());
 
     @FXML
-    private final ObjectProperty<ContentModel> tableFilter = new SimpleObjectProperty<>(new ContentModel());
+    private final ObjectProperty<TableFilter> tableFilter = new SimpleObjectProperty<>(new TableFilter());
 
     @FXML
     private TabPane tabPane;
@@ -353,7 +352,7 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
     private void applyFilter() {
-        getModel().getContent().setAll(ContentRepository.getInstance().filterByExample(tableFilter.get().toFilter()));
+        getModel().getContent().setAll(ContentRepository.getInstance().filterByExample(tableFilter.get()));
         //getModel().getContent().setAll(dbManager.getFileEntries(getTableFilter()));
     }
 
@@ -371,11 +370,11 @@ public class PrimaryController extends BaseController<DataModel> {
         return config;
     }
 
-    public ContentModel getTableFilter() {
+    public TableFilter getTableFilter() {
         return tableFilter.get();
     }
 
-    public ObjectProperty<ContentModel> tableFilterProperty() {
+    public ObjectProperty<TableFilter> tableFilterProperty() {
         return tableFilter;
     }
 
