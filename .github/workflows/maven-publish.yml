@@ -23,14 +23,14 @@ jobs:
           distribution: temurin
           java-version: "25"
 
-      - name: Build (including jlink)
+      - name: Build (jlink)
         run: mvn -B clean javafx:jlink
 
       - name: Find build output
         id: find
         shell: bash
         run: |
-          echo "APP_IMAGE=$(find . -type d -name 'SeriousContentManager.zip' | head -n 1)" >> $GITHUB_ENV
+          echo "APP_IMAGE=$(find . -type f -name 'SeriousContentManager.zip' | head -n 1)" >> $GITHUB_ENV
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
