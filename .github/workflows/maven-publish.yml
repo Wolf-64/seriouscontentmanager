@@ -27,7 +27,7 @@ jobs:
         id: find
         shell: bash
         run: |
-          echo "APP_IMAGE=$(find . -type d -name 'SeriousContentManager' | head -n 1)" >> $GITHUB_ENV
+          echo "APP_IMAGE=$(find . -type d -name 'SeriousContentManager.zip' | head -n 1)" >> $GITHUB_ENV
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
