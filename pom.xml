@@ -1,14 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wlf</groupId>
     <artifactId>SeriousContentManager</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.8</version>
     <name>${project.artifactId}::${project.version}</name>
     <inceptionYear>2025</inceptionYear>
     <scm>
         <developerConnection>scm:git:https://github.com/Wolf-64/seriouscontentmanager.git</developerConnection>
-    </scm>
+      <tag>v0.0.8</tag>
+  </scm>
 
     <properties>
         <app.version>${project.version}</app.version>
