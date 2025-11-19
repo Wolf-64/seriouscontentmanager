@@ -2,12 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wlf</groupId>
     <artifactId>SeriousContentManager</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>${project.artifactId}::${project.version}</name>
     <inceptionYear>2025</inceptionYear>
     <scm>
         <developerConnection>scm:git:https://github.com/Wolf-64/seriouscontentmanager.git</developerConnection>
-      <tag>v0.1.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <properties>
