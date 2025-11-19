@@ -22,56 +22,35 @@ public class FileHandler {
     private static final Config config = Config.getInstance();
 
     // mod files
-    private static File getTempModDir(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager");
+    private static Path getTempModDir(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager");
     }
-    private static File getTempModDescriptor(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager.des");
+    private static Path getTempModDescriptor(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager.des");
     }
-    private static File getTempModExlusionList(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/BaseBrowseExclude.lst");
+    private static Path getTempModExlusionList(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "BaseBrowseExclude.lst");
     }
-    private static File getTempModInclusionList(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/BaseBrowseInclude.lst");
+    private static Path getTempModInclusionList(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "BaseBrowseInclude.lst");
     }
-    private static File getTempModInclusionListWrite(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/BaseWriteInclude.lst");
+    private static Path getTempModInclusionListWrite(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "BaseWriteInclude.lst");
     }
-    private static File getTempModDataVar(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Data/Var");
+    private static Path getTempModDataVar(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "Data", "Var");
     }
-    private static File getTempModScripts(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Scripts");
+    private static Path getTempModScripts(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "Scripts");
     }
-    private static File getTempModGameStartupIni(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Scripts/Game_startup.ini");
+    private static Path getTempModGameStartupIni(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "Scripts", "Game_startup.ini");
     }
-    private static File getTempModModNameVar(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Data/Var/ModName.var");
+    private static Path getTempModModNameVar(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "Data", "Var", "ModName.var");
     }
-    private static File getTempModSamVersionVar(Game game) {
-        return new File(game.getGameFolder() + "/Mods/SeriousContentManager/Data/Var/Sam_Version.var");
-    }
-
-    public static void registerNewFile(String file, String originURL, String name) {
-        try {
-            // move to downloads
-            Path filePath = Path.of(file);
-            Path downloads = Path.of(config.getDirectoryDownloads());
-            if (!Files.exists(downloads)) {
-                Files.createDirectory(downloads);
-            }
-
-            Path newFileLocation = Files.move(filePath, Path.of(downloads.toString() + "/" + filePath.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
-            ContentModel newFile = new ContentModel();
-            newFile.setName(name);
-            newFile.setOrigin(originURL);
-            newFile.setDownloadedFileName(newFileLocation.getFileName().toString());
-            ContentRepository.getInstance().save(newFile);
-        } catch (IOException e) {
-            log.severe(e.toString());
-        }     
-        
+    private static Path getTempModSamVersionVar(Game game) {
+        return Path.of(game.getGameFolder(), "Mods", "SeriousContentManager", "Data", "Var", "Sam_Version.var");
     }
 
     public static void registerNewFile(ContentModel contentModel, String file) {
@@ -91,13 +70,7 @@ public class FileHandler {
                 contentModel.setDownloadedFile(newFile);
                 contentModel.setDownloadedFileName(newFile.getName());
                 contentModel.setDateAdded(LocalDateTime.now());
-                // set completed date to "now" every time the box is checked
-                contentModel.completedProperty().addListener(((observableValue, aBoolean, t1) -> {
-                    if (t1) {
-                        contentModel.setDateCompleted(LocalDateTime.now());
-                    }
-                    ContentRepository.getInstance().update(contentModel);
-                }));
+                contentModel.setupListener();
                 ContentRepository.getInstance().save(contentModel);
             } else {
                 log.warning("Could not register new file: Unrecognized format.");
@@ -148,25 +121,25 @@ public class FileHandler {
 
     public static void createTempMod(ContentModel contentModel) {
         try {
-            log.info("Creating temp mod directory: " + getTempModDir(contentModel.getGame()).toPath());
+            log.info("Creating temp mod directory: " + getTempModDir(contentModel.getGame()));
             removeTempModFolder(contentModel); // if leftover
-            Path modDir = Files.createDirectory(getTempModDir(contentModel.getGame()).toPath());
+            Path modDir = Files.createDirectory(getTempModDir(contentModel.getGame()));
 
             // Set mod description to map name
             String descriptionContent = contentModel.getName() + " (SCM)";
-            Files.writeString(getTempModDescriptor(contentModel.getGame()).toPath(), descriptionContent);
+            Files.writeString(getTempModDescriptor(contentModel.getGame()), descriptionContent);
 
             // exclude base game levels to only display custom map
             String excludeList = "Levels";
-            Files.writeString(getTempModExlusionList(contentModel.getGame()).toPath(), excludeList);
+            Files.writeString(getTempModExlusionList(contentModel.getGame()), excludeList);
             String include = "SaveGame\nControls";
-            Files.writeString(getTempModInclusionList(contentModel.getGame()).toPath(), include);
-            Files.writeString(getTempModInclusionListWrite(contentModel.getGame()).toPath(), include);
+            Files.writeString(getTempModInclusionList(contentModel.getGame()), include);
+            Files.writeString(getTempModInclusionListWrite(contentModel.getGame()), include);
 
-            Files.createDirectories(getTempModDataVar(contentModel.getGame()).toPath());
-            Files.writeString(getTempModModNameVar(contentModel.getGame()).toPath(), descriptionContent);
+            Files.createDirectories(getTempModDataVar(contentModel.getGame()));
+            Files.writeString(getTempModModNameVar(contentModel.getGame()), descriptionContent);
             if (contentModel.getVersion() != null) {
-                Files.writeString(getTempModSamVersionVar(contentModel.getGame()).toPath(), contentModel.getVersion());
+                Files.writeString(getTempModSamVersionVar(contentModel.getGame()), contentModel.getVersion());
             }
 
             // define new game map name if only one map
@@ -178,8 +151,8 @@ public class FileHandler {
                 }
                 relativePath = relativePath.replace("\\", "\\\\"); // backslashes in string need to be escaped for the file as well
                 String startingMapEntry = "sam_strFirstLevel = \"" + relativePath + "\";";
-                Files.createDirectory(getTempModScripts(contentModel.getGame()).toPath());
-                Files.writeString(getTempModGameStartupIni(contentModel.getGame()).toPath(), startingMapEntry);
+                Files.createDirectory(getTempModScripts(contentModel.getGame()));
+                Files.writeString(getTempModGameStartupIni(contentModel.getGame()), startingMapEntry);
             }
 
             File target = new File(modDir + File.separator + contentModel.getDownloadedFileName());
@@ -255,13 +228,13 @@ public class FileHandler {
     }
 
     private static void removeTempModFolder(ContentModel contentModel) throws IOException {
-        if (getTempModDir(contentModel.getGame()).exists()) {
-            try (Stream<Path> pathStream = Files.walk(getTempModDir(contentModel.getGame()).toPath())) {
+        if (Files.exists(getTempModDir(contentModel.getGame()))) {
+            try (Stream<Path> pathStream = Files.walk(getTempModDir(contentModel.getGame()))) {
                 log.info("Removing temp mod files...");
                 pathStream.sorted(Comparator.reverseOrder())
                         .map(Path::toFile)
                         .forEach(File::delete);
-                Files.delete(getTempModDescriptor(contentModel.getGame()).toPath());
+                Files.delete(getTempModDescriptor(contentModel.getGame()));
             }
         }
     }

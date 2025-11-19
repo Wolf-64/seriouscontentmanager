@@ -1,10 +1,11 @@
 package com.wlf.app.main.data;
 
-import com.wlf.app.main.io.FileHandler;
 import com.wlf.app.preferences.Config;
 import lombok.Getter;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 
@@ -26,36 +27,36 @@ public enum Game {
     }
 
     public boolean isGamePathValid(String path) {
-        if (path != null && new File(path).exists()) {
+        if (path != null && Files.exists(Path.of(path))) {
             if (!this.equals(ANY)) {
-                return Arrays.stream(getKnownFiles()).allMatch(File::exists);
+                return Arrays.stream(getKnownFiles(path)).allMatch(File::exists);
             }
         }
         return false;
     }
 
-    public File[] getKnownFiles() {
+    public File[] getKnownFiles(String basePath) {
         return switch (this) {
             case TFE -> new File[]{
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "Bin" + File.separator + "SeriousSam.exe"),
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "1_00_ExtraTools.gro"),
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "1_00_music.gro"),
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "1_00c_Logo.gro"),
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "1_00c_scripts.gro"),
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "1_00c.gro"),
-                    new File(Config.getInstance().getDirectoryTFE() + File.separator + "1_04_patch.gro")
+                    Path.of(basePath, "Bin", "SeriousSam.exe").toFile(),
+                    Path.of(basePath, "1_00_ExtraTools.gro").toFile(),
+                    Path.of(basePath, "1_00_music.gro").toFile(),
+                    Path.of(basePath, "1_00c_Logo.gro").toFile(),
+                    Path.of(basePath, "1_00c_scripts.gro").toFile(),
+                    Path.of(basePath, "1_00c.gro").toFile(),
+                    Path.of(basePath, "1_04_patch.gro").toFile()
             };
             case TSE -> new File[]{
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "Bin" + File.separator + "SeriousSam.exe"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "1_04_patch.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "1_07_tools.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "SE1_00_Extra.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "SE1_00_ExtraTools.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "SE1_00_Levels.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "SE1_00_Logo.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "SE1_00_Music.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "SE1_00.gro"),
-                    new File(Config.getInstance().getDirectoryTSE() + File.separator + "ModEXT.txt")
+                    Path.of(basePath, "Bin", "SeriousSam.exe").toFile(),
+                    Path.of(basePath, "1_04_patch.gro").toFile(),
+                    Path.of(basePath, "1_07_tools.gro").toFile(),
+                    Path.of(basePath, "SE1_00_Extra.gro").toFile(),
+                    Path.of(basePath, "SE1_00_ExtraTools.gro").toFile(),
+                    Path.of(basePath, "SE1_00_Levels.gro").toFile(),
+                    Path.of(basePath, "SE1_00_Logo.gro").toFile(),
+                    Path.of(basePath, "SE1_00_Music.gro").toFile(),
+                    Path.of(basePath, "SE1_00.gro").toFile(),
+                    Path.of(basePath, "ModEXT.txt").toFile()
             };
             case ANY -> null;
         };

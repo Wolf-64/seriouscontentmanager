@@ -8,7 +8,6 @@ import jakarta.persistence.criteria.Root;
 import javafx.beans.property.Property;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -63,7 +62,9 @@ public class ContentRepository {
                     Property<?> field = (Property<?>) property.get(filter);
                     Object value = field.getValue();
 
-                    if (value == null) continue;
+                    if (value == null) {
+                        continue;
+                    }
 
                     if (value instanceof String s) {
                         if (!s.isBlank()) {

@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wlf.common.util.FileConverter;
+import com.wlf.common.util.FileListConverter;
 import com.wlf.common.util.LocalDateConverter;
 import com.wlf.common.util.LocalDateTimeConverter;
 import jakarta.persistence.*;
@@ -45,8 +47,10 @@ public class ContentEntity {
     /** The rating that has been given to the content */
     private Double rating;
     /** Absolute path of the content's file (gro) after installing */
+    @Convert(converter = FileConverter.class)
     private File installFileLocation;
     /** All files that have been extracted from zipped content */
+    @Convert(converter = FileListConverter.class)
     private final List<File> installedFiles = new ArrayList<>();
     /** Either the URL this content has been downloaded from, or 'local' if it has been added manually */
     private String origin;

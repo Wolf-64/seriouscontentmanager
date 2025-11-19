@@ -28,10 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
@@ -51,7 +48,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     @FXML
     private TaskProgressView<Task<ContentModel>> downloadTaskView;
     private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(getConfiguration().getMaxDownloads());
-    private final List<Downloader> activeDownloads = new ArrayList<>();
+    private final Map<String, Downloader> activeDownloads = new HashMap<>();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
     private final BooleanProperty loadingIndicatorVisible = new SimpleBooleanProperty(false);
@@ -99,7 +96,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
         // relevant on reloads - do we have active downloads? need to re-add them to the view
         if (!activeDownloads.isEmpty()) {
-            Platform.runLater(() -> downloadTaskView.getTasks().addAll(activeDownloads));
+            Platform.runLater(() -> downloadTaskView.getTasks().addAll(activeDownloads.values()));
         }
     }
 
@@ -126,7 +123,8 @@ public class GroRepositoryController extends BaseController<DataModel> {
         browser.get().load(GRO_REPOSITORY_URL);
     }
 
-    record DownloadPrep(ModInfo modInfo, URI fileUri) {}
+    record DownloadInfo(ModInfo modInfo, URI fileUri, String fileName) {
+    }
 
     private void onDownloadRequestReceived() {
         if (!checkPrerequisitesForDownload()) {
@@ -139,17 +137,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
         CompletableFuture.supplyAsync(() -> {
             Platform.runLater(() -> loadingIndicatorVisible.set(true));
-
-            // 1. Fetch metadata
-            try (Requester requester = new Requester()) {
-                return requester.requestModInfo(modName);
-            } catch (IOException | InterruptedException e) {
-                log.severe(e.toString());
-                App.showError(e);
-                return null;
-            }
+            return fetchModInfo(modName);
         }).thenCompose(modInfo -> {
-            // 2. Maybe ask for a language (UI step)
+            // Maybe ask for a language (UI step)
             if (modInfo.isMultilingual()) {
                 CompletableFuture<ContentLanguage> langFuture = new CompletableFuture<>();
                 Platform.runLater(() -> {
@@ -159,96 +149,141 @@ public class GroRepositoryController extends BaseController<DataModel> {
                     }
                     langFuture.complete(language);
                 });
-                return langFuture.thenApply(lang -> {
-                    try (Requester requester = new Requester()) {
-                        URI downloadURI = requester.requestDownloadURI(modInfo.getId(), lang);
-                        return new DownloadPrep(modInfo, downloadURI);
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                return langFuture.thenApply(lang -> fetchDownloadInfo(modInfo, lang));
             } else {
-                return CompletableFuture.supplyAsync(() -> {
-                    try (Requester requester = new Requester()) {
-                        URI downloadURI = requester.requestDownloadURI(modInfo.getId(), ContentLanguage.DEFAULT_OR_RU);
-                        return new DownloadPrep(modInfo, downloadURI);
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                return CompletableFuture.supplyAsync(() -> fetchDownloadInfo(modInfo, ContentLanguage.DEFAULT_OR_RU));
             }
-        }).thenAccept(prep -> {
-            // 3. Download file
-            // Download file via task and add to queue
-            Downloader downloader = new Downloader(prep.modInfo, prep.fileUri, TMP_DONWLOADS);
-            downloader.setUpdateIntervalMillis(1000L);
-            downloader.setOnSucceeded((workerStateEvent -> {
-                try {
-                    ContentModel contentModel = downloader.get();
-                    if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
+        }).thenAccept(downloadInfo -> {
+            // Validate before download
+            if (!validateForDownload(downloadInfo)) {
+                resetBrowser();
+                return;
+            }
+
+            if (Files.exists(Path.of(getConfiguration().getDirectoryDownloads(), downloadInfo.fileName))) {
+                CompletableFuture<Boolean> choiceFuture = new CompletableFuture<>();
+                Platform.runLater(() -> {
+                    String text = "File '" + downloadInfo.fileName + "' already exists on disk. Add to library?";
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text, ButtonType.YES, ButtonType.NO);
+                    alert.showAndWait();
+
+                    choiceFuture.complete(alert.getResult() == ButtonType.YES);
+                });
+                choiceFuture.thenApply(choice -> {
+                    resetBrowser();
+                    if (choice) {
+                        ContentModel contentModel = new ContentModel().fromModInfo(downloadInfo.modInfo);
+                        contentModel.setDownloadedFile(new ContentFile(Path.of(getConfiguration().getDirectoryDownloads(), downloadInfo.fileName)));
+                        contentModel.setDownloadedFileName(downloadInfo.fileName);
                         FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
                         getModel().getContent().add(contentModel);
                     }
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-
-                if (getConfiguration().isAutoClearFinishedDownloads()) {
-                    downloadTaskView.getTasks().remove(downloader);
-                }
-            }));
-            downloader.setOnFailed((workerStateEvent -> {
-                log.severe(workerStateEvent.getSource().getException().toString());
-            }));
-            activeDownloads.add(downloader);
-            Platform.runLater(() -> {
-                downloadTaskView.getTasks().add(downloader);
-                setStopDownloadButtonDisabled(false);
-
-                browser.get().load(lastLocation);
-                loadingIndicatorVisible.set(false);
-            });
-
-            executorService.submit(downloader);
+                    return null;
+                });
+            } else if (downloadInfo != null) {
+                startDownload(downloadInfo);
+            } else {
+                resetBrowser();
+            }
         }).exceptionally(ex -> {
             Platform.runLater(() -> {
-                loadingIndicatorVisible.set(false);
+                resetBrowser();
                 App.showError((Exception) ex);
             });
             return null;
         });
     }
 
+    private void resetBrowser() {
+        loadingIndicatorVisible.set(false);
+        Platform.runLater(() -> browser.get().load(lastLocation));
+    }
+
+    private ModInfo fetchModInfo(String modName) {
+        try (Requester requester = new Requester()) {
+            return requester.requestModInfo(modName);
+        } catch (IOException | InterruptedException e) {
+            log.severe(e.toString());
+            App.showError(e);
+            return null;
+        }
+    }
+
+    private DownloadInfo fetchDownloadInfo(ModInfo modInfo, ContentLanguage lang) {
+        try (Requester requester = new Requester()) {
+            URI downloadURI = requester.requestDownloadURI(modInfo.getId(), lang);
+            Requester.FileInfo fileInfo = requester.requestFileInfo(downloadURI);
+
+            return new DownloadInfo(modInfo, downloadURI, fileInfo.getFileName());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void startDownload(DownloadInfo downloadInfo) {
+        // Download file via task and add to queue
+        Downloader downloader = new Downloader(downloadInfo.modInfo, downloadInfo.fileUri, TMP_DONWLOADS);
+        downloader.setUpdateIntervalMillis(1000L);
+        downloader.setOnSucceeded((workerStateEvent -> {
+            try {
+                ContentModel contentModel = downloader.get();
+                if (Files.exists(Path.of(contentModel.getDownloadedFile().getAbsolutePath()))) {
+                    FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
+                    getModel().getContent().add(contentModel);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (getConfiguration().isAutoClearFinishedDownloads()) {
+                downloadTaskView.getTasks().remove(downloader);
+            }
+            activeDownloads.remove(downloadInfo.fileName);
+        }));
+        downloader.setOnFailed((workerStateEvent -> {
+            log.severe(workerStateEvent.getSource().getException().toString());
+            activeDownloads.remove(downloadInfo.fileName);
+        }));
+        activeDownloads.put(downloadInfo.fileName, downloader);
+        Platform.runLater(() -> {
+            downloadTaskView.getTasks().add(downloader);
+            setStopDownloadButtonDisabled(false);
+
+            resetBrowser();
+        });
+
+        executorService.submit(downloader);
+    }
+
     /**
      * Check database or active downloads for the presence of the same mod via metadata before starting a download.
      *
-     * @param modInfo
+     * @param downloadInfo
      * @return
      */
-    private boolean validateForDownload(ModInfo modInfo) {
-        if (activeDownloads.stream()
-                .anyMatch(downloader ->
-                        downloader.getModInfo().getTitle().equals(modInfo.getTitle())
-                                && downloader.isRunning())) {
-            log.warning("Content '" + modInfo.getTitle() + "' already in download list.");
-            new Alert(Alert.AlertType.WARNING, "File already downloading!").show();
+    private boolean validateForDownload(DownloadInfo downloadInfo) {
+        // we don't support skins or resources for simplicity
+        if (downloadInfo.modInfo.getType().ordinal() >= Type.SKIN.ordinal()) {
+            Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, "Content type not supported: " + downloadInfo.modInfo.getType().getName()).show());
+            return false;
+        }
+
+        if (activeDownloads.keySet().stream()
+                .anyMatch(fileName -> fileName.equals(downloadInfo.fileName))) {
+            log.warning("Content '" + downloadInfo.modInfo.getTitle() + "' already in download list.");
+            Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, "File already downloading!").show());
             return false;
         }
 
         // check existence in model
-        ModInfo finalModInfo = modInfo;
+        ModInfo finalModInfo = downloadInfo.modInfo;
         if (getModel().getContent().stream().anyMatch(content ->
                 content.getName().equals(finalModInfo.getTitle()))) {
-            log.warning("Content '" + modInfo.getTitle() + "' already in download list.");
-            new Alert(Alert.AlertType.INFORMATION, "File already in library!").show();
+            log.warning("Content '" + downloadInfo.modInfo.getTitle() + "' already in download list.");
+            Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, "File already in library!").show());
             return false;
         }
 
-        // we don't support skins or resources for simplicity
-        if (modInfo.getType().ordinal() >= Type.SKIN.ordinal()) {
-            new Alert(Alert.AlertType.WARNING, "Content type not supported: " + modInfo.getType().getName()).show();
-            return false;
-        }
         return true;
     }
 
@@ -319,7 +354,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     @FXML
     public void onClearDownloadList() {
-        for (Downloader downloader : activeDownloads.stream().filter(FutureTask::isDone).toList()) {
+        for (Downloader downloader : activeDownloads.values().stream().filter(FutureTask::isDone).toList()) {
             downloadTaskView.getTasks().remove(downloader);
         }
     }
@@ -347,7 +382,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     @FXML
     public void onStopDownloads(ActionEvent event) {
-        for (Downloader downloader : activeDownloads) {
+        for (Downloader downloader : activeDownloads.values()) {
             downloader.cancel(true);
         }
     }
@@ -357,7 +392,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     @FXML
     public void onPauseDownloads(ActionEvent event) {
         pauseToggle = !pauseToggle;
-        for (var download : activeDownloads) {
+        for (var download : activeDownloads.values()) {
             download.setPause(pauseToggle);
         }
     }

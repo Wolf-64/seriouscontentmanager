@@ -120,7 +120,7 @@ public class PrimaryController extends BaseController<DataModel> {
         setModel(new DataModel());
 
         for (ContentModel contentModel : ContentRepository.getInstance().findAll()) {
-            //contentModel.completedProperty().addListener(getListItemListener(contentModel));
+            contentModel.setupListener();
             getModel().getContent().add(contentModel);
         }
 

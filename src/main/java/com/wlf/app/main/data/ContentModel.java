@@ -64,6 +64,11 @@ public class ContentModel {
     private Long id;
 
     public ContentModel() {
+
+    }
+
+    /** Should be called after object initialization and after initial load to receive update without causing persistence issues. */
+    public void setupListener() {
         // set completed date to "now" every time the box is checked
         completedProperty().addListener(((observableValue, aBoolean, t1) -> {
             if (t1) {

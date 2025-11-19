@@ -14,6 +14,10 @@ public class ContentFile extends File {
         super(pathname);
     }
 
+    public ContentFile(Path path) {
+        super(path.toAbsolutePath().toString());
+    }
+
     public ContentModel analyzeContent() {
         throw new UnsupportedOperationException("Not implemented.");
     }

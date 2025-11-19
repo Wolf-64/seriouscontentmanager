@@ -4,6 +4,8 @@
         <class>com.wlf.app.main.data.ContentEntity</class>
         <class>com.wlf.common.util.LocalDateConverter</class>
         <class>com.wlf.common.util.LocalDateTimeConverter</class>
+        <class>com.wlf.common.util.FileConverter</class>
+        <class>com.wlf.common.util.FileListConverter</class>
         <properties>
             <property name="eclipselink.weaving" value="false"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:files.db"/>
