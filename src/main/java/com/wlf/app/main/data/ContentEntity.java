@@ -58,6 +58,10 @@ public class ContentEntity {
     private String version;
     /** Total file size of the content (gro or zip) */
     private Long size;
+    /** Language of the map/mod */
+    private ContentLanguage language;
+    /** Author of the map/mod */
+    private String author;
 
     /** GRO Repository file/mod id */
     private String repoId;

@@ -1,4 +1,4 @@
-package com.wlf.app.main.data;
+package com.wlf.app.main.net;
 
 public enum AuthorType {
     ORIGINAL,

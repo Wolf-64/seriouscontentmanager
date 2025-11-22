@@ -55,6 +55,10 @@ public class ContentModel {
     private final StringProperty version = new SimpleStringProperty();
     /** Total file size of the content (gro or zip) */
     private final LongProperty size = new SimpleLongProperty();
+    /** Language of the map/mod */
+    private final ObjectProperty<ContentLanguage> language = new SimpleObjectProperty<>();
+    /** Author of the map/mod */
+    private final StringProperty author = new SimpleStringProperty();
 
     /** GRO Repository file/mod id */
     @Getter
@@ -345,5 +349,29 @@ public class ContentModel {
 
     public void setDateLastPlayed(LocalDateTime dateLastPlayed) {
         this.dateLastPlayed.set(dateLastPlayed);
+    }
+
+    public ContentLanguage getLanguage() {
+        return language.get();
+    }
+
+    public ObjectProperty<ContentLanguage> languageProperty() {
+        return language;
+    }
+
+    public void setLanguage(ContentLanguage language) {
+        this.language.set(language);
+    }
+
+    public String getAuthor() {
+        return author.get();
+    }
+
+    public StringProperty authorProperty() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author.set(author);
     }
 }

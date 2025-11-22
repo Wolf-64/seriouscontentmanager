@@ -38,8 +38,8 @@ module seriouscontentmanager {
     opens com.wlf.app to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.app.main.data;
-    opens com.wlf.app.main.io to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
-    opens com.wlf.app.main.net to com.fasterxml.jackson.databind, javafx.fxml, javafx.graphics;
     opens com.wlf.common.util;
+    opens com.wlf.app.main.net;
+    opens com.wlf.app.main.io;
 
 }

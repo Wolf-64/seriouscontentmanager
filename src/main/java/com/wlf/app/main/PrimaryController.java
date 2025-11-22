@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.main.net.GroRepositoryController;
 import com.wlf.app.preferences.Config;
@@ -255,8 +256,8 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onPlaySingleMap(ActionEvent event) {
-        FileHandler.createTempMod(currentSelection.get());
         try {
+            FileHandler.createTempMod(currentSelection.get());
             Task<Integer> task = new Task<>() {
                 @Override
                 protected Integer call() throws Exception {
@@ -290,6 +291,7 @@ public class PrimaryController extends BaseController<DataModel> {
             new Thread(task).start();
         } catch (Exception e) {
             log.severe(e.toString());
+            App.showError(e);
         }
     }
 
