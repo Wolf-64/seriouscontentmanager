@@ -8,15 +8,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
+@Slf4j
 public class ContentModel {
-    public static final Logger log = Logger.getLogger(ContentModel.class.getSimpleName());
-
     private static final Config config = Config.getInstance();
 
     /** Name of the map/mod/character model */
@@ -59,6 +59,7 @@ public class ContentModel {
     private final ObjectProperty<ContentLanguage> language = new SimpleObjectProperty<>();
     /** Author of the map/mod */
     private final StringProperty author = new SimpleStringProperty();
+    private final BooleanProperty dllUsage = new SimpleBooleanProperty();
 
     /** GRO Repository file/mod id */
     @Getter
@@ -373,5 +374,17 @@ public class ContentModel {
 
     public void setAuthor(String author) {
         this.author.set(author);
+    }
+
+    public boolean isDllUsage() {
+        return dllUsage.get();
+    }
+
+    public BooleanProperty dllUsageProperty() {
+        return dllUsage;
+    }
+
+    public void setDllUsage(boolean dllUsage) {
+        this.dllUsage.set(dllUsage);
     }
 }

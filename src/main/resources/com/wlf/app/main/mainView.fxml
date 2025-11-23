@@ -155,7 +155,7 @@
                                 <Label text="%filter.date.to" />
                                 <DatePicker />
                             </HBox>
-                            <Button mnemonicParsing="false" onAction="#rescanDownloadDir" prefWidth="250.0" text="%actions.rescanDownloads" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                            <Button mnemonicParsing="false" onAction="#onRescanDownloadDir" prefWidth="250.0" text="%actions.rescanDownloads" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                             <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="250.0" text="%actions.playTFE" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
                                 <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -171,6 +171,7 @@
                                 </graphic>
                             </Button>
                             <Rating GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                     <Button mnemonicParsing="false" onAction="#onImportFile" prefWidth="250.0" text="%actions.importFile" GridPane.columnIndex="4" GridPane.rowIndex="4" />
                         </GridPane>
                     </top>
                     <center>
@@ -180,7 +181,8 @@
                            <content>
                                     <TableView fx:id="table" editable="true" items="${controller.model.content}" tableMenuButtonVisible="true">
                                         <columns>
-                                            <TableColumn maxWidth="-1.0" minWidth="200.0" prefWidth="246.0" text="%table.name">
+                                    <TableColumn fx:id="actionColumn" prefWidth="32.0" />
+                                            <TableColumn minWidth="200.0" prefWidth="243.0" text="%table.name">
                                                 <cellValueFactory>
                                                     <PropertyValueFactory property="name" />
                                                 </cellValueFactory>

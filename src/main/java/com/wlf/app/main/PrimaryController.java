@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
@@ -20,10 +18,10 @@ import com.wlf.app.main.data.*;
 import com.wlf.app.main.io.FileHandler;
 import com.wlf.app.main.io.GameHandler;
 
+import com.wlf.common.util.FileDialogues;
 import com.wlf.common.util.LocalDateConverter;
 import com.wlf.common.util.LocalDateTimeConverter;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
@@ -31,12 +29,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.FileChooser;
 import javafx.stage.WindowEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.slf4j.event.Level;
 
+@Slf4j
 public class PrimaryController extends BaseController<DataModel> {
-    static Logger log = Logger.getLogger(PrimaryController.class.getSimpleName());
-
     @FXML
     private final ObjectProperty<Config> config = new SimpleObjectProperty<>(Config.getInstance());
 
@@ -51,8 +51,6 @@ public class PrimaryController extends BaseController<DataModel> {
     // --- Filter ---
     @FXML
     private TextField tfNameFilter;
-    @FXML
-    private RadioButton rbTfe, rbTse, rbMaps, rbMods, rbSp, rbCoop, rbDm;
     @FXML
     private CheckBox cbInstalled, cbCompleted;
 
@@ -164,29 +162,31 @@ public class PrimaryController extends BaseController<DataModel> {
         table.getSelectionModel().selectedItemProperty().addListener(((observable, oldVal, newVal) -> {
             currentSelection.set(newVal);
         }));
-
-        // deploy function in button column or per right/double click?
-        /*
-        actionColumn.setCellFactory(param -> {
-            ButtonCellFactory<FileEntry> factory = new ButtonCellFactory<>();
-            factory.setButtonText("▶\uFE0F");
-            factory.setActionConsumer(item -> {
-                log.info(item.getName());
-            });
-
-            return factory.call(param);
-        });
-         */
-    }
-
-
-    private InvalidationListener getListItemListener(ContentModel object) {
-        return observable -> ContentRepository.getInstance().update(object);
     }
 
     @FXML
-    public void rescanDownloadDir(ActionEvent event) {
+    public void onRescanDownloadDir(ActionEvent event) {
         // TODO
+    }
+
+    @FXML
+    public void onImportFile(ActionEvent event) {
+        File file = FileDialogues.chooseFile(Path.of(System.getProperty("user.home"))
+                , new FileChooser.ExtensionFilter("All files", "*.*")
+                , new FileChooser.ExtensionFilter("Group files", "*.gro")
+                , new FileChooser.ExtensionFilter("ZIP archives", "*.zip"));
+
+        if (file != null) {
+            ContentFile contentFile = new ContentFile(file.toPath());
+            try {
+                ContentModel model = contentFile.analyzeContent();
+                FileHandler.registerNewFile(model, model.getDownloadedFile().getAbsolutePath());
+                getModel().getContent().add(model);
+            } catch (IOException e) {
+                log.error("Error analyzing file content during import.", e);
+                App.showError(e);
+            }
+        }
     }
 
     @FXML
@@ -239,13 +239,13 @@ public class PrimaryController extends BaseController<DataModel> {
 
     private void deploy(Game game) {
         Path modPath = Path.of(config.get().getDirectoryDownloads(), currentSelection.get().getDownloadedFileName());
-        log.log(Level.INFO, "Deploying {0}...", modPath);
+        log.atLevel(Level.INFO).log("Deploying {0}...", modPath);
         ;
         if (Files.exists(modPath)) {
             // check file type
             if (currentSelection.get().isGro()) {
                 Path installPath = Path.of(game.getGameFolder() + "/" + currentSelection.get().getDownloadedFileName());
-                log.log(Level.INFO, "...to {0}", installPath);
+                log.atLevel(Level.INFO).log("...to {0}", installPath);
 
                 FileHandler.installContent(currentSelection.get());
                 currentSelection.get().setInstalled(true);
@@ -256,8 +256,12 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onPlaySingleMap(ActionEvent event) {
+        quickPlay(currentSelection.get());
+    }
+
+    public void quickPlay(ContentModel model) {
         try {
-            FileHandler.createTempMod(currentSelection.get());
+            FileHandler.createTempMod(model);
             Task<Integer> task = new Task<>() {
                 @Override
                 protected Integer call() throws Exception {
@@ -273,7 +277,7 @@ public class PrimaryController extends BaseController<DataModel> {
                 }
             };
             task.setOnFailed((workerStateEvent) -> {
-                log.severe(workerStateEvent.getSource().toString());
+                log.error(workerStateEvent.getSource().toString());
             });
             task.setOnSucceeded((workerStateEvent) -> {
                 try {
@@ -290,7 +294,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
             new Thread(task).start();
         } catch (Exception e) {
-            log.severe(e.toString());
+            log.error(e.toString());
             App.showError(e);
         }
     }
@@ -312,7 +316,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
     private void remove(Game game) {
         String modPath = game.getGameFolder() + "/" + currentSelection.get().getDownloadedFileName();
-        log.log(Level.INFO, "Removing {0}...", modPath);
+        log.atLevel(Level.INFO).log("Removing {0}...", modPath);
         File mod = new File(modPath);
         if (mod.exists()) {
             // check file type
