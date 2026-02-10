@@ -56,7 +56,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private String lastLocation;
 
     private final String GRO_REPOSITORY_URL = "https://grorepository.ru/mods";
-    private final String GRO_MODPAGE_URL = "https://grorepository.ru/mod/";
+    private final String GRO_MODPAGE_URL = "^https://grorepository\\.ru/[^/]+/mod/.*$";
     private final String ABOUT_BLANK = "about:blank";
     private final String TMP_DONWLOADS = "tmpDownload";
 
@@ -111,7 +111,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 lastLocation = browser.get().getHistory().getEntries().getLast().getUrl();
                 // after clicking on download we'll just get a white screen
                 if (ABOUT_BLANK.equals(browser.get().getLocation())
-                        && lastLocation.startsWith(GRO_MODPAGE_URL)) {
+                        && lastLocation.matches(GRO_MODPAGE_URL)) {
                     onDownloadRequestReceived();
                 }
             } catch (NoSuchElementException ignored) {
