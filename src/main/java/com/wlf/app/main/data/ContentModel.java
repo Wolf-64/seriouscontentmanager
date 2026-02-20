@@ -4,16 +4,16 @@ import com.wlf.app.main.net.ModInfo;
 import com.wlf.app.main.net.Requester;
 import com.wlf.app.preferences.Config;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class ContentModel {
@@ -43,12 +43,8 @@ public class ContentModel {
     private final ObjectProperty<LocalDateTime> dateLastPlayed = new SimpleObjectProperty<>();
     /** The rating that has been given to the content */
     private final DoubleProperty rating = new SimpleDoubleProperty();
-    /** Absolute path of the content's file (gro or zip) after download */
-    private final ObjectProperty<ContentFile> downloadedFile = new SimpleObjectProperty<>();
     /** Absolute path of the content's file (gro) after installing */
     private final ObjectProperty<File> installFileLocation = new SimpleObjectProperty<>();
-    /** All files that have been extracted from zipped content */
-    private final ObservableList<File> installedFiles = FXCollections.observableArrayList();
     /** Either the URL this content has been downloaded from, or 'local' if it has been added manually */
     private final StringProperty origin = new SimpleStringProperty();
     /** The content's version */
@@ -67,6 +63,17 @@ public class ContentModel {
     /** Database ID */
     @Getter @Setter
     private Long id;
+    /**
+     * Name of the .des file to start with exe arguments
+     */
+    @Getter @Setter
+    private String modNameInternal;
+    /** Absolute path of the content's file (gro or zip) after download */
+    @Setter
+    private ContentFile downloadedFile;
+    /** All files that have been extracted from zipped content */
+    @Getter
+    private final List<File> installedFiles = new ArrayList<>();
 
     public ContentModel() {
 
@@ -138,11 +145,11 @@ public class ContentModel {
     }
 
     public boolean isGro() {
-        return downloadedFile.get() instanceof GroFile;
+        return downloadedFile instanceof GroFile;
     }
 
     public boolean isZip() {
-        return downloadedFile.get() instanceof ZipFile;
+        return downloadedFile instanceof ZipFile;
     }
 
     // ---------------------------- FX Boilerplate --------------------------------
@@ -172,15 +179,16 @@ public class ContentModel {
     }
 
     public ContentFile getDownloadedFile() {
-        return downloadedFile.get();
-    }
-
-    public ObjectProperty<ContentFile> downloadedFileProperty() {
+        if (downloadedFile == null && downloadedFileName.get() != null) {
+            if (downloadedFileName.get().endsWith(".zip")) {
+                this.downloadedFile = new ZipFile(Path.of(config.getDirectoryDownloads(), downloadedFileName.get()));
+            } else if (downloadedFileName.get().endsWith(".gro")) {
+                this.downloadedFile = new GroFile(Path.of(config.getDirectoryDownloads(), downloadedFileName.get()));
+            } else {
+                this.downloadedFile = new ContentFile(Path.of(config.getDirectoryDownloads(), downloadedFileName.get()));
+            }
+        }
         return downloadedFile;
-    }
-
-    public void setDownloadedFile(ContentFile downloadedFile) {
-        this.downloadedFile.set(downloadedFile);
     }
 
     public String getVersion() {

@@ -260,17 +260,90 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
     public void quickPlay(ContentModel model) {
+        Task<Integer> task = null;
+
+        log.info("Staring game...");
+        // install mods directly and start game with mod
+        if (model.getType() == Type.MOD) {
+            task = new Task<>() {
+                @Override
+                protected Integer call() throws Exception {
+                    FileHandler.installMod(model);
+                    DefaultExecuteResultHandler resultHandler = null;
+                    if (false /*config.get().isUseSteamRuntime()*/) {
+                        resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
+                    } else {
+                        resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
+                    }
+                    resultHandler.waitFor();
+                    return resultHandler.getExitValue();
+                }
+            };
+            Task<Integer> finalTask = task;
+            task.setOnSucceeded((workerStateEvent) -> {
+                try {
+                    // this exit code standard?
+                    if (finalTask.get() == -559038737) {
+
+                    }
+                    log.info("Game has been quit. (Exit code " + finalTask.get() + ")");
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+                FileHandler.removeModContent(model);
+            });
+        } else {
+            try {
+                FileHandler.createTempMod(model);
+                task = new Task<>() {
+                    @Override
+                    protected Integer call() throws Exception {
+                        DefaultExecuteResultHandler resultHandler = null;
+                        if (false /*config.get().isUseSteamRuntime()*/) {
+                            resultHandler = GameHandler.startGameWithSteam(currentSelection.get().getGame());
+                        } else {
+                            resultHandler = GameHandler.startGameExe(currentSelection.get().getGame());
+                        }
+                        resultHandler.waitFor();
+                        return resultHandler.getExitValue();
+                    }
+                };
+                Task<Integer> finalTask1 = task;
+                task.setOnSucceeded((workerStateEvent) -> {
+                    try {
+                        // this exit code standard?
+                        if (finalTask1.get() == -559038737) {
+
+                        }
+                        log.info("Game has been quit. (Exit code " + finalTask1.get() + ")");
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    FileHandler.removeTempMod(currentSelection.get());
+                });
+            } catch (Exception e) {
+                log.error(e.toString());
+                App.showError(e);
+            }
+
+            task.setOnFailed((workerStateEvent) -> {
+                log.error(workerStateEvent.getSource().toString());
+            });
+        }
+        new Thread(task).start();
+    }
+
+    private void startGame(ContentModel content) {
         try {
-            FileHandler.createTempMod(model);
             Task<Integer> task = new Task<>() {
                 @Override
                 protected Integer call() throws Exception {
                     log.info("Staring game...");
                     DefaultExecuteResultHandler resultHandler = null;
                     if (false /*config.get().isUseSteamRuntime()*/) {
-                        resultHandler = GameHandler.startGameWithSteam(currentSelection.get().getGame());
+                        resultHandler = GameHandler.startGameWithSteam(content.getGame());
                     } else {
-                        resultHandler = GameHandler.startGameExe(currentSelection.get().getGame());
+                        resultHandler = GameHandler.startGameExe(content.getGame());
                     }
                     resultHandler.waitFor();
                     return resultHandler.getExitValue();
@@ -289,7 +362,7 @@ public class PrimaryController extends BaseController<DataModel> {
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
-                FileHandler.removeTempMod(currentSelection.get());
+                FileHandler.removeTempMod(content);
             });
 
             new Thread(task).start();

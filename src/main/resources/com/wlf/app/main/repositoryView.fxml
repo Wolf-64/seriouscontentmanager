@@ -18,7 +18,7 @@
 
 <BorderPane prefHeight="584.0" prefWidth="1077.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.net.GroRepositoryController">
     <center>
-        <SplitPane dividerPositions="0.741307371349096" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.741307371349096" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
             <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                 <center>
                     <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Gro Repository" BorderPane.alignment="TOP_CENTER">

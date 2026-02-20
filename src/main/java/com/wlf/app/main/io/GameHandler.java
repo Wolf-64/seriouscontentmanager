@@ -11,6 +11,10 @@ public class GameHandler {
     private static final Logger log = Logger.getLogger(GameHandler.class.getSimpleName());
 
     public static DefaultExecuteResultHandler startGameExe(Game game) throws IOException {
+        return startGameWithModExe(game, "SeriousContentManager");
+    }
+
+    public static DefaultExecuteResultHandler startGameWithModExe(Game game, String modName) throws IOException {
         String path;
 
         path = game.getGameFolder() + "/Bin/SeriousSam.exe";
@@ -18,7 +22,7 @@ public class GameHandler {
         CommandLine cmdLine = new CommandLine(path);
 
         cmdLine.addArgument("+game");
-        cmdLine.addArgument("SeriousContentManager");
+        cmdLine.addArgument(modName);
 
         log.info("Running: " + cmdLine);
 

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -70,6 +71,29 @@ public class ContentFile extends File {
         } else {
             return null;
         }
+    }
+
+    public String findModName() throws IOException {
+        AtomicReference<String> modName = new AtomicReference<>();
+        try (var fs = FileSystems.newFileSystem(toPath(), Collections.emptyMap())) {
+            fs.getRootDirectories()
+                    .forEach(root -> {
+                        try (Stream<Path> stream = Files.walk(root)) {
+                            stream.forEach(des -> {
+                                if (modName.get() == null && des.toString().endsWith(".des")) {
+                                    modName.set(des.getFileName().toString().replace(".des", ""));
+                                }
+                            });
+                        } catch (IOException e) {
+                            log.error("Error reading content file.", e);
+                        }
+                    });
+        } catch (IOException e) {
+            log.error("Error reading content file.", e);
+            throw e;
+        }
+
+        return modName.get();
     }
 
     private void inspectArchive(ContentModel model) throws IOException {

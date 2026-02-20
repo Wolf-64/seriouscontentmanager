@@ -12,4 +12,8 @@ public class GroFile extends ContentFile {
     public GroFile(String pathname) {
         super(pathname);
     }
+
+    public GroFile(Path pathname) {
+        super(pathname);
+    }
 }

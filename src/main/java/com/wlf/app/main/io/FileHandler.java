@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -103,7 +105,12 @@ public class FileHandler {
     public static void installContent(ContentModel contentModel) {
         try {
             Path sourcePath = contentModel.getDownloadedFile().toPath();
-            Path targetPath = Path.of(contentModel.getGame().getGameFolder(), contentModel.getDownloadedFileName());
+            Path targetPath = null;
+            if (contentModel.getType() == Type.MOD) {
+                targetPath = Path.of(Objects.requireNonNull(contentModel.getGame().getGameFolder()), "Mods", contentModel.getDownloadedFileName());
+            } else {
+                targetPath = Path.of(Objects.requireNonNull(contentModel.getGame().getGameFolder()), contentModel.getDownloadedFileName());
+            }
             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
             contentModel.setInstalled(true);
 
@@ -120,6 +127,21 @@ public class FileHandler {
             Files.copy(sourcePath, targetLocation, StandardCopyOption.REPLACE_EXISTING);
             contentModel.setInstalled(true);
             contentModel.setInstallFileLocation(targetLocation.toFile());
+
+            // register new deployment on DB
+            ContentRepository.getInstance().update(contentModel);
+        } catch (IOException e) {
+            log.warning(e.toString());
+        }
+    }
+
+    public static void installMod(ContentModel contentModel) {
+        try {
+            Path targetPath = Path.of(Objects.requireNonNull(contentModel.getGame().getGameFolder()),"Mods");
+            List<File> files = ((ZipFile) contentModel.getDownloadedFile()).unpack(targetPath);
+            contentModel.getInstalledFiles().addAll(files);
+            contentModel.setInstalled(true);
+            contentModel.setInstallFileLocation(targetPath.toFile());
 
             // register new deployment on DB
             ContentRepository.getInstance().update(contentModel);
@@ -275,6 +297,26 @@ public class FileHandler {
             ContentRepository.getInstance().update(contentModel);
         } catch (IOException e) {
             log.warning(e.toString());
+        }
+    }
+
+    public static void removeModContent(ContentModel contentModel) {
+        try {
+            for (File modFile : contentModel.getInstalledFiles()) {
+                if (modFile.isFile()) {
+                    Files.deleteIfExists(modFile.toPath());
+                } else if (modFile.isDirectory()) {
+                    try (Stream<Path> paths = Files.walk(modFile.toPath())) {
+                        paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                        contentModel.setInstalled(false);
+                        ContentRepository.getInstance().update(contentModel);
+                    }
+                }
+            }
+            contentModel.getInstalledFiles().clear();
+            ContentRepository.getInstance().update(contentModel);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
