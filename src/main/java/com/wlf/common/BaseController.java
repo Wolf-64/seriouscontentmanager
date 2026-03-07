@@ -4,7 +4,6 @@ import com.wlf.app.preferences.Config;
 import com.wlf.common.controls.OverlayStage;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

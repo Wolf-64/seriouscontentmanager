@@ -83,6 +83,7 @@ public class PrimaryController extends BaseController<DataModel> {
     private final BooleanProperty installMultiVisible = new SimpleBooleanProperty();
     private final BooleanProperty removeDisabled = new SimpleBooleanProperty();
     private final BooleanProperty removeVisible = new SimpleBooleanProperty(true);
+    private final BooleanProperty loadingIndicatorVisible = new SimpleBooleanProperty(false);
 
     private final ObjectProperty<ContentModel> currentSelection = new SimpleObjectProperty<>();
     ChangeListener<Object> filterListener = ((observable, oldVal, newVal) -> {
@@ -170,17 +171,17 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onRescanDownloadDir(ActionEvent event) {
+        loadingIndicatorVisible.set(true);
         if (Files.isDirectory(Path.of(getConfig().getDirectoryDownloads()))) {
             File[] files = Path.of(getConfig().getDirectoryDownloads()).toFile().listFiles();
             if (files != null) {
-                Task<Void> scanTask = new Task<Void>() {
+                Task<Void> scanTask = new Task<>() {
                     @Override
-                    protected Void call() throws Exception {
+                    protected Void call() {
                         for (int i = 0; i < files.length; i++) {
                             File downloadedFile = files[i];
                             int progress = i;
-                            Platform.runLater(() -> statusBar.setText("Scanning " + downloadedFile.getName() + "..."));
-                            Platform.runLater(() -> statusBar.setProgress((double) files.length / progress));
+                            Platform.runLater(() -> setStatusBarContent("Scanning " + downloadedFile.getName() + "...", (double) files.length / progress));
                             if (downloadedFile.getName().endsWith(".gro") || downloadedFile.getName().endsWith(".zip")) {
                                 importFile(downloadedFile.toPath());
                             }
@@ -191,13 +192,10 @@ public class PrimaryController extends BaseController<DataModel> {
                 };
                 scanTask.setOnScheduled((_) -> statusBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS));
                 scanTask.setOnSucceeded((_) -> {
-                    statusBar.setProgress(0);
-                    statusBar.setText("Done!");
+                    resetStatusBar();
+                    loadingIndicatorVisible.set(false);
                 });
-                scanTask.setOnFailed((wse) -> {
-                    statusBar.setProgress(0);
-                    statusBar.setText("Error scanning for files! " + wse.getSource().getException().getLocalizedMessage());
-                });
+                scanTask.setOnFailed((wse) -> setStatusBarContent("Error scanning for files! " + wse.getSource().getException().getLocalizedMessage()));
                 new Thread(scanTask).start();
             }
         }
@@ -215,44 +213,15 @@ public class PrimaryController extends BaseController<DataModel> {
         }
     }
 
-    private void importFile(Path file) {
-        ContentFile contentFile = new ContentFile(file);
-        try {
-            ContentModel model = contentFile.analyzeContent();
-            FileHandler.registerNewFile(model, model.getDownloadedFile().getAbsolutePath());
-            getModel().getContent().add(model);
-        } catch (IOException e) {
-            log.error("Error analyzing file content during import.", e);
-            App.showError(e);
-        }
-    }
-
     @FXML
     public void onPlayTFE() {
-        try {
-            if (false /*config.get().isUseSteamRuntime()*/) {
-                GameHandler.startGameWithSteam(Game.TFE);
-            } else {
-                GameHandler.startGameExe(Game.TFE);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        runGame(Game.TFE, null);
     }
 
     @FXML
     public void onPlayTSE() {
-        try {
-            if (false /*config.get().isUseSteamRuntime()*/) {
-                GameHandler.startGameWithSteam(Game.TSE);
-            } else {
-                GameHandler.startGameExe(Game.TSE);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        runGame(Game.TSE, null);
     }
-
 
     @FXML
     public void onAbout(ActionEvent event) {
@@ -297,91 +266,34 @@ public class PrimaryController extends BaseController<DataModel> {
         quickPlay(currentSelection.get());
     }
 
+    @FXML
     public void quickPlay(ContentModel model) {
-        Task<Integer> task = null;
-
-        log.info("Staring game...");
-        // install mods directly and start game with mod
-        if (model.getType() == Type.MOD) {
-            task = new Task<>() {
-                @Override
-                protected Integer call() throws Exception {
-                    FileHandler.installMod(model);
-                    DefaultExecuteResultHandler resultHandler = null;
-                    if (false /*config.get().isUseSteamRuntime()*/) {
-                        resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
-                    } else {
-                        resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
-                    }
-                    resultHandler.waitFor();
-                    return resultHandler.getExitValue();
-                }
-            };
-            Task<Integer> finalTask = task;
-            task.setOnSucceeded((workerStateEvent) -> {
-                try {
-                    // this exit code standard?
-                    if (finalTask.get() == -559038737) {
-
-                    }
-                    log.info("Game has been quit. (Exit code " + finalTask.get() + ")");
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-                FileHandler.removeModContent(model);
-            });
-        } else {
-            try {
-                FileHandler.createTempMod(model);
-                task = new Task<>() {
-                    @Override
-                    protected Integer call() throws Exception {
-                        DefaultExecuteResultHandler resultHandler = null;
-                        if (false /*config.get().isUseSteamRuntime()*/) {
-                            resultHandler = GameHandler.startGameWithSteam(currentSelection.get().getGame());
-                        } else {
-                            resultHandler = GameHandler.startGameExe(currentSelection.get().getGame());
-                        }
-                        resultHandler.waitFor();
-                        return resultHandler.getExitValue();
-                    }
-                };
-                Task<Integer> finalTask1 = task;
-                task.setOnSucceeded((workerStateEvent) -> {
-                    try {
-                        // this exit code standard?
-                        if (finalTask1.get() == -559038737) {
-
-                        }
-                        log.info("Game has been quit. (Exit code " + finalTask1.get() + ")");
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                    FileHandler.removeTempMod(currentSelection.get());
-                });
-            } catch (Exception e) {
-                log.error(e.toString());
-                App.showError(e);
-            }
-
-            task.setOnFailed((workerStateEvent) -> {
-                log.error(workerStateEvent.getSource().toString());
-            });
-        }
-        new Thread(task).start();
+        startGameWithContent(model);
     }
 
-    private void startGame(ContentModel content) {
+    private void startGameWithContent(ContentModel content) {
+        log.info("Staring game...");
+        setStatusBarContent("Starting " + content.getGame().getName() + " for " + content.getName());
+        loadingIndicatorVisible.set(true);
         try {
             Task<Integer> task = new Task<>() {
                 @Override
                 protected Integer call() throws Exception {
-                    log.info("Staring game...");
                     DefaultExecuteResultHandler resultHandler = null;
-                    if (false /*config.get().isUseSteamRuntime()*/) {
-                        resultHandler = GameHandler.startGameWithSteam(content.getGame());
-                    } else {
-                        resultHandler = GameHandler.startGameExe(content.getGame());
+                    if (content.getType() == Type.MOD) {
+                        FileHandler.installMod(content);
+                        if (false /*config.get().isUseSteamRuntime()*/) {
+                            resultHandler = GameHandler.startGameWithModExe(content.getGame(), content.getDownloadedFile().findModName());
+                        } else {
+                            resultHandler = GameHandler.startGameWithModExe(content.getGame(), content.getDownloadedFile().findModName());
+                        }
+                    } else if (content.getType() == Type.MAP) {
+                        FileHandler.createTempMod(content);
+                        if (false /*config.get().isUseSteamRuntime()*/) {
+                            resultHandler = GameHandler.startGameWithSteam(content.getGame());
+                        } else {
+                            resultHandler = GameHandler.startGameExe(content.getGame());
+                        }
                     }
                     resultHandler.waitFor();
                     return resultHandler.getExitValue();
@@ -397,10 +309,16 @@ public class PrimaryController extends BaseController<DataModel> {
 
                     }
                     log.info("Game has been quit. (Exit code " + task.get() + ")");
+                    resetStatusBar();
+                    loadingIndicatorVisible.set(false);
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
-                FileHandler.removeTempMod(content);
+                if (content.getType() == Type.MAP) {
+                    FileHandler.removeTempMod(content);
+                } else if (content.getType() == Type.MOD) {
+                    FileHandler.removeModContent(content);
+                }
             });
 
             new Thread(task).start();
@@ -465,6 +383,60 @@ public class PrimaryController extends BaseController<DataModel> {
             ContentModel selection = currentSelection.get();
             menuItemInstall.setDisable(!selection.canInstall());
             menuItemRemove.setDisable(!selection.canRemove());
+        }
+    }
+
+    private DefaultExecuteResultHandler runGame(Game game, String modName) {
+        try {
+            if (modName != null) {
+                if (false /*config.get().isUseSteamRuntime()*/) {
+                    return GameHandler.startGameWithModExe(game, modName);
+                } else {
+                    return GameHandler.startGameExe(game);
+                }
+            } else {
+                if (false /*config.get().isUseSteamRuntime()*/) {
+                    return GameHandler.startGameWithSteam(game);
+                } else {
+                    return GameHandler.startGameExe(game);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private DefaultExecuteResultHandler runGame(ContentModel contentModel) {
+        return runGame(contentModel.getGame(), null);
+    }
+
+    private void resetStatusBar() {
+        setStatusBarContent("Ready");
+    }
+
+    private void setStatusBarContent(String text) {
+        setStatusBarContent(text, 0);
+    }
+
+    private void setStatusBarContent(String text, double progress) {
+        statusBar.setText(text);
+        statusBar.setProgress(progress);
+    }
+
+    private void importFile(Path file) {
+        ContentFile contentFile = new ContentFile(file);
+        try {
+            ContentModel model = contentFile.analyzeContent();
+            // check DB for present maps/mods
+            ContentEntity entity = ContentRepository.getInstance().findByFileName(file.getFileName().toString());
+            // only add it if it's not already in the DB
+            if (entity == null) {
+                FileHandler.registerNewFile(model, model.getDownloadedFile().getAbsolutePath());
+                getModel().getContent().add(model);
+            }
+        } catch (IOException e) {
+            log.error("Error analyzing file content during import.", e);
+            App.showError(e);
         }
     }
 
@@ -557,5 +529,17 @@ public class PrimaryController extends BaseController<DataModel> {
 
     public ObjectProperty<ContentModel> currentSelectionProperty() {
         return currentSelection;
+    }
+
+    public boolean isLoadingIndicatorVisible() {
+        return loadingIndicatorVisible.get();
+    }
+
+    public BooleanProperty loadingIndicatorVisibleProperty() {
+        return loadingIndicatorVisible;
+    }
+
+    public void setLoadingIndicatorVisible(boolean loadingIndicatorVisible) {
+        this.loadingIndicatorVisible.set(loadingIndicatorVisible);
     }
 }

@@ -16,6 +16,10 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "Mod")
+@NamedQuery(
+        name = "ContentEntity.findByFileName",
+        query = "SELECT e FROM ContentEntity e WHERE e.downloadedFileName = :name"
+)
 @Getter @Setter
 public class ContentEntity {
     /** Name of the map/mod/character model */

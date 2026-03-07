@@ -48,6 +48,15 @@ public class ContentRepository {
         });
     }
 
+    public ContentEntity findByFileName(String name) {
+        return executeAndReturn((em) -> em.createNamedQuery("ContentEntity.findByFileName", ContentEntity.class)
+                .setParameter("name", name)
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst()
+                .orElse(null));
+    }
+
     public List<ContentModel> filterByExample(TableFilter filter) {
         return executeAndReturn(em -> {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
