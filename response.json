@@ -1,0 +1,75 @@
+{
+  "authors" : [ {
+    "avatar" : "https://grorepository.ru/api/file/8143bdbd-dd35-44f3-8270-ff46b641f748",
+    "changedDate" : "2026-03-06T10:58:26.92",
+    "createdDate" : "2025-06-02T09:19:57.40142",
+    "description" : "Making maps and translations whenever I feel like it. Serious Engine is a fine piece of ancient software!",
+    "fields" : "{\"discord\": \"https://discord.gg/TpF7f996Y\"}",
+    "id" : 759,
+    "modAuthorType" : 0,
+    "name" : "Wolf",
+    "transliteratedName" : "wolf"
+  } ],
+  "changedDate" : "2026-01-20T12:59:25.781839",
+  "createdDate" : "2025-06-25T16:47:39.922629",
+  "description" : "i18n{\"en\":\"Part of Serious Sam Classics Discord server map jam #8 \\\"Key Hunters\\\".\\n\\nSam takes part in the Serious Game Show. In this episode, he'll have to face 3 challenges, collecting key items for each challenge to proceed to the next. Who or what will he face in the final challenge? Only one way to find out.\",\"ru\":\"Часть мап джема #8 \\\"Key Hunters\\\" на сервере Serious Sam Classics в дискорде.\\n\\nСэм принимает участие в Serious Game Show. В этом эпизоде, он столкнётся с трёмя испытаниям, в каждом из которых он должен будет найти ключ от следующего. С кем или с чем он столкнётся в финальном испытании? Есть только один способ это узнать.\"}",
+  "entries" : [ ],
+  "game" : 1,
+  "id" : 1479,
+  "links" : [ {
+    "originalFileName" : "SeriousGameShow.gro",
+    "size" : 79625202,
+    "sortOrder" : 0,
+    "type" : 0
+  } ],
+  "media" : [ {
+    "link" : "https://grorepository.ru/api/file/327ac71b-915e-44d3-a2fc-0d91c19232ae",
+    "originalFileName" : "serious_game_show_01.jpg",
+    "previewLink" : "https://grorepository.ru/api/file/d7a20ebc-e293-48eb-9af6-2340cb314755",
+    "size" : 557279,
+    "sortOrder" : 1,
+    "type" : 1
+  }, {
+    "link" : "https://grorepository.ru/api/file/46c75e4a-e835-49f5-9cbb-051b6e145015",
+    "originalFileName" : "serious_game_show_02.jpg",
+    "previewLink" : "https://grorepository.ru/api/file/467052a9-7c16-4c5d-a982-b4efb850d524",
+    "size" : 583938,
+    "sortOrder" : 2,
+    "type" : 1
+  }, {
+    "link" : "https://grorepository.ru/api/file/1c823569-92c7-4881-937d-da2728bb0ff9",
+    "originalFileName" : "serious_game_show_03.jpg",
+    "previewLink" : "https://grorepository.ru/api/file/076c96e7-a40b-4d7c-a41f-a9bff3017fa4",
+    "size" : 286091,
+    "sortOrder" : 3,
+    "type" : 1
+  }, {
+    "link" : "https://grorepository.ru/api/file/946f7c90-7cc6-4522-8cde-2f7445c1a60f",
+    "originalFileName" : "serious_game_show_04.jpg",
+    "previewLink" : "https://grorepository.ru/api/file/4083d098-c44a-469f-8cdb-a500876e7a03",
+    "size" : 703908,
+    "sortOrder" : 4,
+    "type" : 1
+  }, {
+    "link" : "https://grorepository.ru/api/file/290b7422-1da4-4561-9d14-50aeb982ed65",
+    "originalFileName" : "serious_game_show_05.jpg",
+    "previewLink" : "https://grorepository.ru/api/file/655f5903-1397-4b45-8ee3-9680d3ae1396",
+    "size" : 485815,
+    "sortOrder" : 5,
+    "type" : 1
+  }, {
+    "link" : "https://grorepository.ru/api/file/f5eb8aec-e064-474e-932e-a21025d49584",
+    "originalFileName" : "serious_game_show_06.jpg",
+    "previewLink" : "https://grorepository.ru/api/file/c652da7e-24c7-4de1-b3e8-5e3ac55c4572",
+    "size" : 500672,
+    "sortOrder" : 6,
+    "type" : 1
+  } ],
+  "originalCreatedDate" : "2025-06-16T00:00:00",
+  "relatedMods" : [ ],
+  "subcategory" : 2,
+  "tagIds" : [ 252, 1, 308, 307, 353 ],
+  "title" : "Serious Game Show",
+  "transliteratedTitle" : "serious-game-show",
+  "type" : 0
+}

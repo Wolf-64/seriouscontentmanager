@@ -54,6 +54,7 @@ public class ModInfo {
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Author {
         /** GroRepository content ID */
         private long id;
@@ -80,6 +81,7 @@ public class ModInfo {
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Link {
         /** Actual GroRepository content link. Only valid for media. Mod/map links will be requested separately */
         private String link;
@@ -94,5 +96,6 @@ public class ModInfo {
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Media extends Link { }
 }

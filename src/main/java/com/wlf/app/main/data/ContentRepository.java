@@ -61,6 +61,10 @@ public class ContentRepository {
                 try {
                     Property<?> field = (Property<?>) property.get(filter);
                     Object value = field.getValue();
+                    String fieldName = field.getName();
+                    if(fieldName.isBlank()) {
+                        fieldName = property.getName();
+                    }
 
                     if (value == null) {
                         continue;
@@ -68,26 +72,26 @@ public class ContentRepository {
 
                     if (value instanceof String s) {
                         if (!s.isBlank()) {
-                            predicates.add(criteriaBuilder.like(root.get(field.getName()), "%" + s + "%"));
+                            predicates.add(criteriaBuilder.like(root.get(fieldName), "%" + s + "%"));
                         }
                     } else if (value instanceof Number n
                             && n.doubleValue() > 0) {
-                        predicates.add(criteriaBuilder.equal(root.get(field.getName()), value));
+                        predicates.add(criteriaBuilder.equal(root.get(fieldName), value));
                     } else if (value instanceof Game game) {
                         if (game != Game.ANY) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), game));
+                            predicates.add(criteriaBuilder.equal(root.get(fieldName), game));
                         }
                     } else if (value instanceof Type type) {
                         if (type != Type.UNDEFINED) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), type));
+                            predicates.add(criteriaBuilder.equal(root.get(fieldName), type));
                         }
                     } else if (value instanceof Mode mode) {
                         if (mode != Mode.ALL) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), mode));
+                            predicates.add(criteriaBuilder.equal(root.get(fieldName), mode));
                         }
                     } else if (value instanceof boolean b) {
                         if (b) {
-                            predicates.add(criteriaBuilder.equal(root.get(field.getName()), 1));
+                            predicates.add(criteriaBuilder.equal(root.get(fieldName), 1));
                         }
                     }
                 } catch (IllegalAccessException exception) {

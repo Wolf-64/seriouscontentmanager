@@ -204,7 +204,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
             return requester.requestModInfo(modName);
         } catch (IOException | InterruptedException e) {
             log.severe(e.toString());
-            App.showError(e);
+            Platform.runLater(() -> App.showError(e));
             return null;
         }
     }
