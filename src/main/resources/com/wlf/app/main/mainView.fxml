@@ -41,12 +41,9 @@
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" text="File">
-                <MenuItem mnemonicParsing="false" text="Close" />
+                <MenuItem mnemonicParsing="false" text="Close" onAction="#onClose" />
             </Menu>
-            <Menu mnemonicParsing="false" text="Edit">
-                <MenuItem mnemonicParsing="false" text="Delete" />
-            </Menu>
-            <Menu mnemonicParsing="false" text="?">
+            <Menu mnemonicParsing="false" text="Help">
                 <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
             </Menu>
         </MenuBar>

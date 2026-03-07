@@ -227,8 +227,11 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onAbout(ActionEvent event) {
-        // TODO move to template
-        //App.showAbout();
+        App.showAboutDialog();
+    }
+
+    public void onClose(ActionEvent event) {
+        Platform.exit();
     }
 
     @FXML
