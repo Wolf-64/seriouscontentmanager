@@ -169,6 +169,8 @@ public class PrimaryController extends BaseController<DataModel> {
         }));
     }
 
+
+
     @FXML
     public void onRescanDownloadDir(ActionEvent event) {
         loadingIndicatorVisible.set(true);
@@ -230,16 +232,6 @@ public class PrimaryController extends BaseController<DataModel> {
     }
 
     @FXML
-    public void onDeployTFE(ActionEvent event) {
-        deploy(Game.TFE);
-    }
-
-    @FXML
-    public void onDeployTSE(ActionEvent event) {
-        deploy(Game.TSE);
-    }
-
-    @FXML
     public void onDeploy(ActionEvent event) {
         deploy(currentSelection.get().getGame());
     }
@@ -263,36 +255,28 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onPlaySingleMap(ActionEvent event) {
-        quickPlay(currentSelection.get());
-    }
-
-    @FXML
-    public void quickPlay(ContentModel model) {
-        startGameWithContent(model);
-    }
-
-    private void startGameWithContent(ContentModel content) {
+        ContentModel model = currentSelection.get();
         log.info("Staring game...");
-        setStatusBarContent("Starting " + content.getGame().getName() + " for " + content.getName());
+        setStatusBarContent("Starting " + model.getGame().getName() + " for " + model.getName());
         loadingIndicatorVisible.set(true);
         try {
             Task<Integer> task = new Task<>() {
                 @Override
                 protected Integer call() throws Exception {
                     DefaultExecuteResultHandler resultHandler = null;
-                    if (content.getType() == Type.MOD) {
-                        FileHandler.installMod(content);
+                    if (model.getType() == Type.MOD) {
+                        FileHandler.installMod(model);
                         if (false /*config.get().isUseSteamRuntime()*/) {
-                            resultHandler = GameHandler.startGameWithModExe(content.getGame(), content.getDownloadedFile().findModName());
+                            resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
                         } else {
-                            resultHandler = GameHandler.startGameWithModExe(content.getGame(), content.getDownloadedFile().findModName());
+                            resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
                         }
-                    } else if (content.getType() == Type.MAP) {
-                        FileHandler.createTempMod(content);
+                    } else if (model.getType() == Type.MAP) {
+                        FileHandler.createTempMod(model);
                         if (false /*config.get().isUseSteamRuntime()*/) {
-                            resultHandler = GameHandler.startGameWithSteam(content.getGame());
+                            resultHandler = GameHandler.startGameWithSteam(model.getGame());
                         } else {
-                            resultHandler = GameHandler.startGameExe(content.getGame());
+                            resultHandler = GameHandler.startGameExe(model.getGame());
                         }
                     }
                     resultHandler.waitFor();
@@ -314,10 +298,10 @@ public class PrimaryController extends BaseController<DataModel> {
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
-                if (content.getType() == Type.MAP) {
-                    FileHandler.removeTempMod(content);
-                } else if (content.getType() == Type.MOD) {
-                    FileHandler.removeModContent(content);
+                if (model.getType() == Type.MAP) {
+                    FileHandler.removeTempMod(model);
+                } else if (model.getType() == Type.MOD) {
+                    FileHandler.removeModContent(model);
                 }
             });
 
@@ -326,16 +310,6 @@ public class PrimaryController extends BaseController<DataModel> {
             log.error(e.toString());
             App.showError(e);
         }
-    }
-
-    @FXML
-    public void onRemoveTFE(ActionEvent event) {
-        remove(Game.TFE);
-    }
-
-    @FXML
-    public void onRemoveTSE(ActionEvent event) {
-        remove(Game.TSE);
     }
 
     @FXML
