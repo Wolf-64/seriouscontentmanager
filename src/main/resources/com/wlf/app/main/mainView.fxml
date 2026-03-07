@@ -34,6 +34,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.Rating?>
+<?import org.controlsfx.control.StatusBar?>
 
 <BorderPane prefHeight="800.0" prefWidth="1281.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.main.PrimaryController">
     <top>
@@ -289,6 +290,9 @@
                      </children>
                   </VBox>
                     </center>
+               <bottom>
+                  <StatusBar fx:id="statusBar" BorderPane.alignment="CENTER" />
+               </bottom>
                 </BorderPane>
             </Tab>
             <Tab fx:id="grorepo" closable="false">

@@ -89,7 +89,7 @@
                           <SpinnerValueFactory.IntegerSpinnerValueFactory max="10" min="1" />
                       </valueFactory>
                   </Spinner>
-                  <CheckBox fx:id="cbAutoClearList" text="Auto. clear finished downloads from list" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="cbAutoClearList" text="%downloads.autoClear" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
               <GridPane vgap="8.0">
@@ -128,7 +128,7 @@
                       </Button>
                   </HBox>
                   <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" />
-               <Label text="\%games" GridPane.rowIndex="1">
+               <Label text="%games" GridPane.rowIndex="1">
                   <font>
                      <Font name="System Bold" size="16.0" />
                   </font>

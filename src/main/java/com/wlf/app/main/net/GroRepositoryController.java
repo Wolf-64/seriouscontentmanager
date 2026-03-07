@@ -54,9 +54,13 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private final BooleanProperty loadingIndicatorVisible = new SimpleBooleanProperty(false);
 
     private String lastLocation;
+    private boolean locationChangeOverride;
 
     private final String GRO_REPOSITORY_URL = "https://grorepository.ru/mods";
     private final String GRO_MODPAGE_URL = "^https://grorepository\\.ru/[^/]+/mod/.*$";
+    private final String GRO_SEARCH_URL = "^https://grorepository\\.ru/[^/]+/mods\\?search=.*$";
+    private final String GRO_SEARCH_API_INFIX = "?page=1&str=";
+    private final String GRO_SEARCH_PARAM = "?search=";
     private final String ABOUT_BLANK = "about:blank";
     private final String TMP_DONWLOADS = "tmpDownload";
 
@@ -106,13 +110,24 @@ public class GroRepositoryController extends BaseController<DataModel> {
         webViewContainer.setCenter(webView);
         browser.set(webView.getEngine());
         browser.get().locationProperty().addListener((observable -> {
-            //check for url here?
+            if (locationChangeOverride) {
+                locationChangeOverride = false;
+                return;
+            }
             try {
                 lastLocation = browser.get().getHistory().getEntries().getLast().getUrl();
                 // after clicking on download we'll just get a white screen
                 if (ABOUT_BLANK.equals(browser.get().getLocation())
                         && lastLocation.matches(GRO_MODPAGE_URL)) {
                     onDownloadRequestReceived();
+                } else if (lastLocation.matches(GRO_SEARCH_URL)) {
+                    // workaround to fix proper search api call, maybe a webkit issue?
+                    String baseLocation = lastLocation.substring(0, lastLocation.indexOf(GRO_SEARCH_PARAM));
+                    String searchString = lastLocation.substring(lastLocation.indexOf(GRO_SEARCH_PARAM) + GRO_SEARCH_PARAM.length());
+                    lastLocation = baseLocation + GRO_SEARCH_API_INFIX + searchString;
+                    // to prevent webview from crashing after loading new URL within listener
+                    locationChangeOverride = true;
+                    browser.get().load(lastLocation);
                 }
             } catch (NoSuchElementException ignored) {
             }

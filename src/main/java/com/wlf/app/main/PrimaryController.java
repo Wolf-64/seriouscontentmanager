@@ -33,6 +33,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.controlsfx.control.StatusBar;
 import org.slf4j.event.Level;
 
 @Slf4j
@@ -70,6 +71,9 @@ public class PrimaryController extends BaseController<DataModel> {
     private MenuItem menuItemInstall;
     @FXML
     private MenuItem menuItemRemove;
+
+    @FXML
+    private StatusBar statusBar;
 
     private GroRepositoryController repoController;
 
@@ -166,26 +170,60 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onRescanDownloadDir(ActionEvent event) {
-        // TODO
+        if (Files.isDirectory(Path.of(getConfig().getDirectoryDownloads()))) {
+            File[] files = Path.of(getConfig().getDirectoryDownloads()).toFile().listFiles();
+            if (files != null) {
+                Task<Void> scanTask = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        for (int i = 0; i < files.length; i++) {
+                            File downloadedFile = files[i];
+                            int progress = i;
+                            Platform.runLater(() -> statusBar.setText("Scanning " + downloadedFile.getName() + "..."));
+                            Platform.runLater(() -> statusBar.setProgress((double) files.length / progress));
+                            if (downloadedFile.getName().endsWith(".gro") || downloadedFile.getName().endsWith(".zip")) {
+                                importFile(downloadedFile.toPath());
+                            }
+                        }
+
+                        return null;
+                    }
+                };
+                scanTask.setOnScheduled((_) -> statusBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS));
+                scanTask.setOnSucceeded((_) -> {
+                    statusBar.setProgress(0);
+                    statusBar.setText("Done!");
+                });
+                scanTask.setOnFailed((wse) -> {
+                    statusBar.setProgress(0);
+                    statusBar.setText("Error scanning for files! " + wse.getSource().getException().getLocalizedMessage());
+                });
+                new Thread(scanTask).start();
+            }
+        }
     }
 
     @FXML
     public void onImportFile(ActionEvent event) {
         File file = FileDialogues.chooseFile(Path.of(System.getProperty("user.home"))
-                , new FileChooser.ExtensionFilter("All files", "*.*")
+                , new FileChooser.ExtensionFilter("All files",  "*.*")
                 , new FileChooser.ExtensionFilter("Group files", "*.gro")
                 , new FileChooser.ExtensionFilter("ZIP archives", "*.zip"));
 
         if (file != null) {
-            ContentFile contentFile = new ContentFile(file.toPath());
-            try {
-                ContentModel model = contentFile.analyzeContent();
-                FileHandler.registerNewFile(model, model.getDownloadedFile().getAbsolutePath());
-                getModel().getContent().add(model);
-            } catch (IOException e) {
-                log.error("Error analyzing file content during import.", e);
-                App.showError(e);
-            }
+            importFile(file.toPath());
+        }
+    }
+
+    private void importFile(Path file) {
+        ContentFile contentFile = new ContentFile(file);
+        try {
+            ContentModel model = contentFile.analyzeContent();
+            FileHandler.registerNewFile(model, model.getDownloadedFile().getAbsolutePath());
+            getModel().getContent().add(model);
+        } catch (IOException e) {
+            log.error("Error analyzing file content during import.", e);
+            App.showError(e);
         }
     }
 
