@@ -33,3 +33,4 @@ replay_pid*
 
 # app generated
 *config.json
+files.db
