@@ -56,6 +56,10 @@ public abstract class BaseController<T extends BaseModel> {
         }
     }
 
+    public void addCloseRequestCallback(Consumer<WindowEvent> callback) {
+        onCloseRequestCallbacks.add(callback);
+    }
+
     // ---------------------------------- FX Boilerplate ---------------------------------
 
     public Config getConfiguration() {

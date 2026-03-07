@@ -5,6 +5,7 @@ import com.wlf.common.BaseController;
 import com.wlf.common.util.Utils;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -27,6 +28,8 @@ public class App extends javafx.application.Application {
     public static FrameController FRAME_CONTROLLER;
     public static BaseController<?> MAIN_CONTROLLER;
     public final static AppState STATE = new AppState();
+
+    private static Stage ABOUT_STAGE;
 
     public static void main(String[] args) {
         // used to display on the GUI for funsies
@@ -91,6 +94,29 @@ public class App extends javafx.application.Application {
         dlg.initOwner(MAINSTAGE.getOwner());
         dlg.initModality(Modality.WINDOW_MODAL);
         dlg.showAndWait();
+    }
+
+    public static void showAboutDialog() {
+        if (ABOUT_STAGE == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/wlf/app/about.fxml"));
+                Parent window = loader.load();
+                Scene scene = new Scene(window);
+                Stage stage = new Stage();
+                ABOUT_STAGE = stage;
+
+                stage.setTitle(getAppName() + " v" + getAppVersion());
+
+                stage.getIcons().add(APP_ICON);
+                stage.setScene(scene);
+
+                stage.show();
+            } catch (IOException exception) {
+                showError(exception);
+            }
+        } else {
+            ABOUT_STAGE.show();
+        }
     }
 
     public static void showCriticalError(Exception e) {
