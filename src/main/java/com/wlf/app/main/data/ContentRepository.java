@@ -109,9 +109,17 @@ public class ContentRepository {
             }
 
             if (filter.getDateCreatedFrom() != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateCreated"), filter.getDateCreatedFrom()));
-            } else if (filter.getDateCreatedTo() != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dateCreated"), filter.getDateCreatedTo()));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                        root.get("dateCreated"),
+                        filter.getDateCreatedFrom()
+                ));
+            }
+
+            if (filter.getDateCreatedTo() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(
+                        root.get("dateCreated"),
+                        filter.getDateCreatedTo()
+                ));
             }
 
             query.where(predicates.toArray(Predicate[]::new));

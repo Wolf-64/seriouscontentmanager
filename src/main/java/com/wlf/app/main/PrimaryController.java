@@ -65,6 +65,8 @@ public class PrimaryController extends BaseController<DataModel> {
     private TableColumn<ContentModel, LocalDateTime> colDateAdded, colDateLastPlayed, colDateCompleted;
     @FXML
     private TableColumn<ContentModel, LocalDate> colDateCreated;
+    @FXML
+    private DatePicker dateFrom, dateTo;
 
     // --- TableView context menu ---
     @FXML
@@ -132,6 +134,23 @@ public class PrimaryController extends BaseController<DataModel> {
         colDateAdded.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
         colDateCompleted.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
         colDateLastPlayed.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateTimeConverter()));
+
+        // store column configuration on app close
+        getOnCloseRequestCallbacks().add((windowEvent -> {
+            for(int i = 0; i < table.getColumns().size(); i++) {
+                getConfig().getTableColumnHeaders()[i] = table.getColumns().get(i).isVisible();
+            }
+            try {
+                Config.save();
+            } catch (IOException e) {
+                log.error(e.toString());
+            }
+        }));
+
+        // restore column header visibilities
+        for(int i = 0; i < table.getColumns().size(); i++) {
+            table.getColumns().get(i).setVisible(getConfig().getTableColumnHeaders()[i]);
+        }
     }
 
     private void initBindings() {
@@ -164,12 +183,19 @@ public class PrimaryController extends BaseController<DataModel> {
         getTableFilter().installedProperty().addListener(filterListener);
         getTableFilter().completedProperty().addListener(filterListener);
 
+        dateFrom.valueProperty().addListener((observableValue, oldVal, newVal) -> {
+            getTableFilter().setDateCreatedFrom(newVal);
+            applyFilter();
+        });
+        dateTo.valueProperty().addListener((observableValue, oldVal, newVal) -> {
+            getTableFilter().setDateCreatedTo(newVal);
+            applyFilter();
+        });
+
         table.getSelectionModel().selectedItemProperty().addListener(((observable, oldVal, newVal) -> {
             currentSelection.set(newVal);
         }));
     }
-
-
 
     @FXML
     public void onRescanDownloadDir(ActionEvent event) {
@@ -217,12 +243,12 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onPlayTFE() {
-        runGame(Game.TFE, null);
+        runGame(Game.TFE);
     }
 
     @FXML
     public void onPlayTSE() {
-        runGame(Game.TSE, null);
+        runGame(Game.TSE);
     }
 
     @FXML
@@ -236,22 +262,37 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onDeploy(ActionEvent event) {
-        deploy(currentSelection.get().getGame());
+        deploy(currentSelection.get());
     }
 
-    private void deploy(Game game) {
-        Path modPath = Path.of(config.get().getDirectoryDownloads(), currentSelection.get().getDownloadedFileName());
-        log.atLevel(Level.INFO).log("Deploying {0}...", modPath);
+    private boolean checkGamePathValidity(Game game) {
+        String gamePath = GameHandler.getGamePath(game);
+        if (!game.isGamePathValid(gamePath)) {
+            String text = "Path '" + gamePath + "' is not valid. Check your settings.";
+            Alert alert = new Alert(Alert.AlertType.WARNING, text, ButtonType.OK);
+            alert.showAndWait();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void deploy(ContentModel model) {
+        if (!checkFileExistence(model) || !checkGamePathValidity(model.getGame())) {
+            return;
+        }
+
+        log.atLevel(Level.INFO).log("Deploying {0}...", model.getDownloadedFile());
         ;
-        if (Files.exists(modPath)) {
+        if (Files.exists(model.getDownloadedFile().toPath())) {
             // check file type
-            if (currentSelection.get().isGro()) {
-                Path installPath = Path.of(game.getGameFolder() + "/" + currentSelection.get().getDownloadedFileName());
+            if (model.isGro()) {
+                Path installPath = Path.of(model.getGame().getGameFolder() + "/" + model.getDownloadedFileName());
                 log.atLevel(Level.INFO).log("...to {0}", installPath);
 
-                FileHandler.installContent(currentSelection.get());
-                currentSelection.get().setInstalled(true);
-                ContentRepository.getInstance().update(currentSelection.get());
+                FileHandler.installContent(model);
+                model.setInstalled(true);
+                ContentRepository.getInstance().update(model);
             }
         }
     }
@@ -259,6 +300,12 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     public void onPlaySingleMap(ActionEvent event) {
         ContentModel model = currentSelection.get();
+
+        // handle file not existent
+        if (!checkFileExistence(model) || !checkGamePathValidity(model.getGame())) {
+            return;
+        }
+
         log.info("Staring game...");
         setStatusBarContent("Starting " + model.getGame().getName() + " for " + model.getName());
         loadingIndicatorVisible.set(true);
@@ -269,29 +316,27 @@ public class PrimaryController extends BaseController<DataModel> {
                     DefaultExecuteResultHandler resultHandler = null;
                     if (model.getType() == Type.MOD) {
                         FileHandler.installMod(model);
-                        if (false /*config.get().isUseSteamRuntime()*/) {
-                            resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
-                        } else {
-                            resultHandler = GameHandler.startGameWithModExe(model.getGame(), model.getDownloadedFile().findModName());
-                        }
+                        resultHandler = GameHandler.startGame(model.getGame(), model.getDownloadedFile().findModName());
                     } else if (model.getType() == Type.MAP) {
                         FileHandler.createTempMod(model);
-                        if (false /*config.get().isUseSteamRuntime()*/) {
-                            resultHandler = GameHandler.startGameWithSteam(model.getGame());
-                        } else {
-                            resultHandler = GameHandler.startGameExe(model.getGame());
-                        }
+                        resultHandler = GameHandler.startGame(model.getGame());
                     }
                     resultHandler.waitFor();
+                    if (resultHandler.getException() != null && resultHandler.getExitValue() != 0) {
+                        throw resultHandler.getException();
+                    }
                     return resultHandler.getExitValue();
                 }
             };
             task.setOnFailed((workerStateEvent) -> {
                 log.error(workerStateEvent.getSource().toString());
+                App.showError(new Exception(workerStateEvent.getSource().getException()));
+                resetStatusBar();
+                loadingIndicatorVisible.set(false);
             });
             task.setOnSucceeded((workerStateEvent) -> {
                 try {
-                    // this exit code standard?
+                    // this exit code has not been set, just a placeholder, ignore?
                     if (task.get() == -559038737) {
 
                     }
@@ -315,19 +360,34 @@ public class PrimaryController extends BaseController<DataModel> {
         }
     }
 
-    @FXML
-    public void onRemove(ActionEvent event) {
-        remove(currentSelection.get().getGame());
+    private boolean checkFileExistence(ContentModel model) {
+        if (!model.getDownloadedFile().exists()) {
+            String text = "File '" + model.getDownloadedFile().getName() + "' does not exists on disk. Remove from library?";
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text, ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.YES) {
+                delete(model);
+            }
+
+            return false;
+        }
+        return true;
     }
 
-    private void remove(Game game) {
-        String modPath = game.getGameFolder() + "/" + currentSelection.get().getDownloadedFileName();
+    @FXML
+    public void onRemove(ActionEvent event) {
+        remove(currentSelection.get());
+    }
+
+    private void remove(ContentModel model) {
+        String modPath = model.getGame().getGameFolder() + "/" + model.getDownloadedFileName();
         log.atLevel(Level.INFO).log("Removing {0}...", modPath);
         File mod = new File(modPath);
         if (mod.exists()) {
             // check file type
-            if (currentSelection.get().isGro()) {
-                FileHandler.removeContent(currentSelection.get());
+            if (model.isGro()) {
+                FileHandler.removeContent(model);
             }
         }
 
@@ -347,8 +407,12 @@ public class PrimaryController extends BaseController<DataModel> {
 
     @FXML
     public void onDelete(ActionEvent actionEvent) {
-        FileHandler.deleteContent(currentSelection.get());
-        getModel().getContent().remove(currentSelection.get());
+        delete(currentSelection.get());
+    }
+
+    private void delete(ContentModel model) {
+        FileHandler.deleteContent(model);
+        getModel().getContent().remove(model);
     }
 
     @FXML
@@ -363,28 +427,16 @@ public class PrimaryController extends BaseController<DataModel> {
         }
     }
 
-    private DefaultExecuteResultHandler runGame(Game game, String modName) {
-        try {
-            if (modName != null) {
-                if (false /*config.get().isUseSteamRuntime()*/) {
-                    return GameHandler.startGameWithModExe(game, modName);
-                } else {
-                    return GameHandler.startGameExe(game);
-                }
-            } else {
-                if (false /*config.get().isUseSteamRuntime()*/) {
-                    return GameHandler.startGameWithSteam(game);
-                } else {
-                    return GameHandler.startGameExe(game);
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private void runGame(Game game) {
+        if (!checkGamePathValidity(game)) {
+            return;
         }
-    }
 
-    private DefaultExecuteResultHandler runGame(ContentModel contentModel) {
-        return runGame(contentModel.getGame(), null);
+        try {
+            GameHandler.startGame(game);
+        } catch (IOException e) {
+            App.showError(e);
+        }
     }
 
     private void resetStatusBar() {

@@ -105,7 +105,7 @@ public class FileHandler {
     public static void installContent(ContentModel contentModel) {
         try {
             Path sourcePath = contentModel.getDownloadedFile().toPath();
-            Path targetPath = null;
+            Path targetPath;
             if (contentModel.getType() == Type.MOD) {
                 targetPath = Path.of(Objects.requireNonNull(contentModel.getGame().getGameFolder()), "Mods", contentModel.getDownloadedFileName());
             } else {

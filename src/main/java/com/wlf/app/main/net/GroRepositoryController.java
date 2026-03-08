@@ -175,6 +175,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 return;
             }
 
+            // file exists already, ask to add to library; TODO potentially merge entries with data from grorepo
             if (Files.exists(Path.of(getConfiguration().getDirectoryDownloads(), downloadInfo.fileName))) {
                 CompletableFuture<Boolean> choiceFuture = new CompletableFuture<>();
                 Platform.runLater(() -> {

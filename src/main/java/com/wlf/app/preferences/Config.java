@@ -21,7 +21,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Config extends BaseModel {
     /** Version to compare for potential updates and adjustments of changed or deprecated settings. */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final int CURRENT_CONFIG_VERSION = 2;
     /** Path to store config file. Should be local to executed jar. */
     private static final String CONFIG_PATH = "config.json";
     /** Mapper to read/write config.json */
@@ -42,9 +42,12 @@ public class Config extends BaseModel {
 
     private final ObjectProperty<Integer> maxDownloads = new SimpleObjectProperty<>(2);
     private final BooleanProperty autoClearFinishedDownloads = new SimpleBooleanProperty(false);
+    private final BooleanProperty useSteamRuntime = new SimpleBooleanProperty(false);
     private final StringProperty directoryDownloads = new SimpleStringProperty();
     private final StringProperty directoryTFE = new SimpleStringProperty();
     private final StringProperty directoryTSE = new SimpleStringProperty();
+    @Getter
+    private boolean[] tableColumnHeaders = new boolean[13];
 
     @JsonIgnore
     private final BooleanProperty tfeDirectoryValid = new SimpleBooleanProperty();
@@ -209,6 +212,18 @@ public class Config extends BaseModel {
 
     public void setAutoClearFinishedDownloads(boolean autoClearFinishedDownloads) {
         this.autoClearFinishedDownloads.set(autoClearFinishedDownloads);
+    }
+
+    public boolean isUseSteamRuntime() {
+        return useSteamRuntime.get();
+    }
+
+    public BooleanProperty useSteamRuntimeProperty() {
+        return useSteamRuntime;
+    }
+
+    public void setUseSteamRuntime(boolean useSteamRuntime) {
+        this.useSteamRuntime.set(useSteamRuntime);
     }
 }
 

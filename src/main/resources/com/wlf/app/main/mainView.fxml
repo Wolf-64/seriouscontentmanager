@@ -41,7 +41,7 @@
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" text="File">
-                <MenuItem mnemonicParsing="false" text="Close" onAction="#onClose" />
+                <MenuItem mnemonicParsing="false" onAction="#onClose" text="Close" />
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
                 <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
@@ -59,251 +59,251 @@
                 <tooltip>
                     <Tooltip text="Content Manager" />
                 </tooltip>
-            <BorderPane>
-               <center>
-                  <StackPane>
-                     <children>
-                            <BorderPane>
-                                <top>
-                                    <GridPane hgap="4.0" vgap="4.0" BorderPane.alignment="CENTER">
-                                        <columnConstraints>
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.0" prefWidth="100.0" />
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                                        </columnConstraints>
-                                        <rowConstraints>
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        </rowConstraints>
-                                        <BorderPane.margin>
-                                            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                        </BorderPane.margin>
-                                        <RadioButton fx:id="rbTfe" mnemonicParsing="false" selected="true" text="The First Encounter">
-                                            <userData>
-                                                <Game fx:constant="TFE" />
-                                            </userData>
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="tgGame" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="rbTse" mnemonicParsing="false" text="The Second Encounter" toggleGroup="$tgGame" GridPane.rowIndex="1">
-                                            <userData>
-                                                <Game fx:constant="TSE" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%filter.game.any" toggleGroup="$tgGame" GridPane.rowIndex="2">
-                                            <userData>
-                                                <Game fx:constant="ANY" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton fx:id="rbMaps" mnemonicParsing="false" text="%filter.type.map" GridPane.columnIndex="1">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="tgType" />
-                                            </toggleGroup>
-                                            <userData>
-                                                <Type fx:constant="MAP" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton fx:id="rbMods" mnemonicParsing="false" text="%filter.type.mod" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                            <userData>
-                                                <Type fx:constant="MOD" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%filter.type.skin" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                            <userData>
-                                                <Type fx:constant="SKIN" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%filter.type.any" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                            <userData>
-                                                <Type fx:constant="UNDEFINED" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton fx:id="rbSp" mnemonicParsing="false" text="%filter.mode.single" GridPane.columnIndex="2">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="tgMode" />
-                                            </toggleGroup>
-                                            <userData>
-                                                <Mode fx:constant="SP" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton fx:id="rbCoop" mnemonicParsing="false" text="%filter.mode.coop" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                            <userData>
-                                                <Mode fx:constant="COOP" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton fx:id="rbDm" mnemonicParsing="false" text="%filter.mode.dm" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                                            <userData>
-                                                <Mode fx:constant="DM" />
-                                            </userData>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%filter.mode.any" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                                            <userData>
-                                                <Mode fx:constant="ALL" />
-                                            </userData>
-                                        </RadioButton>
-                                        <CheckBox fx:id="cbInstalled" mnemonicParsing="false" text="%filter.installed" GridPane.columnIndex="3" />
-                                        <CheckBox fx:id="cbCompleted" mnemonicParsing="false" text="%filter.completed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                        <TextField fx:id="tfNameFilter" promptText="%filter.name" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                                        <HBox alignment="CENTER_RIGHT" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                                            <Label text="%filter.date.from" />
-                                            <DatePicker />
-                                        </HBox>
-                                        <HBox alignment="CENTER_RIGHT" spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
-                                            <Label text="%filter.date.to" />
-                                            <DatePicker />
-                                        </HBox>
-                                 <VBox prefHeight="162.0" prefWidth="231.0" spacing="10.0" GridPane.columnIndex="4" GridPane.rowSpan="5">
-                                    <children>
-                                              <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="250.0" text="%actions.playTFE">
-                                                  <graphic>
-                                                      <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                          <Image url="@icons/tfe.png" />
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="250.0" text="%actions.playTSE">
-                                                  <graphic>
-                                                      <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                          <Image url="@icons/tse.png" />
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button mnemonicParsing="false" onAction="#onRescanDownloadDir" prefWidth="250.0" text="%actions.rescanDownloads" />
-                                       <Button mnemonicParsing="false" onAction="#onImportFile" prefWidth="250.0" text="%actions.importFile" />
-                                    </children>
-                                 </VBox>
-                                    </GridPane>
-                                </top>
-                                <center>
-                              <VBox>
-                                 <children>
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
-                                       <content>
-                                                <TableView fx:id="table" editable="true" items="${controller.model.content}" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                    <columns>
-                                                <TableColumn fx:id="actionColumn" prefWidth="32.0" />
-                                                        <TableColumn minWidth="200.0" prefWidth="243.0" text="%table.name">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="name" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                        <TableColumn minWidth="100.0" prefWidth="250.0" text="%table.file">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="downloadedFileName" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                        <TableColumn minWidth="0.0" prefWidth="134.0" text="%table.game">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="game" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                        <TableColumn prefWidth="71.0" text="%table.type">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="type" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                        <TableColumn prefWidth="136.0" text="%table.mode">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="modes" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                        <TableColumn editable="false" prefWidth="32.0">
-                                                            <cellFactory>
-                                                                <CheckBoxTableCellFactory />
-                                                            </cellFactory>
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="installed" />
-                                                            </cellValueFactory>
-                                                            <graphic>
-                                                                <Label text="%table.installed">
-                                                                    <tooltip>
-                                                                        <Tooltip text="Installed" />
-                                                                    </tooltip>
-                                                                </Label>
-                                                            </graphic>
-                                                        </TableColumn>
-                                                        <TableColumn minWidth="0.0" prefWidth="32.0">
-                                                            <cellFactory>
-                                                                <CheckBoxTableCellFactory />
-                                                            </cellFactory>
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="completed" />
-                                                            </cellValueFactory>
-                                                            <graphic>
-                                                                <Label text="%table.completed">
-                                                                    <tooltip>
-                                                                        <Tooltip text="Completed" />
-                                                                    </tooltip>
-                                                                </Label>
-                                                            </graphic>
-                                                        </TableColumn>
-                                                        <TableColumn prefWidth="180.0" text="%table.rating">
-                                                            <cellFactory>
-                                                                <RatingTableCellFactory />
-                                                            </cellFactory>
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="rating" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                        <TableColumn fx:id="colDateAdded" prefWidth="120.0" text="%table.dateAdded">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="dateAdded" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-                                                <TableColumn fx:id="colDateCreated" prefWidth="120.0" text="%table.dateCreated">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="dateCreated" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn fx:id="colDateLastPlayed" prefWidth="120.0" text="%table.dateLastPlayed">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="dateLastPlayed" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn fx:id="colDateCompleted" prefWidth="120.0" text="%table.dateCompleted">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="dateCompleted" />
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                    </columns>
-                                                    <contextMenu>
-                                                        <ContextMenu onShowing="#updateContextMenu">
-                                                            <items>
-                                                                <MenuItem fx:id="quickPlay" mnemonicParsing="false" onAction="#onPlaySingleMap" text="%contextMenu.quickPlay" />
-                                                                <MenuItem fx:id="menuItemInstall" mnemonicParsing="false" onAction="#onDeploy" text="%contextMenu.install" />
-                                                                <MenuItem fx:id="menuItemRemove" mnemonicParsing="false" onAction="#onRemove" text="%contextMenu.remove" />
-                                                                <SeparatorMenuItem />
-                                                                <MenuItem mnemonicParsing="false" onAction="#onMarkComplete" text="%contextMenu.markComplete" />
-                                                                <MenuItem mnemonicParsing="false" onAction="#onRate" text="%contextMenu.rate" />
-                                                                <SeparatorMenuItem />
-                                                                <MenuItem mnemonicParsing="false" onAction="#onDelete" text="%contextMenu.delete" />
-                                                            </items>
-                                                        </ContextMenu>
-                                                    </contextMenu>
-                                             <columnResizePolicy>
-                                                <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
-                                             </columnResizePolicy>
-                                                </TableView>
-                                       </content>
-                                    </ScrollPane>
-                                 </children>
-                              </VBox>
-                                </center>
-                            </BorderPane>
-                        <MaskerPane text="%spinnerText" visible="${controller.loadingIndicatorVisible}" />
-                     </children>
-                  </StackPane>
-               </center>
-               <bottom>
-                  <StatusBar fx:id="statusBar" text="Ready" BorderPane.alignment="CENTER" />
-               </bottom>
-            </BorderPane>
+                <BorderPane>
+                    <center>
+                        <StackPane>
+                            <children>
+                                <BorderPane>
+                                    <top>
+                                        <GridPane hgap="4.0" vgap="4.0" BorderPane.alignment="CENTER">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <BorderPane.margin>
+                                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                                            </BorderPane.margin>
+                                            <RadioButton fx:id="rbTfe" mnemonicParsing="false" selected="true" text="The First Encounter">
+                                                <userData>
+                                                    <Game fx:constant="TFE" />
+                                                </userData>
+                                                <toggleGroup>
+                                                    <ToggleGroup fx:id="tgGame" />
+                                                </toggleGroup>
+                                            </RadioButton>
+                                            <RadioButton fx:id="rbTse" mnemonicParsing="false" text="The Second Encounter" toggleGroup="$tgGame" GridPane.rowIndex="1">
+                                                <userData>
+                                                    <Game fx:constant="TSE" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton mnemonicParsing="false" selected="true" text="%filter.game.any" toggleGroup="$tgGame" GridPane.rowIndex="2">
+                                                <userData>
+                                                    <Game fx:constant="ANY" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton fx:id="rbMaps" mnemonicParsing="false" text="%filter.type.map" GridPane.columnIndex="1">
+                                                <toggleGroup>
+                                                    <ToggleGroup fx:id="tgType" />
+                                                </toggleGroup>
+                                                <userData>
+                                                    <Type fx:constant="MAP" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton fx:id="rbMods" mnemonicParsing="false" text="%filter.type.mod" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                <userData>
+                                                    <Type fx:constant="MOD" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton mnemonicParsing="false" text="%filter.type.skin" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                <userData>
+                                                    <Type fx:constant="SKIN" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton mnemonicParsing="false" selected="true" text="%filter.type.any" toggleGroup="$tgType" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                <userData>
+                                                    <Type fx:constant="UNDEFINED" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton fx:id="rbSp" mnemonicParsing="false" text="%filter.mode.single" GridPane.columnIndex="2">
+                                                <toggleGroup>
+                                                    <ToggleGroup fx:id="tgMode" />
+                                                </toggleGroup>
+                                                <userData>
+                                                    <Mode fx:constant="SP" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton fx:id="rbCoop" mnemonicParsing="false" text="%filter.mode.coop" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                <userData>
+                                                    <Mode fx:constant="COOP" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton fx:id="rbDm" mnemonicParsing="false" text="%filter.mode.dm" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                <userData>
+                                                    <Mode fx:constant="DM" />
+                                                </userData>
+                                            </RadioButton>
+                                            <RadioButton mnemonicParsing="false" selected="true" text="%filter.mode.any" toggleGroup="$tgMode" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                <userData>
+                                                    <Mode fx:constant="ALL" />
+                                                </userData>
+                                            </RadioButton>
+                                            <CheckBox fx:id="cbInstalled" mnemonicParsing="false" text="%filter.installed" GridPane.columnIndex="3" />
+                                            <CheckBox fx:id="cbCompleted" mnemonicParsing="false" text="%filter.completed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                            <TextField fx:id="tfNameFilter" promptText="%filter.name" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                                            <HBox alignment="CENTER_RIGHT" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                <Label text="%filter.date.from" />
+                                                <DatePicker fx:id="dateFrom" />
+                                            </HBox>
+                                            <HBox alignment="CENTER_RIGHT" spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                                <Label text="%filter.date.to" />
+                                                <DatePicker fx:id="dateTo" />
+                                            </HBox>
+                                            <VBox prefHeight="162.0" prefWidth="231.0" spacing="10.0" GridPane.columnIndex="4" GridPane.rowSpan="5">
+                                                <children>
+                                                    <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTFE" prefWidth="250.0" text="%actions.playTFE">
+                                                        <graphic>
+                                                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                                <Image url="@icons/tfe.png" />
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
+                                                    <Button graphicTextGap="2.0" mnemonicParsing="false" onAction="#onPlayTSE" prefWidth="250.0" text="%actions.playTSE">
+                                                        <graphic>
+                                                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                                <Image url="@icons/tse.png" />
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
+                                                    <Button mnemonicParsing="false" onAction="#onRescanDownloadDir" prefWidth="250.0" text="%actions.rescanDownloads" />
+                                                    <Button mnemonicParsing="false" onAction="#onImportFile" prefWidth="250.0" text="%actions.importFile" />
+                                                </children>
+                                            </VBox>
+                                        </GridPane>
+                                    </top>
+                                    <center>
+                                        <VBox>
+                                            <children>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <TableView fx:id="table" editable="true" items="${controller.model.content}" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                                                            <columns>
+                                                                <TableColumn fx:id="actionColumn" prefWidth="32.0" />
+                                                                <TableColumn minWidth="200.0" prefWidth="243.0" text="%table.name">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="name" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn minWidth="100.0" prefWidth="250.0" text="%table.file">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="downloadedFileName" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn minWidth="0.0" prefWidth="134.0" text="%table.game">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="game" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn prefWidth="71.0" text="%table.type">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="type" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn prefWidth="136.0" text="%table.mode">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="modes" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn editable="false" prefWidth="32.0">
+                                                                    <cellFactory>
+                                                                        <CheckBoxTableCellFactory />
+                                                                    </cellFactory>
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="installed" />
+                                                                    </cellValueFactory>
+                                                                    <graphic>
+                                                                        <Label text="%table.installed">
+                                                                            <tooltip>
+                                                                                <Tooltip text="Installed" />
+                                                                            </tooltip>
+                                                                        </Label>
+                                                                    </graphic>
+                                                                </TableColumn>
+                                                                <TableColumn minWidth="0.0" prefWidth="32.0">
+                                                                    <cellFactory>
+                                                                        <CheckBoxTableCellFactory />
+                                                                    </cellFactory>
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="completed" />
+                                                                    </cellValueFactory>
+                                                                    <graphic>
+                                                                        <Label text="%table.completed">
+                                                                            <tooltip>
+                                                                                <Tooltip text="Completed" />
+                                                                            </tooltip>
+                                                                        </Label>
+                                                                    </graphic>
+                                                                </TableColumn>
+                                                                <TableColumn prefWidth="180.0" text="%table.rating">
+                                                                    <cellFactory>
+                                                                        <RatingTableCellFactory />
+                                                                    </cellFactory>
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="rating" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn fx:id="colDateAdded" prefWidth="120.0" text="%table.dateAdded">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="dateAdded" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn fx:id="colDateCreated" prefWidth="120.0" text="%table.dateCreated">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="dateCreated" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn fx:id="colDateLastPlayed" prefWidth="120.0" text="%table.dateLastPlayed">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="dateLastPlayed" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                                <TableColumn fx:id="colDateCompleted" prefWidth="120.0" text="%table.dateCompleted">
+                                                                    <cellValueFactory>
+                                                                        <PropertyValueFactory property="dateCompleted" />
+                                                                    </cellValueFactory>
+                                                                </TableColumn>
+                                                            </columns>
+                                                            <contextMenu>
+                                                                <ContextMenu onShowing="#updateContextMenu">
+                                                                    <items>
+                                                                        <MenuItem fx:id="quickPlay" mnemonicParsing="false" onAction="#onPlaySingleMap" text="%contextMenu.quickPlay" />
+                                                                        <MenuItem fx:id="menuItemInstall" mnemonicParsing="false" onAction="#onDeploy" text="%contextMenu.install" />
+                                                                        <MenuItem fx:id="menuItemRemove" mnemonicParsing="false" onAction="#onRemove" text="%contextMenu.remove" />
+                                                                        <SeparatorMenuItem />
+                                                                        <MenuItem mnemonicParsing="false" onAction="#onMarkComplete" text="%contextMenu.markComplete" />
+                                                                        <MenuItem mnemonicParsing="false" onAction="#onRate" text="%contextMenu.rate" />
+                                                                        <SeparatorMenuItem />
+                                                                        <MenuItem mnemonicParsing="false" onAction="#onDelete" text="%contextMenu.delete" />
+                                                                    </items>
+                                                                </ContextMenu>
+                                                            </contextMenu>
+                                                            <columnResizePolicy>
+                                                                <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
+                                                            </columnResizePolicy>
+                                                        </TableView>
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+                                    </center>
+                                </BorderPane>
+                                <MaskerPane text="%spinnerText" visible="${controller.loadingIndicatorVisible}" />
+                            </children>
+                        </StackPane>
+                    </center>
+                    <bottom>
+                        <StatusBar fx:id="statusBar" text="Ready" BorderPane.alignment="CENTER" />
+                    </bottom>
+                </BorderPane>
             </Tab>
             <Tab fx:id="grorepo" closable="false">
                 <graphic>
