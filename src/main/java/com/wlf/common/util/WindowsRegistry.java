@@ -3,6 +3,8 @@ package com.wlf.common.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Oleg Ryaboy, based on work by Miguel Enriquez 
@@ -29,13 +31,15 @@ public abstract class WindowsRegistry {
 
             // Output has the following format:
             // \n<Version information>\n\n<key>\t<registry type>\t<value>
-            if( ! output.contains("\t")){
-                return null;
+            Pattern p = Pattern.compile("^\\s*([^\\s]+)\\s+([A-Z_0-9]+)\\s+(.+)$", Pattern.MULTILINE);
+            Matcher m = p.matcher(output);
+
+            String value = null;
+            while (m.find()) {
+                value = m.group(3);  // D:\Games\Steam
             }
 
-            // Parse out the value
-            String[] parsed = output.split("\t");
-            return parsed[parsed.length-1];
+            return value;
         }
         catch (Exception e) {
             return null;
