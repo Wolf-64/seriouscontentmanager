@@ -6,9 +6,9 @@ import lombok.Getter;
 public enum Mode {
     SP("Singleplayer"), // ModeID 0
     COOP("Co-op"), // ModeID 1
-    DM("Deathmatch"), // ModeID 2
-    UNDEFINED("All modes"), // ModeID 3
-    ALL("All modes"); // ModeID 3
+    SINGLE_COOP("Single & Coop"), // ModeID 2 - Single & Coop
+    DM("Deathmatch"), // ModeID 3 - DM
+    ALL("All modes"); // ModeID 4
 
     Mode(String name) { this.name = name; }
     private final  String name;

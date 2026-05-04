@@ -57,11 +57,12 @@ public class GroRepositoryController extends BaseController<DataModel> {
     private boolean locationChangeOverride;
 
     private final String GRO_REPOSITORY_URL = "https://grorepository.ru/mods";
-    private final String GRO_MODPAGE_URL = "^https://grorepository\\.ru/[^/]+/mod/.*$";
-    private final String GRO_SEARCH_URL = "^https://grorepository\\.ru/[^/]+/mods\\?search=.*$";
+    private final String GRO_REPOSITORY_URL_EN = "https://grorepository.ru/en/mods";
+    private final String GRO_REPOSITORY_URL_FR = "https://grorepository.ru/fr/mods";
+    private final String GRO_MODPAGE_URL = "^https://grorepository\\.ru/(?:[^/]+/)?mod/.*$";
+    private final String GRO_SEARCH_URL = "^https://grorepository\\.ru/(?:[^/]+/)?mods\\?search=.*$";
     private final String GRO_SEARCH_API_INFIX = "?page=1&str=";
     private final String GRO_SEARCH_PARAM = "?search=";
-    private final String ABOUT_BLANK = "about:blank";
     private final String TMP_DONWLOADS = "tmpDownload";
 
     @Override
@@ -117,9 +118,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
             try {
                 lastLocation = browser.get().getHistory().getEntries().getLast().getUrl();
                 // after clicking on download we'll just get a white screen
-                if (ABOUT_BLANK.equals(browser.get().getLocation())
+                if (browser.get().getLocation().startsWith(Requester.DOWNLOAD_API_FILE_URL)
                         && lastLocation.matches(GRO_MODPAGE_URL)) {
-                    onDownloadRequestReceived();
+                    onDownloadRequestReceived(browser.get().getLocation());
                 } else if (lastLocation.matches(GRO_SEARCH_URL)) {
                     // workaround to fix proper search api call, maybe a webkit issue?
                     String baseLocation = lastLocation.substring(0, lastLocation.indexOf(GRO_SEARCH_PARAM));
@@ -135,13 +136,19 @@ public class GroRepositoryController extends BaseController<DataModel> {
     }
 
     public void loadGroRepo() {
-        browser.get().load(GRO_REPOSITORY_URL);
+        if (Locale.getDefault().equals(Locale.of("ru", "RU"))) {
+            browser.get().load(GRO_REPOSITORY_URL);
+        } else if (Locale.getDefault().equals(Locale.FRANCE)) {
+            browser.get().load(GRO_REPOSITORY_URL_FR);
+        } else {
+            browser.get().load(GRO_REPOSITORY_URL_EN);
+        }
     }
 
     record DownloadInfo(ModInfo modInfo, URI fileUri, String fileName) {
     }
 
-    private void onDownloadRequestReceived() {
+    private void onDownloadRequestReceived(String downloadURL) {
         if (!checkPrerequisitesForDownload()) {
             browser.get().load(lastLocation);
             return;
@@ -149,6 +156,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
         // get transliterated mod name to fetch metadata with API
         String modName = lastLocation.substring(lastLocation.lastIndexOf('/') + 1);
+
 
         CompletableFuture.supplyAsync(() -> {
             Platform.runLater(() -> loadingIndicatorVisible.set(true));
@@ -164,9 +172,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
                     }
                     langFuture.complete(language);
                 });
-                return langFuture.thenApply(lang -> fetchDownloadInfo(modInfo, lang));
+                return langFuture.thenApply(lang -> fetchDownloadInfo(modInfo, lang, downloadURL));
             } else {
-                return CompletableFuture.supplyAsync(() -> fetchDownloadInfo(modInfo, ContentLanguage.DEFAULT_OR_RU));
+                return CompletableFuture.supplyAsync(() -> fetchDownloadInfo(modInfo, ContentLanguage.DEFAULT_OR_RU, downloadURL));
             }
         }).thenAccept(downloadInfo -> {
             // Validate before download
@@ -225,9 +233,9 @@ public class GroRepositoryController extends BaseController<DataModel> {
         }
     }
 
-    private DownloadInfo fetchDownloadInfo(ModInfo modInfo, ContentLanguage lang) {
+    private DownloadInfo fetchDownloadInfo(ModInfo modInfo, ContentLanguage lang, String downloadUrl) {
         try (Requester requester = new Requester()) {
-            URI downloadURI = requester.requestDownloadURI(modInfo.getId(), lang);
+            URI downloadURI = URI.create(downloadUrl);
             Requester.FileInfo fileInfo = requester.requestFileInfo(downloadURI);
 
             return new DownloadInfo(modInfo, downloadURI, fileInfo.getFileName());

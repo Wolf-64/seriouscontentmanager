@@ -96,7 +96,12 @@ public class ContentRepository {
                         }
                     } else if (value instanceof Mode mode) {
                         if (mode != Mode.ALL) {
-                            predicates.add(criteriaBuilder.equal(root.get(fieldName), mode));
+                            if (mode == Mode.SP || mode == Mode.COOP) {
+                                predicates.add(criteriaBuilder.or(criteriaBuilder.equal(root.get(fieldName), mode),
+                                        criteriaBuilder.equal(root.get(fieldName), Mode.SINGLE_COOP)));
+                            } else {
+                                predicates.add(criteriaBuilder.equal(root.get(fieldName), mode));
+                            }
                         }
                     } else if (value instanceof boolean b) {
                         if (b) {
