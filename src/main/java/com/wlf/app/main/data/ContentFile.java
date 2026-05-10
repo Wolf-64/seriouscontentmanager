@@ -1,14 +1,13 @@
 package com.wlf.app.main.data;
 
+import com.wlf.app.main.io.EncodingFileSystems;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -48,7 +47,7 @@ public class ContentFile extends File {
 
     public Path findFirstLevel() throws IOException {
         ArrayList<Path> wlds = new ArrayList<>();
-        try (var fs = FileSystems.newFileSystem(toPath(), Collections.emptyMap())) {
+        try (var fs = EncodingFileSystems.newFileSystem(toPath())) {
             fs.getRootDirectories()
                     .forEach(root -> {
                         try (Stream<Path> stream = Files.walk(root)) {
@@ -75,7 +74,7 @@ public class ContentFile extends File {
 
     public String findModName() throws IOException {
         AtomicReference<String> modName = new AtomicReference<>();
-        try (var fs = FileSystems.newFileSystem(toPath(), Collections.emptyMap())) {
+        try (var fs = EncodingFileSystems.newFileSystem(toPath())) {
             fs.getRootDirectories()
                     .forEach(root -> {
                         try (Stream<Path> stream = Files.walk(root)) {
@@ -97,7 +96,7 @@ public class ContentFile extends File {
     }
 
     private void inspectArchive(ContentModel model) throws IOException {
-        try (var fs = FileSystems.newFileSystem(toPath(), Collections.emptyMap())) {
+        try (var fs = EncodingFileSystems.newFileSystem(toPath())) {
             for (Path root : fs.getRootDirectories()) {
                 walkRoot(root, model);
             }

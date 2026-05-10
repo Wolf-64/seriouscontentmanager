@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
@@ -203,11 +204,13 @@ public class PrimaryController extends BaseController<DataModel> {
         if (Files.isDirectory(Path.of(getConfig().getDirectoryDownloads()))) {
             File[] files = Path.of(getConfig().getDirectoryDownloads()).toFile().listFiles();
             if (files != null) {
+                AtomicReference<File> currentFile = new AtomicReference<>();
                 Task<Void> scanTask = new Task<>() {
                     @Override
                     protected Void call() {
                         for (int i = 0; i < files.length; i++) {
                             File downloadedFile = files[i];
+                            currentFile.set(downloadedFile);
                             int progress = i;
                             Platform.runLater(() -> setStatusBarContent("Scanning " + downloadedFile.getName() + "...", (double) files.length / progress));
                             if (downloadedFile.getName().endsWith(".gro") || downloadedFile.getName().endsWith(".zip")) {
@@ -223,7 +226,10 @@ public class PrimaryController extends BaseController<DataModel> {
                     resetStatusBar();
                     loadingIndicatorVisible.set(false);
                 });
-                scanTask.setOnFailed((wse) -> setStatusBarContent("Error scanning for files! " + wse.getSource().getException().getLocalizedMessage()));
+                scanTask.setOnFailed((wse) -> {
+                    loadingIndicatorVisible.set(false);
+                    setStatusBarContent("Error scanning " + currentFile.get().getName() + " - " + wse.getSource().getException().getLocalizedMessage());
+                });
                 new Thread(scanTask).start();
             }
         }
