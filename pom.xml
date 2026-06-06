@@ -6,7 +6,7 @@
     <name>${project.artifactId}::${project.version}</name>
     <inceptionYear>2025</inceptionYear>
     <scm>
-        <developerConnection>scm:git:https://github.com/Wolf-64/seriouscontentmanager.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:Wolf-64/seriouscontentmanager.git</developerConnection>
       <tag>v0.2.3</tag>
   </scm>
 
