@@ -9,18 +9,15 @@ import java.net.http.HttpResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.wlf.app.main.data.ContentLanguage;
 import lombok.Data;
 
 public class Requester implements Closeable {
     Logger log = Logger.getLogger(Requester.class.getSimpleName());
 
-    public static final String MOD_API_URL = "https://grorepository.ru/api/mods/";
+    public static final String MOD_API_URL = "https://grorepository.ru/proxy/mods/";
     public static final String MOD_SITE_URL = "https://grorepository.ru/mod/";
-    private static final String DOWNLOAD_API_URL = "https://grorepository.ru/api/mods/download/";
     public static final String DOWNLOAD_API_FILE_URL = "https://grorepository.ru/api/file/";
 
     private final HttpClient client;
@@ -34,26 +31,6 @@ public class Requester implements Closeable {
         mapper.registerModule(new JavaTimeModule());
     }
 
-    // GET https://grorepository.ru/api/mods/gates-to-hammurabi
-
-    public JsonNode getJsonFromURL(String url) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
-
-        log.log(Level.INFO, "Sending request to fetch metadata for: {0}", url);
-        HttpResponse<String> response;
-        response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 200) {
-            log.log(Level.SEVERE, "Failed to fetch file URI. HTTP Status: {0}", response.statusCode());
-            return mapper.readTree(response.body());
-        }
-
-        return null;
-    }
-
     /**
      * Sends request to grorepository API, fetching all metadata for a given mod
      * @param modName
@@ -64,6 +41,7 @@ public class Requester implements Closeable {
     public ModInfo requestModInfo(String modName) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(MOD_API_URL + modName))
+                .header("accept", "application/json")
                 .GET()
                 .build();
 
