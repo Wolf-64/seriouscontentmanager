@@ -2,7 +2,7 @@ package com.wlf.app.main.data;
 
 import com.wlf.app.main.net.ModInfo;
 import com.wlf.app.main.net.Requester;
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
 import javafx.beans.property.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 public class ContentModel {
-    private static final Config config = Config.getInstance();
+    private static final ConfigManager config = ConfigManager.getInstance();
 
     /** Name of the map/mod/character model */
     private final StringProperty name = new SimpleStringProperty();
@@ -91,19 +91,19 @@ public class ContentModel {
     }
 
     public boolean canInstallToTfe() {
-        return !isInstalled() && config.isTfeDirectoryValid();
+        return !isInstalled() && config.getManagerConfig().isTfeDirectoryValid();
     }
 
     public boolean canInstallToTse() {
-        return !isInstalled() && config.isTseDirectoryValid();
+        return !isInstalled() && config.getManagerConfig().isTseDirectoryValid();
     }
 
     public boolean canRemoveFromTfe() {
-        return isInstalled() && config.isTfeDirectoryValid();
+        return isInstalled() && config.getManagerConfig().isTfeDirectoryValid();
     }
 
     public boolean canRemoveFromTse() {
-        return isInstalled() && config.isTseDirectoryValid();
+        return isInstalled() && config.getManagerConfig().isTseDirectoryValid();
     }
 
     /**
@@ -112,8 +112,8 @@ public class ContentModel {
      */
     public boolean canInstall() {
         return switch (game.get()) {
-            case TFE -> config.isTfeDirectoryValid() && !isInstalled();
-            case TSE -> config.isTseDirectoryValid() && !isInstalled();
+            case TFE -> config.getManagerConfig().isTfeDirectoryValid() && !isInstalled();
+            case TSE -> config.getManagerConfig().isTseDirectoryValid() && !isInstalled();
             default -> false;
         };
     }
@@ -124,8 +124,8 @@ public class ContentModel {
      */
     public boolean canRemove() {
         return switch (game.get()) {
-            case TFE -> config.isTfeDirectoryValid() && isInstalled();
-            case TSE -> config.isTseDirectoryValid() && isInstalled();
+            case TFE -> config.getManagerConfig().isTfeDirectoryValid() && isInstalled();
+            case TSE -> config.getManagerConfig().isTseDirectoryValid() && isInstalled();
             default -> false;
         };
     }
@@ -181,11 +181,11 @@ public class ContentModel {
     public ContentFile getDownloadedFile() {
         if (downloadedFile == null && downloadedFileName.get() != null) {
             if (downloadedFileName.get().endsWith(".zip")) {
-                this.downloadedFile = new ZipFile(Path.of(config.getDirectoryDownloads(), downloadedFileName.get()));
+                this.downloadedFile = new ZipFile(Path.of(config.getDownloaderConfig().getDirectoryDownloads(), downloadedFileName.get()));
             } else if (downloadedFileName.get().endsWith(".gro")) {
-                this.downloadedFile = new GroFile(Path.of(config.getDirectoryDownloads(), downloadedFileName.get()));
+                this.downloadedFile = new GroFile(Path.of(config.getDownloaderConfig().getDirectoryDownloads(), downloadedFileName.get()));
             } else {
-                this.downloadedFile = new ContentFile(Path.of(config.getDirectoryDownloads(), downloadedFileName.get()));
+                this.downloadedFile = new ContentFile(Path.of(config.getDownloaderConfig().getDirectoryDownloads(), downloadedFileName.get()));
             }
         }
         return downloadedFile;

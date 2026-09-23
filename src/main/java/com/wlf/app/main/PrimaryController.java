@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.main.net.GroRepositoryController;
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
 import com.wlf.app.preferences.PreferencesController;
 import com.wlf.common.BaseController;
 import com.wlf.app.main.data.*;
@@ -40,7 +40,7 @@ import org.slf4j.event.Level;
 @Slf4j
 public class PrimaryController extends BaseController<DataModel> {
     @FXML
-    private final ObjectProperty<Config> config = new SimpleObjectProperty<>(Config.getInstance());
+    private final ObjectProperty<ConfigManager> config = new SimpleObjectProperty<>(ConfigManager.getInstance());
 
     @FXML
     private final ObjectProperty<TableFilter> tableFilter = new SimpleObjectProperty<>(new TableFilter());
@@ -139,10 +139,10 @@ public class PrimaryController extends BaseController<DataModel> {
         // store column configuration on app close
         getOnCloseRequestCallbacks().add((windowEvent -> {
             for(int i = 0; i < table.getColumns().size(); i++) {
-                getConfig().getTableColumnHeaders()[i] = table.getColumns().get(i).isVisible();
+                getConfig().getManagerConfig().getTableColumnHeaders()[i] = table.getColumns().get(i).isVisible();
             }
             try {
-                Config.save();
+                ConfigManager.save();
             } catch (IOException e) {
                 log.error(e.toString());
             }
@@ -150,7 +150,7 @@ public class PrimaryController extends BaseController<DataModel> {
 
         // restore column header visibilities
         for(int i = 0; i < table.getColumns().size(); i++) {
-            table.getColumns().get(i).setVisible(getConfig().getTableColumnHeaders()[i]);
+            table.getColumns().get(i).setVisible(getConfig().getManagerConfig().getTableColumnHeaders()[i]);
         }
     }
 
@@ -201,8 +201,8 @@ public class PrimaryController extends BaseController<DataModel> {
     @FXML
     public void onRescanDownloadDir(ActionEvent event) {
         loadingIndicatorVisible.set(true);
-        if (Files.isDirectory(Path.of(getConfig().getDirectoryDownloads()))) {
-            File[] files = Path.of(getConfig().getDirectoryDownloads()).toFile().listFiles();
+        if (Files.isDirectory(Path.of(getConfig().getDownloaderConfig().getDirectoryDownloads()))) {
+            File[] files = Path.of(getConfig().getDownloaderConfig().getDirectoryDownloads()).toFile().listFiles();
             if (files != null) {
                 AtomicReference<File> currentFile = new AtomicReference<>();
                 Task<Void> scanTask = new Task<>() {
@@ -336,7 +336,7 @@ public class PrimaryController extends BaseController<DataModel> {
             };
             task.setOnFailed((workerStateEvent) -> {
                 log.error(workerStateEvent.getSource().toString());
-                App.showError(new Exception(workerStateEvent.getSource().getException()));
+                App.showErrorMessage(new Exception(workerStateEvent.getSource().getException()));
                 resetStatusBar();
                 loadingIndicatorVisible.set(false);
             });
@@ -362,7 +362,7 @@ public class PrimaryController extends BaseController<DataModel> {
             new Thread(task).start();
         } catch (Exception e) {
             log.error(e.toString());
-            App.showError(e);
+            App.showErrorMessage(e);
         }
     }
 
@@ -441,7 +441,7 @@ public class PrimaryController extends BaseController<DataModel> {
         try {
             GameHandler.startGame(game);
         } catch (IOException e) {
-            App.showError(e);
+            App.showErrorMessage(e);
         }
     }
 
@@ -471,7 +471,7 @@ public class PrimaryController extends BaseController<DataModel> {
             }
         } catch (IOException e) {
             log.error("Error analyzing file content during import.", e);
-            App.showError(e);
+            App.showErrorMessage(e);
         }
     }
 
@@ -482,15 +482,15 @@ public class PrimaryController extends BaseController<DataModel> {
 
     // ------------------------ FX Boilerplate ------------------------
 
-    public Config getConfig() {
+    public ConfigManager getConfig() {
         return config.get();
     }
 
-    public void setConfig(Config config) {
-        this.config.set(config);
+    public void setConfig(ConfigManager managerConfig) {
+        this.config.set(managerConfig);
     }
 
-    public ObjectProperty<Config> configProperty() {
+    public ObjectProperty<ConfigManager> configProperty() {
         return config;
     }
 

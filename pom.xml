@@ -150,7 +150,6 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${version.log4j2}</version>
             <scope>runtime</scope>
-            <version>${version.logger}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

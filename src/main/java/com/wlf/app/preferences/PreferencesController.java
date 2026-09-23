@@ -5,6 +5,7 @@ import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
 import com.wlf.app.main.data.Game;
 import com.wlf.common.BaseController;
+import com.wlf.common.BaseModel;
 import com.wlf.common.controls.ValidatingTextField;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -31,7 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-public class PreferencesController extends BaseController<GeneralConfig> {
+public class PreferencesController extends BaseController<BaseModel> {
     @FXML
     private ComboBox<Language> cmbLanguages;
     @FXML
@@ -47,7 +48,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
 
     private final ObjectProperty<Ikon> iconDarkModeToggle = new SimpleObjectProperty<>(FontAwesomeSolid.SUN);
 
-    private final ObjectProperty<GeneralConfig> config= new SimpleObjectProperty<>(ConfigManager.getInstance().getGeneralConfig());
+    private final ObjectProperty<ConfigManager> config= new SimpleObjectProperty<>(ConfigManager.getInstance());
 
     @FXML
     FontIcon imgCheckTFE, imgCheckTSE;
@@ -66,79 +67,73 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     @FXML
     private Spinner<Integer> spinMaxDownloads;
 
-
-    public PreferencesController() {
-        model.set(ConfigManager.getInstance().getGeneralConfig());
-    }
-
     @FXML
     public void initialize() {
         warningIcon.setStyle("-fx-icon-color: red");
-        btnDarkMode.selectedProperty().bindBidirectional(getConfig().darkModeEnabledProperty());
-        cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().restoreWindowProperty());
-        cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().fullScreenProperty());
+        btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
+        cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
+        cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
-        cmbLanguages.getSelectionModel().select(model.get().getLanguage());
+        cmbLanguages.getSelectionModel().select(getConfig().getGeneralConfig().getLanguage());
         cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
-                    App.STATE.setLanguageChanged(newValue != model.get().getLanguage());
-                    languageWarningVisible.setValue(newValue != model.get().getLanguage());
+                    App.STATE.setLanguageChanged(newValue != getConfig().getGeneralConfig().getLanguage());
+                    languageWarningVisible.setValue(newValue != getConfig().getGeneralConfig().getLanguage());
                 });
 
         cmbThemes.setItems(FXCollections.observableList(Arrays.stream(AppStyle.Theme.values()).toList()));
-        cmbThemes.getSelectionModel().select(model.get().getActiveTheme());
+        cmbThemes.getSelectionModel().select(getConfig().getGeneralConfig().getActiveTheme());
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
                     if (newValue.getLightTheme() == null) {
-                        getConfig().setDarkModeEnabled(true);
+                        getConfig().getGeneralConfig().setDarkModeEnabled(true);
                         setDarkModeToggleDisabled(true);
                         onToggleDarkMode();
                     } else if (newValue.getDarkTheme() == null) {
-                        getConfig().setDarkModeEnabled(false);
+                        getConfig().getGeneralConfig().setDarkModeEnabled(false);
                         setDarkModeToggleDisabled(true);
                         onToggleDarkMode();
                     } else {
-                        App.setAppTheme(newValue, getConfig().isDarkModeEnabled());
+                        App.setAppTheme(newValue, getConfig().getGeneralConfig().isDarkModeEnabled());
                     }
                 });
 
-        spinMaxDownloads.getValueFactory().valueProperty().bindBidirectional(getModel().maxDownloadsProperty());
+        spinMaxDownloads.getValueFactory().valueProperty().bindBidirectional(getConfig().getDownloaderConfig().maxDownloadsProperty());
 
-        vtfDownloadsPath.textProperty().bindBidirectional(getModel().directoryDownloadsProperty());
+        vtfDownloadsPath.textProperty().bindBidirectional(getConfig().getDownloaderConfig().directoryDownloadsProperty());
         vtfDownloadsPath.setValidator(this::validateDownloadsPath);
-        vtfTFEPath.textProperty().bindBidirectional(getModel().directoryTFEProperty());
+        vtfTFEPath.textProperty().bindBidirectional(getConfig().getManagerConfig().directoryTFEProperty());
         vtfTFEPath.setValidator(this::validateTFEPath);
-        vtfTSEPath.textProperty().bindBidirectional(getModel().directoryTSEProperty());
+        vtfTSEPath.textProperty().bindBidirectional(getConfig().getManagerConfig().directoryTSEProperty());
         vtfTSEPath.setValidator(this::validateTSEPath);
 
-        cbAutoClearList.selectedProperty().bindBidirectional(getModel().autoClearFinishedDownloadsProperty());
+        cbAutoClearList.selectedProperty().bindBidirectional(getConfig().getDownloaderConfig().autoClearFinishedDownloadsProperty());
 
         validateGamePaths();
 
         // register directory browser buttons
         btnBrowseDirectoryDownloads.setOnAction((event) -> {
             String path = browseForDirectory();
-            getModel().setDirectoryDownloads(path);
+            getConfig().getDownloaderConfig().setDirectoryDownloads(path);
         });
         btnBrowseDirectoryTFE.setOnAction((event) -> {
             String path = browseForDirectory();
-            getModel().setDirectoryTFE(path);
+            getConfig().getManagerConfig().setDirectoryTFE(path);
         });
         btnBrowseDirectoryTSE.setOnAction((event) -> {
             String path = browseForDirectory();
-            getModel().setDirectoryTSE(path);
+            getConfig().getManagerConfig().setDirectoryTSE(path);
         });
     }
 
     @FXML
     public void onToggleDarkMode() {
-        if (getConfig().isDarkModeEnabled()) {
+        if (getConfig().getGeneralConfig().isDarkModeEnabled()) {
             iconDarkModeToggle.set(FontAwesomeRegular.MOON);
         } else {
             iconDarkModeToggle.set(FontAwesomeSolid.SUN);
         }
-        App.setAppTheme(cmbThemes.getSelectionModel().getSelectedItem(), getConfig().isDarkModeEnabled());
-                (_, _, newValue) -> App.setTheme(newValue));
+        App.setAppTheme(cmbThemes.getSelectionModel().getSelectedItem(), getConfig().getGeneralConfig().isDarkModeEnabled());
     }
 
     private boolean validateDownloadsPath(String path) {
@@ -149,7 +144,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     protected void onSave() throws IOException {
         validateGamePaths();
         if (App.STATE.isLanguageChanged()) {
-            model.get().setLanguage(cmbLanguages.getValue());
+            getConfig().getGeneralConfig().setLanguage(cmbLanguages.getValue());
             ConfigManager.save();
             AppLoader.reloadGUIs();
         } else {
@@ -199,20 +194,20 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     }
 
     private void validateGamePaths() {
-        validateTFEPath(getModel().getDirectoryTFE());
-        validateTSEPath(getModel().getDirectoryTSE());
+        validateTFEPath(getConfig().getManagerConfig().getDirectoryTFE());
+        validateTSEPath(getConfig().getManagerConfig().getDirectoryTSE());
     }
 
     private boolean validateTFEPath(String path) {
         boolean valid = Game.TFE.isGamePathValid(path);
-        getModel().setTfeDirectoryValid(valid);
+        getConfig().getManagerConfig().setTfeDirectoryValid(valid);
         imgCheckTFE.setVisible(valid);
         return valid;
     }
 
     private boolean validateTSEPath(String path) {
         boolean valid = Game.TSE.isGamePathValid(path);
-        getModel().setTseDirectoryValid(valid);
+        getConfig().getManagerConfig().setTseDirectoryValid(valid);
         imgCheckTSE.setVisible(valid);
         return valid;
     }
@@ -231,15 +226,15 @@ public class PreferencesController extends BaseController<GeneralConfig> {
         this.languageWarningVisible.set(languageWarningVisible);
     }
 
-    public GeneralConfig getConfig() {
+    public ConfigManager getConfig() {
         return config.get();
     }
 
-    public ObjectProperty<GeneralConfig> configProperty() {
+    public ObjectProperty<ConfigManager> configProperty() {
         return config;
     }
 
-    public void setConfig(GeneralConfig config) {
+    public void setConfig(ConfigManager config) {
         this.config.set(config);
     }
 

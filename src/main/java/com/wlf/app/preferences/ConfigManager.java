@@ -30,6 +30,10 @@ public class ConfigManager {
 
     @Getter
     private final GeneralConfig generalConfig = new GeneralConfig();
+    @Getter
+    private final ManagerConfig managerConfig = new ManagerConfig();
+    @Getter
+    private final DownloaderConfig downloaderConfig = new DownloaderConfig();
 
     private ConfigManager() {
 

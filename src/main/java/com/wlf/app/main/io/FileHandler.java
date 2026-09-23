@@ -1,7 +1,7 @@
 package com.wlf.app.main.io;
 
 import com.wlf.app.main.data.*;
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import java.util.zip.ZipInputStream;
 
 public class FileHandler {
     private static final Logger log = Logger.getLogger(FileHandler.class.getSimpleName());
-    private static final Config config = Config.getInstance();
+    private static final ConfigManager CONFIG = ConfigManager.getInstance();
 
     // mod files
     private static Path getTempModDir(Game game) {
@@ -68,7 +68,7 @@ public class FileHandler {
         try {
             // move to downloads
             Path tempFilePath = Path.of(file);
-            Path downloads = Path.of(config.getDirectoryDownloads());
+            Path downloads = Path.of(CONFIG.getDownloaderConfig().getDirectoryDownloads());
             if (!Files.exists(downloads)) {
                 Files.createDirectory(downloads);
             }
@@ -326,7 +326,7 @@ public class FileHandler {
                 removeContent(contentModel);
             }
             ContentRepository.getInstance().delete(contentModel);
-            Files.delete(Path.of(config.getDirectoryDownloads(), contentModel.getDownloadedFileName()));
+            Files.delete(Path.of(CONFIG.getDownloaderConfig().getDirectoryDownloads(), contentModel.getDownloadedFileName()));
         } catch (IOException e) {
             log.warning(e.toString());
         }

@@ -1,7 +1,7 @@
 package com.wlf.app.main.io;
 
 import com.wlf.app.main.data.Game;
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
 import com.wlf.common.util.OSUtil;
 import com.wlf.common.util.WindowsRegistry;
 import org.apache.commons.exec.*;
@@ -24,9 +24,9 @@ public class GameHandler {
 
     public static String getGamePath(Game game) {
         if (game == Game.TFE) {
-            return Config.getInstance().getDirectoryTFE();
+            return ConfigManager.getInstance().getManagerConfig().getDirectoryTFE();
         } else if (game == Game.TSE) {
-            return Config.getInstance().getDirectoryTSE();
+            return ConfigManager.getInstance().getManagerConfig().getDirectoryTSE();
         } else {
             return null;
         }
@@ -37,7 +37,7 @@ public class GameHandler {
     }
 
     public static DefaultExecuteResultHandler startGame(Game game, String modName) throws IOException {
-        if (Config.getInstance().isUseSteamRuntime()) {
+        if (ConfigManager.getInstance().getManagerConfig().isUseSteamRuntime()) {
             return runSteamExecutable(game, modName);
         } else {
             return runGameExe(game, modName);

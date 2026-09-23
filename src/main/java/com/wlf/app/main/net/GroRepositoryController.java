@@ -47,7 +47,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
 
     @FXML
     private TaskProgressView<Task<ContentModel>> downloadTaskView;
-    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(getConfiguration().getMaxDownloads());
+    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(getConfigManager().getDownloaderConfig().getMaxDownloads());
     private final Map<String, Downloader> activeDownloads = new HashMap<>();
 
     private final BooleanProperty stopDownloadButtonDisabled = new SimpleBooleanProperty(true);
@@ -86,7 +86,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
         });
         downloadTaskView.getStylesheets().clear();
 
-        getConfiguration().maxDownloadsProperty().addListener(((observableValue, oldValue, newValue) -> {
+        getConfigManager().getDownloaderConfig().maxDownloadsProperty().addListener(((observableValue, oldValue, newValue) -> {
             // thread pool value constraints don't allow setting core size higher than max and vice versa, so order matters
             if (oldValue > newValue) {
                 executorService.setCorePoolSize(newValue);
@@ -184,7 +184,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
             }
 
             // file exists already, ask to add to library; TODO potentially merge entries with data from grorepo
-            if (Files.exists(Path.of(getConfiguration().getDirectoryDownloads(), downloadInfo.fileName))) {
+            if (Files.exists(Path.of(getConfigManager().getDownloaderConfig().getDirectoryDownloads(), downloadInfo.fileName))) {
                 CompletableFuture<Boolean> choiceFuture = new CompletableFuture<>();
                 Platform.runLater(() -> {
                     String text = "File '" + downloadInfo.fileName + "' already exists on disk. Add to library?";
@@ -197,7 +197,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
                     resetBrowser();
                     if (choice) {
                         ContentModel contentModel = new ContentModel().fromModInfo(downloadInfo.modInfo);
-                        contentModel.setDownloadedFile(new ContentFile(Path.of(getConfiguration().getDirectoryDownloads(), downloadInfo.fileName)));
+                        contentModel.setDownloadedFile(new ContentFile(Path.of(getConfigManager().getDownloaderConfig().getDirectoryDownloads(), downloadInfo.fileName)));
                         contentModel.setDownloadedFileName(downloadInfo.fileName);
                         FileHandler.registerNewFile(contentModel, contentModel.getDownloadedFile().getAbsolutePath());
                         getModel().getContent().add(contentModel);
@@ -212,7 +212,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
         }).exceptionally(ex -> {
             Platform.runLater(() -> {
                 resetBrowser();
-                App.showError((Exception) ex);
+                App.showErrorMessage((Exception) ex);
             });
             return null;
         });
@@ -228,7 +228,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
             return requester.requestModInfo(modName);
         } catch (IOException | InterruptedException e) {
             log.severe(e.toString());
-            Platform.runLater(() -> App.showError(e));
+            Platform.runLater(() -> App.showErrorMessage(e));
             return null;
         }
     }
@@ -259,7 +259,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
                 throw new RuntimeException(e);
             }
 
-            if (getConfiguration().isAutoClearFinishedDownloads()) {
+            if (getConfigManager().getDownloaderConfig().isAutoClearFinishedDownloads()) {
                 downloadTaskView.getTasks().remove(downloader);
             }
             activeDownloads.remove(downloadInfo.fileName);
@@ -353,12 +353,12 @@ public class GroRepositoryController extends BaseController<DataModel> {
      * @return
      */
     private boolean checkPrerequisitesForDownload() {
-        if (configuration.get().getDirectoryDownloads() == null
-                || configuration.get().getDirectoryDownloads().isEmpty()) {
+        if (getConfigManager().getDownloaderConfig().getDirectoryDownloads() == null
+                || getConfigManager().getDownloaderConfig().getDirectoryDownloads().isEmpty()) {
             new Alert(Alert.AlertType.WARNING, "No download directory set!\nCheck your settings.").show();
             return false;
         }
-        if (!Files.exists(Path.of(configuration.get().getDirectoryDownloads()))) {
+        if (!Files.exists(Path.of(getConfigManager().getDownloaderConfig().getDirectoryDownloads()))) {
             new Alert(Alert.AlertType.ERROR, "Download directory does not exist!\nCheck your settings.").show();
             return false;
         }
@@ -369,7 +369,7 @@ public class GroRepositoryController extends BaseController<DataModel> {
             try {
                 Files.createDirectory(path);
             } catch (IOException e) {
-                App.showError(e);
+                App.showErrorMessage(e);
                 return false;
             }
         }

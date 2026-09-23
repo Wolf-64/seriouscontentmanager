@@ -1,6 +1,6 @@
 package com.wlf.app.main.data;
 
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
 import lombok.Getter;
 
 import java.io.File;
@@ -20,8 +20,8 @@ public enum Game {
 
     public String getGameFolder() {
         return switch (this) {
-            case TFE -> Config.getInstance().getDirectoryTFE();
-            case TSE -> Config.getInstance().getDirectoryTSE();
+            case TFE -> ConfigManager.getInstance().getManagerConfig().getDirectoryTFE();
+            case TSE -> ConfigManager.getInstance().getManagerConfig().getDirectoryTSE();
             case ANY -> null;
         };
     }
