@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wlf</groupId>
     <artifactId>lightweightFX</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>${project.artifactId}::${project.version}</name>
     <inceptionYear>2025</inceptionYear>
     <scm>
@@ -12,27 +12,23 @@
     </scm>
 
     <properties>
-        <app.version>${project.version}</app.version>
-        <app.name>lightweightFX</app.name>
-
         <project.mainClass>com.wlf.app.App</project.mainClass>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+        <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
         <version.javafx>25.0.1</version.javafx>
         <version.lombok>1.18.42</version.lombok>
         <version.controlsfx>11.2.2</version.controlsfx>
-        <version.sqlite>3.47.1.0</version.sqlite>
+        <version.gemsfx>4.5.0</version.gemsfx>
         <version.ikonli>12.4.0</version.ikonli>
-        <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-        <version.jackson>2.19.2</version.jackson>
         <version.atlantafx>2.1.0</version.atlantafx>
+        <version.sqlite>3.47.1.0</version.sqlite>
+        <version.jackson>2.19.2</version.jackson>
         <version.maven-scm-plugin>2.0.1</version.maven-scm-plugin>
         <version.maven-install-plugin>2.4</version.maven-install-plugin>
         <version.versions-maven-plugin>2.14.2</version.versions-maven-plugin>
         <version.properties-maven-plugin>1.2.1</version.properties-maven-plugin>
         <version.maven-dependency-plugin>3.8.1</version.maven-dependency-plugin>
-        <version.jgit>7.2.0.202503040940-r</version.jgit>
-        <version.logger>2.25.2</version.logger>
+        <version.slf4j>2.0.18</version.slf4j>
+        <version.log4j2>2.25.4</version.log4j2>
         <version.commons-cli>1.5.0.redhat-00001</version.commons-cli>
         <version.junit>4.13.2</version.junit>
         <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
@@ -57,6 +53,11 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>${version.controlsfx}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dlsc.gemsfx</groupId>
+            <artifactId>gemsfx</artifactId>
+            <version>${version.gemsfx}</version>
         </dependency>
         <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -121,19 +122,20 @@
             <version>${version.atlantafx}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${version.logger}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.slf4j}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${version.logger}</version>
+            <version>${version.log4j2}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>${version.logger}</version>
+            <version>${version.log4j2}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <build>
@@ -165,13 +167,14 @@
                 <version>${version.properties-maven-plugin}</version>
                 <executions>
                     <execution>
-                        <id>generate-version-file</id>
-                        <phase>generate-resources</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>write-project-properties</goal>
                         </goals>
                         <configuration>
-                            <outputFile>${project.build.outputDirectory}/meta.properties</outputFile>
+                            <outputFile>
+                                ${project.build.directory}/maven-project.properties
+                            </outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -185,7 +188,7 @@
                     <noHeaderFiles>true</noHeaderFiles>
                     <stripDebug>true</stripDebug>
                     <noManPages>true</noManPages>
-                    <launcher>${app.name}</launcher>
+                    <launcher>lightweightfx</launcher>
                     <mainClass>lightweightfx/${project.mainClass}</mainClass>
                     <jlinkImageName>lightweightfx</jlinkImageName>
                     <jlinkZipName>lightweightfx</jlinkZipName>
@@ -197,7 +200,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>${project.mainClass}</mainClass>
-                            <launcher>${app.name}</launcher>
+                            <launcher>lightweightfx</launcher>
                             <jlinkZipName>lightweightfx</jlinkZipName>
                             <jlinkImageName>lightweightfx</jlinkImageName>
                             <noManPages>true</noManPages>
@@ -224,6 +227,48 @@
                                 <option>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>
+                                ${project.mainClass}
+                            </mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>project-classifier</shadedClassifierName>
+                            <outputFile>shade\${project.artifactId}.jar</outputFile>
+                            <transformers>
+                                <transformer implementation=
+                                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${project.mainClass}</mainClass>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>

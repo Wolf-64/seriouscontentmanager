@@ -1,6 +1,7 @@
 package com.wlf.app;
 
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
+import com.wlf.app.preferences.GeneralConfig;
 import com.wlf.common.BaseController;
 import com.wlf.common.util.ErrorHandler;
 import javafx.concurrent.Task;
@@ -43,7 +44,7 @@ public class AppLoader<T extends BaseController<?>> {
                 if (loadedControllers.containsKey(fxml)) {
                     loader.setControllerFactory((clazz) -> loadedControllers.get(fxml));
                 }
-                loader.setResources(getI18NResourceForLocale(guiName, Config.getInstance().getLanguage().getLocale()));
+                loader.setResources(getI18NResourceForLocale(guiName, ConfigManager.getInstance().getGeneralConfig().getLanguage().getLocale()));
                 gui = loader.load();
                 controller = loader.getController();
                 loadedControllers.put(fxml, controller);
@@ -74,7 +75,7 @@ public class AppLoader<T extends BaseController<?>> {
     /** Does not register an fxml for reloading */
     public Parent load() throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-        loader.setResources(getI18NResourceForLocale(guiName, Config.getInstance().getLanguage().getLocale()));
+        loader.setResources(getI18NResourceForLocale(guiName, ConfigManager.getInstance().getGeneralConfig().getLanguage().getLocale()));
         gui = loader.load();
         controller = loader.getController();
         loadedControllers.put(fxml, controller);

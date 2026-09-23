@@ -1,11 +1,10 @@
 package com.wlf.app;
 
-import com.wlf.app.preferences.Config;
+import com.wlf.app.preferences.ConfigManager;
 import com.wlf.common.*;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 import org.controlsfx.control.MaskerPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import java.net.InetAddress;
 
 public final class FrameController extends BaseController<BaseModel> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrameController.class.getSimpleName());
-    private static final boolean DEV_MODE = Config.getInstance().isDevMode();
+    private static final boolean DEV_MODE = ConfigManager.getInstance().getGeneralConfig().isDevMode();
 
     @FXML
     private VBox splash;
@@ -47,6 +46,19 @@ public final class FrameController extends BaseController<BaseModel> {
 
     public void setLoading(boolean value) {
         loadingMask.setVisible(value);
+    }
+
+    public void setWindowsSizeFromConfig() {
+        double width, height;
+        width = getConfigManager().getGeneralConfig().getWindowWidth();
+        height = getConfigManager().getGeneralConfig().getWindowHeight();
+
+        if (getConfigManager().getGeneralConfig().isFullScreen()) {
+            stage.setFullScreen(true);
+        } else if (width > 0 || height > 0 && getConfigManager().getGeneralConfig().isRestoreWindow()) {
+            stage.setHeight(height);
+            stage.setWidth(width);
+        }
     }
 
     private void checkInternetConnection() {

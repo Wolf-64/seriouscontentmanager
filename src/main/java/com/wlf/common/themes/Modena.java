@@ -1,12 +1,12 @@
 package com.wlf.common.themes;
 
-import atlantafx.base.theme.Theme;
+import com.wlf.common.util.Utils;
 import javafx.application.Application;
 
-public class Modena implements Theme {
+public class Modena extends BaseTheme {
     @Override
     public String getName() {
-        return "Modena";
+        return "Modena (JavaFX default)";
     }
 
     @Override
@@ -22,5 +22,10 @@ public class Modena implements Theme {
     @Override
     public boolean isDarkMode() {
         return false;
+    }
+
+    @Override
+    public String getSceneStyleSheet() {
+        return Utils.getCss("common/modena.css");
     }
 }
