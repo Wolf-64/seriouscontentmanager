@@ -1,26 +1,29 @@
 package com.wlf.common.themes;
 
-import javafx.application.Application;
+public class CupertinoDark extends BaseTheme {
 
-public class Caspian extends BaseTheme {
+    public CupertinoDark() {
+        this.atlantafxTheme = new atlantafx.base.theme.CupertinoDark();
+    }
+
     @Override
     public String getName() {
-        return "Caspian (JavaFX 2.0)";
+        return atlantafxTheme.getName();
     }
 
     @Override
     public String getUserAgentStylesheet() {
-        return Application.STYLESHEET_CASPIAN;
+        return atlantafxTheme.getUserAgentStylesheet();
     }
 
     @Override
     public String getUserAgentStylesheetBSS() {
-        return null;
+        return atlantafxTheme.getUserAgentStylesheetBSS();
     }
 
     @Override
     public boolean isDarkMode() {
-        return false;
+        return atlantafxTheme.isDarkMode();
     }
 
     @Override

@@ -9,6 +9,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,6 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.kordamp.ikonli.javafx.FontIconTableCell?>
 
 <BorderPane prefHeight="625.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.preferences.PreferencesController">
     <top>
@@ -24,7 +27,7 @@
             <children>
                 <GridPane>
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
@@ -32,7 +35,10 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
                         <Label text="%language" GridPane.rowIndex="1" />
@@ -45,6 +51,37 @@
                             </font>
                         </Label>
                   <Label text="%language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ToggleButton fx:id="btnDarkMode" disable="${controller.darkModeToggleDisabled}" mnemonicParsing="false" onAction="#onToggleDarkMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <graphic>
+                        <FontIconTableCell />
+                     </graphic>
+                  </ToggleButton>
+                  <Label text="%logging" GridPane.rowIndex="4">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+                  <Label text="%logging.level" GridPane.rowIndex="5" />
+                  <Label text="%logging.type" GridPane.rowIndex="6" />
+                  <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <HBox fx:id="hbxLogFile" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                     <children>
+                        <TextField maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="984.0" promptText="log file location" />
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <FontIcon iconLiteral="far-folder" />
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <FontIcon iconLiteral="far-folder-open" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="cbxRestoreWindow" mnemonicParsing="false" text="%window.resize" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="cbxStartFullscreen" mnemonicParsing="false" text="%window.fullscreen" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                     </children>
                 </GridPane>
             </children>
@@ -90,6 +127,8 @@
                       </valueFactory>
                   </Spinner>
                   <CheckBox fx:id="cbAutoClearList" text="%downloads.autoClear" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSave" prefWidth="120.0" text="%save" />
+                  <Button cancelButton="true" mnemonicParsing="false" onAction="#onCancel" prefWidth="120.0" text="%cancel" />
                </children>
             </GridPane>
               <GridPane vgap="8.0">

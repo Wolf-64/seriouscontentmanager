@@ -1,34 +1,37 @@
 package com.wlf.app;
 
-import atlantafx.base.theme.*;
-import com.wlf.common.themes.Caspian;
-import com.wlf.common.themes.Modena;
-import com.wlf.common.themes.ModenaDark;
+import com.wlf.common.themes.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 public class AppStyle {
     public enum Theme {
-        PRIMER_LIGHT(new PrimerLight()),
-        PRIMER_DARK(new PrimerDark()),
-        NORD_LIGHT(new NordLight()),
-        NORD_DARK(new NordDark()),
-        CUPERTINO_LIGHT(new CupertinoLight()),
-        CUPERTINO_DARK(new CupertinoDark()),
-        DRACULA(new Dracula()),
-        MODENA(new Modena()),
-        MODENA_DARK(new ModenaDark()),
-        CASPIAN(new Caspian());
+        PRIMER(new PrimerLight(), new PrimerDark()),
+        NORD(new NordLight(), new NordDark()),
+        CUPERTINO(new CupertinoLight(), new CupertinoDark()),
+        DRACULA(new Dracula(), new Dracula()),
+        MODENA(new Modena(), new ModenaDark()),
+        CASPIAN(new Caspian(), new Caspian());
 
-        Theme(atlantafx.base.theme.Theme theme) { this.theme = theme; }
         @Getter
-        final atlantafx.base.theme.Theme theme;
+        final BaseTheme lightTheme;
+        @Getter
+        final BaseTheme darkTheme;
+
+        Theme(BaseTheme lightTheme,  BaseTheme darkTheme) {
+            this.lightTheme = lightTheme;
+            this.darkTheme = darkTheme;
+        }
 
         @Override
         public String toString() {
-            return this.theme.getName();
+            if (lightTheme != null) {
+                return lightTheme.getName().replace("Light", "");
+            } else if (darkTheme != null) {
+                return darkTheme.getName().replace("Dark", "");
+            }
+            return "undefined";
         }
     }
 
@@ -36,4 +39,22 @@ public class AppStyle {
     private String file;
     private boolean useCustomDecorations;
     private boolean isActive;
+
+    public AppStyle() {}
+
+    public AppStyle(String name, String file, boolean useCustomDecorations, boolean isActive) {
+        this.name = name;
+        this.file = file;
+        this.useCustomDecorations = useCustomDecorations;
+        this.isActive = isActive;
+    }
+
+    public AppStyle(String name, String file, boolean useCustomDecorations) {
+        this(name, file, useCustomDecorations, false);
+    }
+
+    @Override
+    public String toString() {
+        return name + (isActive ? " (current)" : "");
+    }
 }

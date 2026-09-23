@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logPattern}"/>
+        </Console>
+        <!-- createOnDemand avoids creating an empty log file when logging only to the console -->
+        <File name="File" fileName="${sys:log.file:-logs/cia-tools.log}" append="true" createOnDemand="true">
+            <PatternLayout pattern="${logPattern}"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="${sys:log.level:-INFO}">
+            <Select>
+                <SystemPropertyArbiter propertyName="log.target" propertyValue="file">
+                    <AppenderRef ref="File"/>
+                </SystemPropertyArbiter>
+                <SystemPropertyArbiter propertyName="log.target" propertyValue="both">
+                    <AppenderRef ref="Console"/>
+                    <AppenderRef ref="File"/>
+                </SystemPropertyArbiter>
+                <DefaultArbiter>
+                    <AppenderRef ref="Console"/>
+                </DefaultArbiter>
+            </Select>
+        </Root>
+    </Loggers>
+</Configuration>
