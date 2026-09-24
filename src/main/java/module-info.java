@@ -24,6 +24,7 @@ module seriouscontentmanager {
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
     requires org.kordamp.ikonli.fontawesome6;
+    requires com.dlsc.atlantafx.themes;
     requires org.apache.commons.exec;
     requires org.apache.commons.io;
     requires org.xerial.sqlitejdbc;

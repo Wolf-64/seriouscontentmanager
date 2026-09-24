@@ -1,8 +1,8 @@
 package com.wlf.app.main.io;
 
+import atlantafx.base.util.OS;
 import com.wlf.app.main.data.Game;
 import com.wlf.app.preferences.ConfigManager;
-import com.wlf.common.util.OSUtil;
 import com.wlf.common.util.WindowsRegistry;
 import org.apache.commons.exec.*;
 
@@ -64,18 +64,16 @@ public class GameHandler {
     }
 
     public static DefaultExecuteResultHandler runSteamExecutable(Game game, String modname) throws IOException {
-        Path path;
+        Path path = null;
         String gameId;
 
-        switch (OSUtil.getOS()) {
-            case LINUX -> path = Path.of("steam");
-            case WIN -> {
-                if (regValueCache == null) {
-                    regValueCache = Path.of(Objects.requireNonNull(WindowsRegistry.readRegistry(WIN_REG_STEAM_64, "InstallPath")), "Steam.exe").toString();
-                }
-                path = Path.of(regValueCache);
+        if (OS.isLinux()) {
+            path = Path.of("steam");
+        } else if (OS.isWindows()) {
+            if (regValueCache == null) {
+                regValueCache = Path.of(Objects.requireNonNull(WindowsRegistry.readRegistry(WIN_REG_STEAM_64, "InstallPath")), "Steam.exe").toString();
             }
-            default -> path = null;
+            path = Path.of(regValueCache);
         }
 
         if (game == Game.TFE) {

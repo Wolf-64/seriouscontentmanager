@@ -1,5 +1,6 @@
 package com.wlf.app;
 
+import com.dlsc.atlantafx.themes.*;
 import com.wlf.common.themes.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,10 +8,28 @@ import lombok.Setter;
 @Getter @Setter
 public class AppStyle {
     public enum Theme {
-        PRIMER(new PrimerLight(), new PrimerDark()),
-        NORD(new NordLight(), new NordDark()),
-        CUPERTINO(new CupertinoLight(), new CupertinoDark()),
-        DRACULA(new Dracula(), new Dracula()),
+        // AtlantaFX built-ins
+        PRIMER(fx(new atlantafx.base.theme.PrimerLight()), fx(new atlantafx.base.theme.PrimerDark())),
+        NORD(fx(new atlantafx.base.theme.NordLight()), fx(new atlantafx.base.theme.NordDark())),
+        CUPERTINO(fx(new atlantafx.base.theme.CupertinoLight()), fx(new atlantafx.base.theme.CupertinoDark())),
+        DRACULA(fx(new atlantafx.base.theme.Dracula()), fx(new atlantafx.base.theme.Dracula())),
+        // DLSC themes
+        SPRING(fx(new SpringLight()), fx(new SpringDark())),
+        SUMMER(fx(new SummerLight()), fx(new SummerDark())),
+        FALL(fx(new FallLight()), fx(new FallDark())),
+        WINTER(fx(new WinterLight()), fx(new WinterDark())),
+        BLUE(fx(new BlueLight()), fx(new BlueDark())),
+        NAVY(fx(new NavyLight()), fx(new NavyDark())),
+        ARMY(fx(new ArmyLight()), fx(new ArmyDark())),
+        AUTUMN(fx(new Autumn()), fx(new Autumn())),
+        BLACKY(fx(new Blacky()), fx(new Blacky())),
+        BROWNY(fx(new Browny()), fx(new Browny())),
+        NEWS(fx(new News()), fx(new News())),
+        YACHT(fx(new Yacht()), fx(new Yacht())),
+        GITHUB(fx(new GithubLightDefault()), fx(new GithubSoftDark())),
+        GITHUB_COLORBLIND(fx(new GithubLightColorblind()), fx(new GithubDarkColorblind())),
+        GITHUB_TRITANOPIA(fx(new GithubLightTritanopia()), fx(new GithubDarkTritanopia())),
+        // FX base themes
         MODENA(new Modena(), new ModenaDark()),
         CASPIAN(new Caspian(), new Caspian());
 
@@ -22,6 +41,10 @@ public class AppStyle {
         Theme(BaseTheme lightTheme,  BaseTheme darkTheme) {
             this.lightTheme = lightTheme;
             this.darkTheme = darkTheme;
+        }
+
+        private static BaseTheme fx(atlantafx.base.theme.Theme delegate) {
+            return new DelegateTheme(delegate);
         }
 
         @Override

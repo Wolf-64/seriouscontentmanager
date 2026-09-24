@@ -3,6 +3,7 @@ package com.wlf.app.preferences;
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
+import com.wlf.app.logging.LogManager;
 import com.wlf.app.main.data.Game;
 import com.wlf.common.BaseController;
 import com.wlf.common.BaseModel;
@@ -21,10 +22,12 @@ import javafx.stage.DirectoryChooser;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleButton;
+import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.event.Level;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +40,10 @@ public class PreferencesController extends BaseController<BaseModel> {
     private ComboBox<Language> cmbLanguages;
     @FXML
     private ComboBox<AppStyle.Theme> cmbThemes;
+    @FXML
+    private ComboBox<LogManager.LogType> cmbLogType;
+    @FXML
+    private ComboBox<Level> cmbLogLevel;
     @FXML
     private ToggleButton btnDarkMode;
     @FXML
@@ -96,6 +103,19 @@ public class PreferencesController extends BaseController<BaseModel> {
                     } else {
                         App.setAppTheme(newValue, getConfig().getGeneralConfig().isDarkModeEnabled());
                     }
+                });
+
+        cmbLogType.setItems(FXCollections.observableList(Arrays.stream(LogManager.LogType.values()).toList()));
+        cmbLogType.getSelectionModel().select(getConfig().getGeneralConfig().getLogType());
+        cmbLogType.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> {
+                    getConfig().getGeneralConfig().setLogType(newValue);
+                });
+        cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
+        cmbLogLevel.getSelectionModel().select(getConfig().getGeneralConfig().getLogLevel());
+        cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> {
+                    getConfig().getGeneralConfig().setLogLevel(newValue);
                 });
 
         spinMaxDownloads.getValueFactory().valueProperty().bindBidirectional(getConfig().getDownloaderConfig().maxDownloadsProperty());

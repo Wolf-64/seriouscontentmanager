@@ -1,5 +1,7 @@
 package com.wlf.app;
 
+import atlantafx.base.theme.ThemeManager;
+import atlantafx.base.theme.ThemeOption;
 import com.dlsc.gemsfx.util.ControlsFXAtlantaFX;
 import com.dlsc.gemsfx.util.GemsFXAtlantaFX;
 import com.wlf.app.preferences.ConfigManager;
@@ -38,12 +40,21 @@ public class App extends javafx.application.Application {
 
     private static Stage ABOUT_STAGE;
 
+    private static final ThemeOption.Key<Boolean> THEME_INTEGRATIONS =
+            new ThemeOption.Key<>("app.theme.integrations", Boolean.class);
+
     public static void main(String[] args) {
         // used to display on the GUI for funsies
         USERNAME = System.getProperty("user.name").toUpperCase();
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             Platform.runLater(() -> showCriticalError(new Exception(throwable)));
         });
+        ThemeManager.instance().register(ThemeOption.of(
+                THEME_INTEGRATIONS,
+                Boolean.TRUE,
+                change -> applyThemeIntegration(change.scene(), (BaseTheme) (change.theme()))
+        ));
+
         try {
             launch();
         } catch (Exception e) {
@@ -57,6 +68,7 @@ public class App extends javafx.application.Application {
         controller.afterInit();
         setAppTheme(ConfigManager.getInstance().getGeneralConfig().getActiveTheme(),
                 ConfigManager.getInstance().getGeneralConfig().isDarkModeEnabled());
+        ThemeManager.instance().setOption(THEME_INTEGRATIONS, Boolean.TRUE);
         controller.loadMainGUI("main/mainView.fxml");
     }
 
@@ -92,7 +104,7 @@ public class App extends javafx.application.Application {
         // Null reset forces JavaFX to flush CSS cache
         Application.setUserAgentStylesheet(null);
 
-        applyTheme(MAINSCENE, theme, darkMode);
+        ThemeManager.instance().setTheme(darkMode ? theme.getDarkTheme() : theme.getLightTheme());
 
         ConfigManager.getInstance().getGeneralConfig().setActiveTheme(theme);
         ConfigManager.getInstance().getGeneralConfig().setDarkModeEnabled(darkMode);
@@ -103,32 +115,12 @@ public class App extends javafx.application.Application {
         }
     }
 
-    public static void applyTheme(Scene scene, AppStyle.Theme theme, boolean darkMode) {
-        BaseTheme activeTheme = darkMode ? theme.getDarkTheme() : theme.getLightTheme();
-        Application.setUserAgentStylesheet(activeTheme.getUserAgentStylesheet());
-        if (activeTheme.getSceneStyleSheet() != null) {
-            scene.getStylesheets().add(activeTheme.getSceneStyleSheet());
-        }
-
-        // Apply Atlanta integrations to make icons work outside Modena
-        applyThemeIntegration(scene, activeTheme);
-    }
-
     /**
      * Applies the GemsFX/ControlsFX AtlantaFX integration stylesheets to the given scene when the
      * currently active theme is AtlantaFX-based. Must be called for every scene that hosts GemsFX or
      * ControlsFX controls (main window, login popup, overlay panes) - otherwise those controls' icons
      * fall back to non-theme-aware colors baked into the library's default stylesheets.
      */
-    public static void applyThemeIntegration(Scene scene) {
-        AppStyle.Theme theme = ConfigManager.getInstance().getGeneralConfig().getActiveTheme();
-        if (theme == null) {
-            return;
-        }
-        BaseTheme activeTheme = ConfigManager.getInstance().getGeneralConfig().isDarkModeEnabled() ? theme.getDarkTheme() : theme.getLightTheme();
-        applyThemeIntegration(scene, activeTheme);
-    }
-
     private static void applyThemeIntegration(Scene scene, BaseTheme activeTheme) {
         if (scene == null || activeTheme == null || !activeTheme.isAtlantaFX()) {
             return;
@@ -140,7 +132,7 @@ public class App extends javafx.application.Application {
     public static void showErrorMessage(Throwable exception) {
         ExceptionDialog dialog = new ExceptionDialog(exception);
         dialog.setTitle("Exception occurred");
-        dialog.setHeaderText("An uncaught exception occurred in " + exception.getClass().getSimpleName());
+        dialog.setHeaderText("An uncaught exception occurred " + exception.getCause());
         dialog.initOwner(MAINSTAGE);
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.showAndWait();

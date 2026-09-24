@@ -2,10 +2,12 @@ package com.wlf.app.preferences;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wlf.app.AppStyle;
+import com.wlf.app.logging.LogManager;
 import com.wlf.common.BaseModel;
 import javafx.beans.property.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.event.Level;
 
 /**
  * Global configuration object containing general settings and tool-specific configurations.
@@ -27,9 +29,9 @@ public class GeneralConfig extends BaseModel {
     /** Whether the window sizing should be restored from last session */
     private final BooleanProperty restoreWindow = new SimpleBooleanProperty(false);
 
-    private final BooleanProperty logToFile = new SimpleBooleanProperty(true);
     private final StringProperty logFileTarget = new SimpleStringProperty("app.log");
-    private final StringProperty logLevel = new SimpleStringProperty("INFO");
+    private final ObjectProperty<Level> logLevel = new SimpleObjectProperty<>(Level.INFO);
+    private final ObjectProperty<LogManager.LogType> logType = new SimpleObjectProperty<>(LogManager.LogType.STDOUT);
 
 
     // not used in UI and only for dev
@@ -73,18 +75,6 @@ public class GeneralConfig extends BaseModel {
         this.darkModeEnabled.set(darkModeEnabled);
     }
 
-    public boolean isLogToFile() {
-        return logToFile.get();
-    }
-
-    public BooleanProperty logToFileProperty() {
-        return logToFile;
-    }
-
-    public void setLogToFile(boolean logToFile) {
-        this.logToFile.set(logToFile);
-    }
-
     public String getLogFileTarget() {
         return logFileTarget.get();
     }
@@ -95,18 +85,6 @@ public class GeneralConfig extends BaseModel {
 
     public void setLogFileTarget(String logFileTarget) {
         this.logFileTarget.set(logFileTarget);
-    }
-
-    public String getLogLevel() {
-        return logLevel.get();
-    }
-
-    public StringProperty logLevelProperty() {
-        return logLevel;
-    }
-
-    public void setLogLevel(String logLevel) {
-        this.logLevel.set(logLevel);
     }
 
     public double getWindowWidth() {
@@ -155,6 +133,30 @@ public class GeneralConfig extends BaseModel {
 
     public void setRestoreWindow(boolean restoreWindow) {
         this.restoreWindow.set(restoreWindow);
+    }
+
+    public Level getLogLevel() {
+        return logLevel.get();
+    }
+
+    public ObjectProperty<Level> logLevelProperty() {
+        return logLevel;
+    }
+
+    public void setLogLevel(Level logLevel) {
+        this.logLevel.set(logLevel);
+    }
+
+    public LogManager.LogType getLogType() {
+        return logType.get();
+    }
+
+    public ObjectProperty<LogManager.LogType> logTypeProperty() {
+        return logType;
+    }
+
+    public void setLogType(LogManager.LogType logType) {
+        this.logType.set(logType);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.wlf.app.logging;
 
+import lombok.Getter;
 import org.apache.logging.log4j.core.config.Configurator;
 
 /**
@@ -9,9 +10,22 @@ import org.apache.logging.log4j.core.config.Configurator;
 public final class LogManager {
 
     public enum LogType {
-        STDOUT,
-        FILE,
-        STDOUT_AND_FILE
+        NONE("no logging"),
+        STDOUT("console"),
+        FILE("file"),
+        STDOUT_AND_FILE("console and file");
+
+        @Getter
+        final String name;
+
+        LogType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     // System property names, must match the placeholders referenced in log4j2.xml
@@ -32,7 +46,7 @@ public final class LogManager {
      */
     public static void configure(LogType destination, String filePath, String logLevel) {
         if (destination == null) {
-            destination = LogType.STDOUT;
+            System.setProperty(LEVEL_PROPERTY, "OFF");
         }
         boolean toFile = destination == LogType.FILE || destination == LogType.STDOUT_AND_FILE;
         if (toFile && (filePath == null || filePath.isBlank())) {
@@ -53,6 +67,7 @@ public final class LogManager {
 
     private static String targetValue(LogType destination) {
         return switch (destination) {
+            case NONE -> "none";
             case FILE -> "file";
             case STDOUT_AND_FILE -> "both";
             case STDOUT -> "console";
