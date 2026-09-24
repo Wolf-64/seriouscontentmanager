@@ -56,6 +56,7 @@ public class AppLoader<T extends BaseController<?>> {
                 gui = loader.load();
                 controller = loader.getController();
                 controller.setResourceBundle(resourceBundle);
+                controller.afterInit();
                 loadedControllers.put(fxml, controller);
                 return null;
             }
@@ -84,9 +85,12 @@ public class AppLoader<T extends BaseController<?>> {
     /** Does not register an fxml for reloading */
     public Parent load() throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
-        loader.setResources(getI18NResourceForLocale(guiName, ConfigManager.getInstance().getGeneralConfig().getLanguage().getLocale()));
+        ResourceBundle resourceBundle = getI18NResourceForLocale(guiName, ConfigManager.getInstance().getGeneralConfig().getLanguage().getLocale());
+        loader.setResources(resourceBundle);
         gui = loader.load();
         controller = loader.getController();
+        controller.setResourceBundle(resourceBundle);
+        controller.afterInit();
         loadedControllers.put(fxml, controller);
 
         return gui;

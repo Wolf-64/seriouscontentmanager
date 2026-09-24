@@ -93,6 +93,17 @@ public class PreferencesController extends BaseController<GeneralConfig> {
                     getModel().setLogType(newValue);
                     setLogFileControlsVisible(newValue == LogManager.LogType.FILE);
                 });
+        setLogFileControlsVisible(getModel().getLogType() == LogManager.LogType.FILE);
+        cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
+        cmbLogLevel.getSelectionModel().select(getModel().getLogLevel());
+        cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> {
+                    getModel().setLogLevel(newValue);
+                });
+    }
+
+    @Override
+    public void afterInit() {
         cmbLogType.setConverter(new StringConverter<>() {
             private final ResourceBundle bundle = getResourceBundle();
 
@@ -111,13 +122,6 @@ public class PreferencesController extends BaseController<GeneralConfig> {
                 }
             }
         });
-        setLogFileControlsVisible(getModel().getLogType() == LogManager.LogType.FILE);
-        cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
-        cmbLogLevel.getSelectionModel().select(getModel().getLogLevel());
-        cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
-                (_, _, newValue) -> {
-                    getModel().setLogLevel(newValue);
-                });
     }
 
     @FXML
