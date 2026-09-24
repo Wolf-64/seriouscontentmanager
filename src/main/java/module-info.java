@@ -18,6 +18,7 @@ module lightweightFX {
     requires org.apache.logging.log4j.core;
     requires java.desktop;
     requires org.kordamp.ikonli.fontawesome6;
+    requires com.dlsc.atlantafx.themes;
 
     opens com.wlf.app.preferences to com.fasterxml.jackson.databind,javafx.fxml;
     opens com.wlf.common to com.fasterxml.jackson.databind,javafx.fxml;

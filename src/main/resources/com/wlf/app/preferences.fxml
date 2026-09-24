@@ -59,8 +59,8 @@
                   </Label>
                   <Label text="%logging.level" GridPane.rowIndex="5" />
                   <Label text="%logging.type" GridPane.rowIndex="6" />
-                  <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <ComboBox fx:id="cmbLogLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <ComboBox fx:id="cmbLogType" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <HBox fx:id="hbxLogFile" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
                      <children>
                         <TextField maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="984.0" promptText="log file location" />

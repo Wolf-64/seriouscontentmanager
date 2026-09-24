@@ -3,6 +3,7 @@ package com.wlf.app.preferences;
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
+import com.wlf.app.logging.LogManager;
 import com.wlf.common.BaseController;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -13,10 +14,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleButton;
+import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,6 +29,10 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     private ComboBox<Language> cmbLanguages;
     @FXML
     private ComboBox<AppStyle.Theme> cmbThemes;
+    @FXML
+    private ComboBox<LogManager.LogType> cmbLogType;
+    @FXML
+    private ComboBox<Level> cmbLogLevel;
     @FXML
     private ToggleButton btnDarkMode;
     @FXML
@@ -50,7 +57,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
         cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().restoreWindowProperty());
         cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().fullScreenProperty());
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
-        cmbLanguages.getSelectionModel().select(model.get().getLanguage());
+        cmbLanguages.getSelectionModel().select(getModel().getLanguage());
         cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
                     App.STATE.setLanguageChanged(newValue != model.get().getLanguage());
@@ -58,20 +65,33 @@ public class PreferencesController extends BaseController<GeneralConfig> {
                 });
 
         cmbThemes.setItems(FXCollections.observableList(Arrays.stream(AppStyle.Theme.values()).toList()));
-        cmbThemes.getSelectionModel().select(model.get().getActiveTheme());
+        cmbThemes.getSelectionModel().select(getModel().getActiveTheme());
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
                     if (newValue.getLightTheme() == null) {
-                        getConfig().setDarkModeEnabled(true);
+                        getModel().setDarkModeEnabled(true);
                         setDarkModeToggleDisabled(true);
                         onToggleDarkMode();
                     } else if (newValue.getDarkTheme() == null) {
-                        getConfig().setDarkModeEnabled(false);
+                        getModel().setDarkModeEnabled(false);
                         setDarkModeToggleDisabled(true);
                         onToggleDarkMode();
                     } else {
-                        App.setAppTheme(newValue, getConfig().isDarkModeEnabled());
+                        App.setAppTheme(newValue, getModel().isDarkModeEnabled());
                     }
+                });
+
+        cmbLogType.setItems(FXCollections.observableList(Arrays.stream(LogManager.LogType.values()).toList()));
+        cmbLogType.getSelectionModel().select(getModel().getLogType());
+        cmbLogType.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> {
+                    getModel().setLogType(newValue);
+                });
+        cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
+        cmbLogLevel.getSelectionModel().select(getModel().getLogLevel());
+        cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> {
+                    getModel().setLogLevel(newValue);
                 });
     }
 

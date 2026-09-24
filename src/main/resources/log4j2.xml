@@ -8,6 +8,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${logPattern}"/>
         </Console>
+        <Null name="NoOp"/>
         <!-- createOnDemand avoids creating an empty log file when logging only to the console -->
         <File name="File" fileName="${sys:log.file:-logs/cia-tools.log}" append="true" createOnDemand="true">
             <PatternLayout pattern="${logPattern}"/>
@@ -17,6 +18,9 @@
     <Loggers>
         <Root level="${sys:log.level:-INFO}">
             <Select>
+                <SystemPropertyArbiter propertyName="log.target" propertyValue="none">
+                    <AppenderRef ref="NoOp"/>
+                </SystemPropertyArbiter>
                 <SystemPropertyArbiter propertyName="log.target" propertyValue="file">
                     <AppenderRef ref="File"/>
                 </SystemPropertyArbiter>
