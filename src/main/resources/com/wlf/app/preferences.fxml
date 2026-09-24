@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
@@ -21,74 +21,71 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import org.kordamp.ikonli.javafx.FontIconTableCell?>
 
-<BorderPane prefHeight="625.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.preferences.PreferencesController">
+<BorderPane prefHeight="760.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.preferences.PreferencesController">
     <top>
-        <VBox spacing="8.0" BorderPane.alignment="CENTER">
-            <children>
-                <GridPane>
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label text="%language" GridPane.rowIndex="1" />
-                        <Label text="%theme" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="%general" GridPane.columnSpan="2">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-                  <Label text="%language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <ToggleButton fx:id="btnDarkMode" disable="${controller.darkModeToggleDisabled}" mnemonicParsing="false" onAction="#onToggleDarkMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                     <graphic>
-                        <FontIconTableCell />
-                     </graphic>
-                  </ToggleButton>
-                  <Label text="%logging" GridPane.rowIndex="4">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
+          <GridPane>
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="30.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="1.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="40.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES" />
+              </rowConstraints>
+              <children>
+                  <Label text="%language" GridPane.rowIndex="1" />
+                  <Label text="%theme" GridPane.rowIndex="2" />
+                  <ChoiceBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id="cmbThemes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="%general" GridPane.columnSpan="2">
+                      <font>
+                          <Font name="System Bold" size="16.0" />
+                      </font>
                   </Label>
-                  <Label text="%logging.level" GridPane.rowIndex="5" />
-                  <Label text="%logging.type" GridPane.rowIndex="6" />
-                  <ComboBox fx:id="cmbLogLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <ComboBox fx:id="cmbLogType" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <HBox fx:id="hbxLogFile" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                     <children>
-                        <TextField maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="984.0" promptText="log file location" />
-                        <Button mnemonicParsing="false">
-                           <graphic>
-                              <FontIcon iconLiteral="far-folder" />
-                           </graphic>
-                        </Button>
-                        <Button mnemonicParsing="false">
-                           <graphic>
-                              <FontIcon iconLiteral="far-folder-open" />
-                           </graphic>
-                        </Button>
-                     </children>
-                  </HBox>
-                  <CheckBox fx:id="cbxRestoreWindow" mnemonicParsing="false" text="%window.resize" GridPane.rowIndex="3" />
-                  <CheckBox fx:id="cbxStartFullscreen" mnemonicParsing="false" text="%window.fullscreen" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                    </children>
-                </GridPane>
-            </children>
-            <padding>
-                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-            </padding>
-        </VBox>
+            <Label text="%language.warning" visible="${controller.languageWarningVisible}" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <ToggleButton fx:id="btnDarkMode" disable="${controller.darkModeToggleDisabled}" mnemonicParsing="false" onAction="#onToggleDarkMode" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <graphic>
+                  <FontIconTableCell />
+               </graphic>
+            </ToggleButton>
+            <Label text="%logging" GridPane.rowIndex="5">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            <Label text="%logging.level" GridPane.rowIndex="6" />
+            <Label text="%logging.type" GridPane.rowIndex="7" />
+            <ChoiceBox fx:id="cmbLogLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <ChoiceBox fx:id="cmbLogType" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <HBox fx:id="hbxLogFile" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+               <children>
+                  <TextField maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="984.0" promptText="log file location" />
+                  <Button mnemonicParsing="false">
+                     <graphic>
+                        <FontIcon iconLiteral="far-folder" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false">
+                     <graphic>
+                        <FontIcon iconLiteral="far-folder-open" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <CheckBox fx:id="cbxRestoreWindow" mnemonicParsing="false" text="%window.resize" GridPane.rowIndex="3" />
+            <CheckBox fx:id="cbxStartFullscreen" mnemonicParsing="false" text="%window.fullscreen" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+              </children>
+         <BorderPane.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </BorderPane.margin>
+          </GridPane>
     </top>
     <center>
       <VBox BorderPane.alignment="CENTER">
@@ -107,10 +104,10 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                      <Label text="%dir.downloads" GridPane.valignment="BOTTOM" />
@@ -127,8 +124,6 @@
                       </valueFactory>
                   </Spinner>
                   <CheckBox fx:id="cbAutoClearList" text="%downloads.autoClear" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSave" prefWidth="120.0" text="%save" />
-                  <Button cancelButton="true" mnemonicParsing="false" onAction="#onCancel" prefWidth="120.0" text="%cancel" />
                </children>
             </GridPane>
               <GridPane vgap="8.0">
@@ -137,14 +132,12 @@
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="10.0" percentWidth="10.0" prefWidth="87.0" />
                   </columnConstraints>
                   <rowConstraints>
+                      <RowConstraints minHeight="1.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <Label text="%dir.tfe" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
                   <ValidatingTextField fx:id="vtfTFEPath" onDragDropped="#onDirectoryDrop" onDragOver="#onDirectoryDragOver" GridPane.columnSpan="2" GridPane.rowIndex="3" />

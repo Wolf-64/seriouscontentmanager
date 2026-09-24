@@ -154,7 +154,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${version.log4j2}</version>
-            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.26.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -228,7 +233,7 @@
                         </goals>
                         <configuration>
                             <outputFile>
-                                ${project.build.directory}/maven-project.properties
+                                ${project.build.outputDirectory}/meta.properties
                             </outputFile>
                         </configuration>
                     </execution>
@@ -239,15 +244,9 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <compress>2</compress>
-                    <noHeaderFiles>true</noHeaderFiles>
-                    <stripDebug>true</stripDebug>
-                    <noManPages>true</noManPages>
-                    <launcher>${app.name}</launcher>
-                    <mainClass>seriouscontentmanager/${project.mainClass}</mainClass>
-                    <jlinkImageName>SeriousContentManager</jlinkImageName>
-                    <jlinkZipName>SeriousContentManager</jlinkZipName>
                     <options>
+                        <option>--enable-native-access=javafx.graphics</option>
+                        <option>--enable-native-access=ALL-UNNAMED</option>
                         <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
                         <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
                         <option>--enable-native-access=javafx.web</option>
@@ -256,6 +255,13 @@
                         <option>--include-locales=en</option>
                         <option>--enable-preview</option>
                     </options>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <stripDebug>true</stripDebug>
+                    <noManPages>true</noManPages>
+                    <launcher>${app.name}</launcher>
+                    <mainClass>seriouscontentmanager/${project.mainClass}</mainClass>
+                    <jlinkImageName>SeriousContentManager</jlinkImageName>
+                    <jlinkZipName>SeriousContentManager</jlinkZipName>
                 </configuration>
                 <executions>
                     <execution>
@@ -263,6 +269,10 @@
                         <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
+                            <options>
+                                <option>--enable-native-access=javafx.graphics</option>
+                                <option>-Dlog4j2.jndi.enabled=false</option>
+                            </options>
                             <mainClass>${project.mainClass}</mainClass>
                             <launcher>${app.name}</launcher>
                             <jlinkZipName>SeriousContentManager</jlinkZipName>

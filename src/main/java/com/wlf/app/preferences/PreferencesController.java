@@ -20,9 +20,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleButton;
-import lombok.extern.java.Log;
+import javafx.util.StringConverter;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
@@ -34,16 +33,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 public class PreferencesController extends BaseController<BaseModel> {
     @FXML
-    private ComboBox<Language> cmbLanguages;
+    private ChoiceBox<Language> cmbLanguages;
     @FXML
-    private ComboBox<AppStyle.Theme> cmbThemes;
+    private ChoiceBox<AppStyle.Theme> cmbThemes;
     @FXML
-    private ComboBox<LogManager.LogType> cmbLogType;
+    private ChoiceBox<LogManager.LogType> cmbLogType;
     @FXML
-    private ComboBox<Level> cmbLogLevel;
+    private ChoiceBox<Level> cmbLogLevel;
     @FXML
     private ToggleButton btnDarkMode;
     @FXML
@@ -52,6 +52,7 @@ public class PreferencesController extends BaseController<BaseModel> {
     private final FontIcon warningIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     private final BooleanProperty languageWarningVisible = new SimpleBooleanProperty(false);
     private final BooleanProperty darkModeToggleDisabled = new SimpleBooleanProperty(false);
+    private final BooleanProperty logFileControlsVisible = new SimpleBooleanProperty(true);
 
     private final ObjectProperty<Ikon> iconDarkModeToggle = new SimpleObjectProperty<>(FontAwesomeSolid.SUN);
 
@@ -110,7 +111,27 @@ public class PreferencesController extends BaseController<BaseModel> {
         cmbLogType.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
                     getConfig().getGeneralConfig().setLogType(newValue);
+                    setLogFileControlsVisible(newValue == LogManager.LogType.FILE);
                 });
+        cmbLogType.setConverter(new StringConverter<>() {
+            private final ResourceBundle bundle = getResourceBundle();
+
+            @Override
+            public String toString(LogManager.LogType logType) {
+                if (logType == null) return "<empty>";
+                return bundle.getString("logtype." + logType.name());
+            }
+
+            @Override
+            public LogManager.LogType fromString(String s) {
+                try {
+                    return LogManager.LogType.valueOf(s.replace("logtype.", ""));
+                } catch (IllegalArgumentException e) {
+                    return LogManager.LogType.NONE;
+                }
+            }
+        });
+        setLogFileControlsVisible(getConfig().getGeneralConfig().getLogType() == LogManager.LogType.FILE);
         cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
         cmbLogLevel.getSelectionModel().select(getConfig().getGeneralConfig().getLogLevel());
         cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
@@ -268,5 +289,29 @@ public class PreferencesController extends BaseController<BaseModel> {
 
     public void setDarkModeToggleDisabled(boolean darkModeToggleDisabled) {
         this.darkModeToggleDisabled.set(darkModeToggleDisabled);
+    }
+
+    public boolean isLogFileControlsVisible() {
+        return logFileControlsVisible.get();
+    }
+
+    public BooleanProperty logFileControlsVisibleProperty() {
+        return logFileControlsVisible;
+    }
+
+    public void setLogFileControlsVisible(boolean logFileControlsVisible) {
+        this.logFileControlsVisible.set(logFileControlsVisible);
+    }
+
+    public Ikon getIconDarkModeToggle() {
+        return iconDarkModeToggle.get();
+    }
+
+    public ObjectProperty<Ikon> iconDarkModeToggleProperty() {
+        return iconDarkModeToggle;
+    }
+
+    public void setIconDarkModeToggle(Ikon iconDarkModeToggle) {
+        this.iconDarkModeToggle.set(iconDarkModeToggle);
     }
 }
