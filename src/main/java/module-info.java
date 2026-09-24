@@ -16,6 +16,7 @@ module lightweightFX {
     requires org.slf4j;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j.slf4j2.impl;
     requires java.desktop;
     requires org.kordamp.ikonli.fontawesome6;
     requires com.dlsc.atlantafx.themes;

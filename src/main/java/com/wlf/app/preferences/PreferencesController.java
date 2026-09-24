@@ -1,19 +1,22 @@
 package com.wlf.app.preferences;
 
+import com.dlsc.gemsfx.util.EnumStringConverter;
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
 import com.wlf.app.logging.LogManager;
 import com.wlf.common.BaseController;
+import com.wlf.common.controls.CheckBoxTableCellFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
@@ -23,16 +26,17 @@ import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 public class PreferencesController extends BaseController<GeneralConfig> {
     @FXML
-    private ComboBox<Language> cmbLanguages;
+    private ChoiceBox<Language> cmbLanguages;
     @FXML
-    private ComboBox<AppStyle.Theme> cmbThemes;
+    private ChoiceBox<AppStyle.Theme> cmbThemes;
     @FXML
-    private ComboBox<LogManager.LogType> cmbLogType;
+    private ChoiceBox<LogManager.LogType> cmbLogType;
     @FXML
-    private ComboBox<Level> cmbLogLevel;
+    private ChoiceBox<Level> cmbLogLevel;
     @FXML
     private ToggleButton btnDarkMode;
     @FXML
@@ -41,6 +45,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     private final FontIcon warningIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     private final BooleanProperty languageWarningVisible = new SimpleBooleanProperty(false);
     private final BooleanProperty darkModeToggleDisabled = new SimpleBooleanProperty(false);
+    private final BooleanProperty logFileControlsVisible = new SimpleBooleanProperty(true);
 
     private final ObjectProperty<Ikon> iconDarkModeToggle = new SimpleObjectProperty<>(FontAwesomeSolid.SUN);
 
@@ -86,7 +91,27 @@ public class PreferencesController extends BaseController<GeneralConfig> {
         cmbLogType.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
                     getModel().setLogType(newValue);
+                    setLogFileControlsVisible(newValue == LogManager.LogType.FILE);
                 });
+        cmbLogType.setConverter(new StringConverter<>() {
+            private final ResourceBundle bundle = getResourceBundle();
+
+            @Override
+            public String toString(LogManager.LogType logType) {
+                if (logType == null) return "<empty>";
+                return bundle.getString("logtype." + logType.name());
+            }
+
+            @Override
+            public LogManager.LogType fromString(String s) {
+                try {
+                    return LogManager.LogType.valueOf(s.replace("logtype.", ""));
+                } catch (IllegalArgumentException e) {
+                    return LogManager.LogType.NONE;
+                }
+            }
+        });
+        setLogFileControlsVisible(getModel().getLogType() == LogManager.LogType.FILE);
         cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
         cmbLogLevel.getSelectionModel().select(getModel().getLogLevel());
         cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
@@ -158,5 +183,29 @@ public class PreferencesController extends BaseController<GeneralConfig> {
 
     public void setDarkModeToggleDisabled(boolean darkModeToggleDisabled) {
         this.darkModeToggleDisabled.set(darkModeToggleDisabled);
+    }
+
+    public boolean isLogFileControlsVisible() {
+        return logFileControlsVisible.get();
+    }
+
+    public BooleanProperty logFileControlsVisibleProperty() {
+        return logFileControlsVisible;
+    }
+
+    public void setLogFileControlsVisible(boolean logFileControlsVisible) {
+        this.logFileControlsVisible.set(logFileControlsVisible);
+    }
+
+    public Ikon getIconDarkModeToggle() {
+        return iconDarkModeToggle.get();
+    }
+
+    public ObjectProperty<Ikon> iconDarkModeToggleProperty() {
+        return iconDarkModeToggle;
+    }
+
+    public void setIconDarkModeToggle(Ikon iconDarkModeToggle) {
+        this.iconDarkModeToggle.set(iconDarkModeToggle);
     }
 }

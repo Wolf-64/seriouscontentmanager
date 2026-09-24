@@ -11,6 +11,9 @@
     </scm>
 
     <properties>
+        <app.name>lightweightFX</app.name>
+        <app.version>${project.version}</app.version>
+
         <project.mainClass>com.wlf.app.App</project.mainClass>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
@@ -141,7 +144,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${version.log4j2}</version>
-            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.26.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
@@ -179,7 +187,7 @@
                         </goals>
                         <configuration>
                             <outputFile>
-                                ${project.build.directory}/maven-project.properties
+                                ${project.build.outputDirectory}/meta.properties
                             </outputFile>
                         </configuration>
                     </execution>
@@ -190,14 +198,17 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <compress>2</compress>
+                    <options>
+                        <option>--enable-native-access=javafx.graphics</option>
+                        <option>--enable-native-access=ALL-UNNAMED</option>
+                    </options>
                     <noHeaderFiles>true</noHeaderFiles>
                     <stripDebug>true</stripDebug>
                     <noManPages>true</noManPages>
-                    <launcher>lightweightfx</launcher>
+                    <launcher>${app.name}</launcher>
                     <mainClass>lightweightfx/${project.mainClass}</mainClass>
-                    <jlinkImageName>lightweightfx</jlinkImageName>
-                    <jlinkZipName>lightweightfx</jlinkZipName>
+                    <jlinkImageName>${app.name}</jlinkImageName>
+                    <jlinkZipName>${app.name}</jlinkZipName>
                 </configuration>
                 <executions>
                     <execution>
@@ -205,10 +216,14 @@
                         <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
+                            <options>
+                                <option>--enable-native-access=javafx.graphics</option>
+                                <option>-Dlog4j2.jndi.enabled=false</option>
+                            </options>
                             <mainClass>${project.mainClass}</mainClass>
-                            <launcher>lightweightfx</launcher>
-                            <jlinkZipName>lightweightfx</jlinkZipName>
-                            <jlinkImageName>lightweightfx</jlinkImageName>
+                            <launcher>${app.name}</launcher>
+                            <jlinkZipName>${app.name}</jlinkZipName>
+                            <jlinkImageName>${app.name}</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>

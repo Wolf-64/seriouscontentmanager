@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,6 +52,9 @@ public abstract class BaseController<T extends BaseModel> {
     @Getter
     @Setter
     private List<OverlayStage<?>> overlays = new ArrayList<>();
+
+    @Getter @Setter
+    private ResourceBundle resourceBundle;
 
     // Shared thread pool for all implementing controllers for various tasks
     protected ExecutorService executor;

@@ -1,6 +1,5 @@
 package com.wlf.app.logging;
 
-import lombok.Getter;
 import org.apache.logging.log4j.core.config.Configurator;
 
 /**
@@ -10,22 +9,10 @@ import org.apache.logging.log4j.core.config.Configurator;
 public final class LogManager {
 
     public enum LogType {
-        NONE("no logging"),
-        STDOUT("console"),
-        FILE("file"),
-        STDOUT_AND_FILE("console and file");
-
-        @Getter
-        final String name;
-
-        LogType(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
+        NONE,
+        STDOUT,
+        FILE,
+        STDOUT_AND_FILE
     }
 
     // System property names, must match the placeholders referenced in log4j2.xml

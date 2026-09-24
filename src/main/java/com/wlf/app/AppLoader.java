@@ -1,7 +1,6 @@
 package com.wlf.app;
 
 import com.wlf.app.preferences.ConfigManager;
-import com.wlf.app.preferences.GeneralConfig;
 import com.wlf.common.BaseController;
 import com.wlf.common.util.ErrorHandler;
 import javafx.concurrent.Task;
@@ -10,6 +9,8 @@ import javafx.fxml.LoadException;
 import javafx.scene.Parent;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 
 @Slf4j
 public class AppLoader<T extends BaseController<?>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FrameController.class.getSimpleName());
     private final static Map<String, Consumer<Parent>> loadedGuis = new HashMap<>();
     private final static Map<String, BaseController<?>> loadedControllers = new HashMap<>();
 
@@ -44,9 +46,16 @@ public class AppLoader<T extends BaseController<?>> {
                 if (loadedControllers.containsKey(fxml)) {
                     loader.setControllerFactory((clazz) -> loadedControllers.get(fxml));
                 }
-                loader.setResources(getI18NResourceForLocale(guiName, ConfigManager.getInstance().getGeneralConfig().getLanguage().getLocale()));
+                ResourceBundle resourceBundle = null;
+                try {
+                    resourceBundle = getI18NResourceForLocale(guiName, ConfigManager.getInstance().getGeneralConfig().getLanguage().getLocale());
+                } catch (MissingResourceException e) {
+                    LOGGER.warn("Could not load localization for given locale", e);
+                }
+                loader.setResources(resourceBundle);
                 gui = loader.load();
                 controller = loader.getController();
+                controller.setResourceBundle(resourceBundle);
                 loadedControllers.put(fxml, controller);
                 return null;
             }
