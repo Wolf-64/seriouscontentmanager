@@ -75,7 +75,9 @@ public abstract class BaseController<T extends BaseModel> {
      * after initialization, which are not available during @FXML initialize()
      */
     public void afterInit() {
-        getStage().setOnCloseRequest(this::closeRequest);
+        if (getStage() != null) {
+            getStage().setOnCloseRequest(this::closeRequest);
+        }
     }
 
     public <T> void runTask(Task<T> task) {

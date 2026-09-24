@@ -200,7 +200,6 @@
                 <configuration>
                     <options>
                         <option>--enable-native-access=javafx.graphics</option>
-                        <option>--enable-native-access=ALL-UNNAMED</option>
                     </options>
                     <noHeaderFiles>true</noHeaderFiles>
                     <stripDebug>true</stripDebug>
@@ -218,7 +217,6 @@
                         <configuration>
                             <options>
                                 <option>--enable-native-access=javafx.graphics</option>
-                                <option>-Dlog4j2.jndi.enabled=false</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
                             <launcher>${app.name}</launcher>

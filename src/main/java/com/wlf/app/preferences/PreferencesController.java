@@ -1,12 +1,10 @@
 package com.wlf.app.preferences;
 
-import com.dlsc.gemsfx.util.EnumStringConverter;
 import com.wlf.app.App;
 import com.wlf.app.AppLoader;
 import com.wlf.app.AppStyle;
 import com.wlf.app.logging.LogManager;
 import com.wlf.common.BaseController;
-import com.wlf.common.controls.CheckBoxTableCellFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,10 +12,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
-import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
