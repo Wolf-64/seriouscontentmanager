@@ -49,12 +49,6 @@ public class App extends javafx.application.Application {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             Platform.runLater(() -> showCriticalError(new Exception(throwable)));
         });
-        ThemeManager.instance().register(ThemeOption.of(
-                THEME_INTEGRATIONS,
-                Boolean.TRUE,
-                change -> applyThemeIntegration(change.scene(), (BaseTheme) (change.theme()))
-        ));
-
         try {
             launch();
         } catch (Exception e) {
@@ -66,6 +60,11 @@ public class App extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         FrameController controller = appInit(stage);
         controller.afterInit();
+        ThemeManager.instance().register(ThemeOption.of(
+                THEME_INTEGRATIONS,
+                Boolean.TRUE,
+                change -> applyThemeIntegration(change.scene(), (BaseTheme) (change.theme()))
+        ));
         setAppTheme(ConfigManager.getInstance().getGeneralConfig().getActiveTheme(),
                 ConfigManager.getInstance().getGeneralConfig().isDarkModeEnabled());
         ThemeManager.instance().setOption(THEME_INTEGRATIONS, Boolean.TRUE);
