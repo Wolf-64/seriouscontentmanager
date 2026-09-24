@@ -113,6 +113,17 @@ public class PreferencesController extends BaseController<BaseModel> {
                     getConfig().getGeneralConfig().setLogType(newValue);
                     setLogFileControlsVisible(newValue == LogManager.LogType.FILE);
                 });
+        setLogFileControlsVisible(getConfig().getGeneralConfig().getLogType() == LogManager.LogType.FILE);
+        cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
+        cmbLogLevel.getSelectionModel().select(getConfig().getGeneralConfig().getLogLevel());
+        cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
+                (_, _, newValue) -> {
+                    getConfig().getGeneralConfig().setLogLevel(newValue);
+                });
+    }
+
+    @Override
+    public void afterInit() {
         cmbLogType.setConverter(new StringConverter<>() {
             private final ResourceBundle bundle = getResourceBundle();
 

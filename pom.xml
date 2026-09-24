@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wlf</groupId>
     <artifactId>SeriousContentManager</artifactId>
@@ -7,12 +8,12 @@
     <inceptionYear>2025</inceptionYear>
     <scm>
         <developerConnection>scm:git:git@github.com:Wolf-64/seriouscontentmanager.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
-        <app.version>${project.version}</app.version>
         <app.name>Serious Content Manager</app.name>
+        <app.version>${project.version}</app.version>
 
         <project.mainClass>com.wlf.app.App</project.mainClass>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
@@ -57,11 +58,6 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>${version.controlsfx}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dlsc.gemsfx</groupId>
-            <artifactId>gemsfx</artifactId>
-            <version>${version.gemsfx}</version>
         </dependency>
         <dependency>
             <groupId>com.dlsc.gemsfx</groupId>
@@ -148,11 +144,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${version.log4j2}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${version.log4j2}</version>
         </dependency>
         <dependency>
@@ -246,14 +237,11 @@
                 <configuration>
                     <options>
                         <option>--enable-native-access=javafx.graphics</option>
-                        <option>--enable-native-access=ALL-UNNAMED</option>
-                        <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
-                        <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
                         <option>--enable-native-access=javafx.web</option>
                         <option>--enable-native-access=org.xerial.sqlitejdbc</option>
-                        <option>--enable-native-access=javafx.graphics</option>
+                        <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
+                        <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
                         <option>--include-locales=en</option>
-                        <option>--enable-preview</option>
                     </options>
                     <noHeaderFiles>true</noHeaderFiles>
                     <stripDebug>true</stripDebug>
@@ -272,6 +260,12 @@
                             <options>
                                 <option>--enable-native-access=javafx.graphics</option>
                                 <option>-Dlog4j2.jndi.enabled=false</option>
+                                <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
+                                <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
+                                <option>--enable-native-access=javafx.web</option>
+                                <option>--enable-native-access=org.xerial.sqlitejdbc</option>
+                                <option>--enable-native-access=javafx.graphics</option>
+                                <option>--enable-preview</option>
                             </options>
                             <mainClass>${project.mainClass}</mainClass>
                             <launcher>${app.name}</launcher>
@@ -280,14 +274,6 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
-                            <options>
-                                <option>--add-reads=seriouscontentmanager=ALL-UNNAMED</option>
-                                <option>--add-opens=seriouscontentmanager/com.wlf.app.main.data=ALL-UNNAMED</option>
-                                <option>--enable-native-access=javafx.web</option>
-                                <option>--enable-native-access=org.xerial.sqlitejdbc</option>
-                                <option>--enable-native-access=javafx.graphics</option>
-                                <option>--enable-preview</option>
-                            </options>
                         </configuration>
                     </execution>
                     <execution>
