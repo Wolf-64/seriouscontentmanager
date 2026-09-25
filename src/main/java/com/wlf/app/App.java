@@ -107,11 +107,6 @@ public class App extends javafx.application.Application {
 
         ConfigManager.getInstance().getGeneralConfig().setActiveTheme(theme);
         ConfigManager.getInstance().getGeneralConfig().setDarkModeEnabled(darkMode);
-        try {
-            ConfigManager.save();
-        } catch (IOException e) {
-            showErrorMessage(e);
-        }
     }
 
     /**
