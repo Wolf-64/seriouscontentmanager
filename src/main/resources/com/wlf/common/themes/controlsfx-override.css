@@ -1,7 +1,0 @@
-/* controlsfx-override.css — Load AFTER AtlantaFX theme */
-
-.task-progress-view,
-.task-progress-view .list-cell,
-.task-progress-view .table-row-cell {
-    -fx-background-color: -color-bg-default;
-}
