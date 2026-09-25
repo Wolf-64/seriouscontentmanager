@@ -126,7 +126,6 @@ public class PreferencesController extends BaseController<GeneralConfig> {
 
     @FXML
     public void onToggleDarkMode() {
-        getModel().setDarkModeEnabled(!getModel().isDarkModeEnabled());
         App.setAppTheme(cmbThemes.getSelectionModel().getSelectedItem(), getConfig().isDarkModeEnabled());
     }
 
