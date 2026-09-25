@@ -39,7 +39,7 @@ public class PreferencesController extends BaseController<BaseModel> {
     @FXML
     private ChoiceBox<Language> cmbLanguages;
     @FXML
-    private ChoiceBox<AppStyle.Theme> cmbThemes;
+    private ComboBox<AppStyle.Theme> cmbThemes;
     @FXML
     private ChoiceBox<LogManager.LogType> cmbLogType;
     @FXML
@@ -52,7 +52,7 @@ public class PreferencesController extends BaseController<BaseModel> {
     private final FontIcon warningIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     private final BooleanProperty languageWarningVisible = new SimpleBooleanProperty(false);
     private final BooleanProperty darkModeToggleDisabled = new SimpleBooleanProperty(false);
-    private final BooleanProperty logFileControlsVisible = new SimpleBooleanProperty(true);
+    private final BooleanProperty logFileControlsVisible = new SimpleBooleanProperty(false);
 
     private final ObjectProperty<Ikon> iconDarkModeToggle = new SimpleObjectProperty<>(FontAwesomeSolid.SUN);
 
@@ -81,6 +81,16 @@ public class PreferencesController extends BaseController<BaseModel> {
         btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
         cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
         cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
+        btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
+        btnDarkMode.selectedProperty().addListener((_, _, newValue) -> {
+            if (newValue) {
+                iconDarkModeToggle.set(FontAwesomeRegular.MOON);
+            } else {
+                iconDarkModeToggle.set(FontAwesomeSolid.SUN);
+            }
+        });
+        cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
+        cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
         cmbLanguages.getSelectionModel().select(getConfig().getGeneralConfig().getLanguage());
         cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
@@ -96,11 +106,9 @@ public class PreferencesController extends BaseController<BaseModel> {
                     if (newValue.getLightTheme() == null) {
                         getConfig().getGeneralConfig().setDarkModeEnabled(true);
                         setDarkModeToggleDisabled(true);
-                        onToggleDarkMode();
                     } else if (newValue.getDarkTheme() == null) {
                         getConfig().getGeneralConfig().setDarkModeEnabled(false);
                         setDarkModeToggleDisabled(true);
-                        onToggleDarkMode();
                     } else {
                         App.setAppTheme(newValue, getConfig().getGeneralConfig().isDarkModeEnabled());
                     }
@@ -113,35 +121,6 @@ public class PreferencesController extends BaseController<BaseModel> {
                     getConfig().getGeneralConfig().setLogType(newValue);
                     setLogFileControlsVisible(newValue == LogManager.LogType.FILE);
                 });
-        setLogFileControlsVisible(getConfig().getGeneralConfig().getLogType() == LogManager.LogType.FILE);
-        cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
-        cmbLogLevel.getSelectionModel().select(getConfig().getGeneralConfig().getLogLevel());
-        cmbLogLevel.getSelectionModel().selectedItemProperty().addListener(
-                (_, _, newValue) -> {
-                    getConfig().getGeneralConfig().setLogLevel(newValue);
-                });
-    }
-
-    @Override
-    public void afterInit() {
-        cmbLogType.setConverter(new StringConverter<>() {
-            private final ResourceBundle bundle = getResourceBundle();
-
-            @Override
-            public String toString(LogManager.LogType logType) {
-                if (logType == null) return "<empty>";
-                return bundle.getString("logtype." + logType.name());
-            }
-
-            @Override
-            public LogManager.LogType fromString(String s) {
-                try {
-                    return LogManager.LogType.valueOf(s.replace("logtype.", ""));
-                } catch (IllegalArgumentException e) {
-                    return LogManager.LogType.NONE;
-                }
-            }
-        });
         setLogFileControlsVisible(getConfig().getGeneralConfig().getLogType() == LogManager.LogType.FILE);
         cmbLogLevel.setItems(FXCollections.observableList(Arrays.stream(Level.values()).toList()));
         cmbLogLevel.getSelectionModel().select(getConfig().getGeneralConfig().getLogLevel());
@@ -178,13 +157,30 @@ public class PreferencesController extends BaseController<BaseModel> {
         });
     }
 
+    @Override
+    public void afterInit() {
+        cmbLogType.setConverter(new StringConverter<>() {
+            private final ResourceBundle bundle = getResourceBundle();
+
+            @Override
+            public String toString(LogManager.LogType logType) {
+                if (logType == null) return "<empty>";
+                return bundle.getString("logtype." + logType.name());
+            }
+
+            @Override
+            public LogManager.LogType fromString(String s) {
+                try {
+                    return LogManager.LogType.valueOf(s.replace("logtype.", ""));
+                } catch (IllegalArgumentException e) {
+                    return LogManager.LogType.NONE;
+                }
+            }
+        });
+    }
+
     @FXML
     public void onToggleDarkMode() {
-        if (getConfig().getGeneralConfig().isDarkModeEnabled()) {
-            iconDarkModeToggle.set(FontAwesomeRegular.MOON);
-        } else {
-            iconDarkModeToggle.set(FontAwesomeSolid.SUN);
-        }
         App.setAppTheme(cmbThemes.getSelectionModel().getSelectedItem(), getConfig().getGeneralConfig().isDarkModeEnabled());
     }
 
@@ -207,7 +203,11 @@ public class PreferencesController extends BaseController<BaseModel> {
 
     @FXML
     protected void onCancel() {
-
+        try {
+            ConfigManager.reload();
+        } catch (IOException e) {
+            App.showErrorMessage(e);
+        }
     }
 
     @FXML
