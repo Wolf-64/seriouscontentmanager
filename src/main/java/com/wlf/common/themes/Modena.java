@@ -26,6 +26,6 @@ public class Modena extends BaseTheme {
 
     @Override
     public String getSceneStyleSheet() {
-        return Utils.getCss("common/modena.css");
+        return null;
     }
 }

@@ -78,9 +78,7 @@ public class PreferencesController extends BaseController<BaseModel> {
     @FXML
     public void initialize() {
         warningIcon.setStyle("-fx-icon-color: red");
-        btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
-        cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
-        cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
+        darkModeToggleDisabled.set(getConfig().getGeneralConfig().getActiveTheme().isSingleMode());
         btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
         btnDarkMode.selectedProperty().addListener((_, _, newValue) -> {
             if (newValue) {
@@ -91,6 +89,8 @@ public class PreferencesController extends BaseController<BaseModel> {
         });
         cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
         cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
+        cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
+        cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
         cmbLanguages.getSelectionModel().select(getConfig().getGeneralConfig().getLanguage());
         cmbLanguages.getSelectionModel().selectedItemProperty().addListener(
@@ -98,24 +98,19 @@ public class PreferencesController extends BaseController<BaseModel> {
                     App.STATE.setLanguageChanged(newValue != getConfig().getGeneralConfig().getLanguage());
                     languageWarningVisible.setValue(newValue != getConfig().getGeneralConfig().getLanguage());
                 });
-
         cmbThemes.setItems(FXCollections.observableList(Arrays.stream(AppStyle.Theme.values()).toList()));
         cmbThemes.getSelectionModel().select(getConfig().getGeneralConfig().getActiveTheme());
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
+                    setDarkModeToggleDisabled(newValue.isSingleMode());
                     if (newValue.getLightTheme() == null) {
                         getConfig().getGeneralConfig().setDarkModeEnabled(true);
-                        setDarkModeToggleDisabled(true);
                     } else if (newValue.getDarkTheme() == null) {
                         getConfig().getGeneralConfig().setDarkModeEnabled(false);
-                        setDarkModeToggleDisabled(true);
-                    } else {
-                        setDarkModeToggleDisabled(false);
                     }
 
                     App.setAppTheme(newValue, getConfig().getGeneralConfig().isDarkModeEnabled());
                 });
-
         cmbLogType.setItems(FXCollections.observableList(Arrays.stream(LogManager.LogType.values()).toList()));
         cmbLogType.getSelectionModel().select(getConfig().getGeneralConfig().getLogType());
         cmbLogType.getSelectionModel().selectedItemProperty().addListener(

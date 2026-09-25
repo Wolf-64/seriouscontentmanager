@@ -26,6 +26,6 @@ public class ModenaDark extends BaseTheme {
 
     @Override
     public String getSceneStyleSheet() {
-        return Utils.getCss("common/dark/modenaDark.css");
+        return Utils.getCss("themes/modenaDark.css");
     }
 }
