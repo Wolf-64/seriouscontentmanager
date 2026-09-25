@@ -27,7 +27,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     @FXML
     private ChoiceBox<Language> cmbLanguages;
     @FXML
-    private ChoiceBox<AppStyle.Theme> cmbThemes;
+    private ComboBox<AppStyle.Theme> cmbThemes;
     @FXML
     private ChoiceBox<LogManager.LogType> cmbLogType;
     @FXML
@@ -40,7 +40,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     private final FontIcon warningIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     private final BooleanProperty languageWarningVisible = new SimpleBooleanProperty(false);
     private final BooleanProperty darkModeToggleDisabled = new SimpleBooleanProperty(false);
-    private final BooleanProperty logFileControlsVisible = new SimpleBooleanProperty(true);
+    private final BooleanProperty logFileControlsVisible = new SimpleBooleanProperty(false);
 
     private final ObjectProperty<Ikon> iconDarkModeToggle = new SimpleObjectProperty<>(FontAwesomeSolid.SUN);
 
@@ -54,6 +54,13 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     public void initialize() {
         warningIcon.setStyle("-fx-icon-color: red");
         btnDarkMode.selectedProperty().bindBidirectional(getConfig().darkModeEnabledProperty());
+        btnDarkMode.selectedProperty().addListener((_, _, newValue) -> {
+            if (newValue) {
+                iconDarkModeToggle.set(FontAwesomeRegular.MOON);
+            } else {
+                iconDarkModeToggle.set(FontAwesomeSolid.SUN);
+            }
+        });
         cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().restoreWindowProperty());
         cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().fullScreenProperty());
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
@@ -71,11 +78,9 @@ public class PreferencesController extends BaseController<GeneralConfig> {
                     if (newValue.getLightTheme() == null) {
                         getModel().setDarkModeEnabled(true);
                         setDarkModeToggleDisabled(true);
-                        onToggleDarkMode();
                     } else if (newValue.getDarkTheme() == null) {
                         getModel().setDarkModeEnabled(false);
                         setDarkModeToggleDisabled(true);
-                        onToggleDarkMode();
                     } else {
                         App.setAppTheme(newValue, getModel().isDarkModeEnabled());
                     }
@@ -121,11 +126,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
 
     @FXML
     public void onToggleDarkMode() {
-        if (getConfig().isDarkModeEnabled()) {
-            iconDarkModeToggle.set(FontAwesomeRegular.MOON);
-        } else {
-            iconDarkModeToggle.set(FontAwesomeSolid.SUN);
-        }
+        getModel().setDarkModeEnabled(!getModel().isDarkModeEnabled());
         App.setAppTheme(cmbThemes.getSelectionModel().getSelectedItem(), getConfig().isDarkModeEnabled());
     }
 
@@ -143,7 +144,11 @@ public class PreferencesController extends BaseController<GeneralConfig> {
 
     @FXML
     protected void onCancel() {
-
+        try {
+            ConfigManager.reload();
+        } catch (IOException e) {
+            App.showErrorMessage(e);
+        }
     }
 
     // ----------------------------------- FX Boilerplate ---------------------------------------

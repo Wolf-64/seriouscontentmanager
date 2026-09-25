@@ -15,6 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.ComboBox?>
 <BorderPane prefHeight="531.0" prefWidth="824.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wlf.app.preferences.PreferencesController">
     <opaqueInsets>
         <Insets />
@@ -56,7 +57,7 @@
                 <ChoiceBox fx:id="cmbLanguages" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <HBox spacing="8.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                     <children>
-                        <ChoiceBox fx:id="cmbThemes" prefWidth="150.0" />
+                        <ComboBox fx:id="cmbThemes" prefWidth="150.0" />
                         <ToggleButton fx:id="btnDarkMode" disable="${controller.darkModeToggleDisabled}" mnemonicParsing="false" onAction="#onToggleDarkMode" prefHeight="32.0" prefWidth="32.0">
                             <graphic>
                                 <FontIcon iconCode="${controller.iconDarkModeToggle}" iconSize="32" textAlignment="CENTER" />
