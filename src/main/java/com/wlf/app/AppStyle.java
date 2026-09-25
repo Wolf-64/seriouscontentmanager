@@ -43,6 +43,10 @@ public class AppStyle {
             this.darkTheme = darkTheme;
         }
 
+        public boolean isSingleMode() {
+            return lightTheme == null || darkTheme == null;
+        }
+
         private static BaseTheme fx(atlantafx.base.theme.Theme delegate) {
             return new DelegateTheme(delegate);
         }

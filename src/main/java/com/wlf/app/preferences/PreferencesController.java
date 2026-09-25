@@ -54,6 +54,7 @@ public class PreferencesController extends BaseController<GeneralConfig> {
     public void initialize() {
         warningIcon.setStyle("-fx-icon-color: red");
         btnDarkMode.selectedProperty().bindBidirectional(getConfig().darkModeEnabledProperty());
+        btnDarkMode.setDisable(getConfig().getActiveTheme().isSingleMode());
         btnDarkMode.selectedProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 iconDarkModeToggle.set(FontAwesomeRegular.MOON);
@@ -75,14 +76,15 @@ public class PreferencesController extends BaseController<GeneralConfig> {
         cmbThemes.getSelectionModel().select(getModel().getActiveTheme());
         cmbThemes.getSelectionModel().selectedItemProperty().addListener(
                 (_, _, newValue) -> {
-                    if (newValue.getLightTheme() == null) {
-                        getModel().setDarkModeEnabled(true);
-                        setDarkModeToggleDisabled(true);
-                    } else if (newValue.getDarkTheme() == null) {
-                        getModel().setDarkModeEnabled(false);
+                    if (newValue.isSingleMode()) {
                         setDarkModeToggleDisabled(true);
                     } else {
                         setDarkModeToggleDisabled(false);
+                    }
+                    if (newValue.getLightTheme() == null) {
+                        getConfig().setDarkModeEnabled(true);
+                    } else if (newValue.getDarkTheme() == null) {
+                        getConfig().setDarkModeEnabled(false);
                     }
 
                     App.setAppTheme(newValue, getModel().isDarkModeEnabled());
