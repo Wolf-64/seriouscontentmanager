@@ -31,7 +31,7 @@ public class AppStyle {
         GITHUB_TRITANOPIA(fx(new GithubLightTritanopia()), fx(new GithubDarkTritanopia())),
         // FX base themes
         MODENA(new Modena(), new ModenaDark()),
-        CASPIAN(new Caspian(), new Caspian());
+        CASPIAN(new Caspian(), null);
 
         @Getter
         final BaseTheme lightTheme;
