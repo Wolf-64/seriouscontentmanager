@@ -116,8 +116,8 @@ public class App extends javafx.application.Application {
      * fall back to non-theme-aware colors baked into the library's default stylesheets.
      */
     private static void applyThemeIntegration(Scene scene, BaseTheme activeTheme) {
+        scene.getStylesheets().clear();
         if (activeTheme.getSceneStyleSheet() != null) {
-            scene.getStylesheets().clear();
             scene.getStylesheets().add(activeTheme.getSceneStyleSheet());
         }
         if (scene == null || activeTheme == null || !activeTheme.isAtlantaFX()) {
