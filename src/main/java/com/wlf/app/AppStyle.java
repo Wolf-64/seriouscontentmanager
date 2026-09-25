@@ -12,7 +12,7 @@ public class AppStyle {
         PRIMER(fx(new atlantafx.base.theme.PrimerLight()), fx(new atlantafx.base.theme.PrimerDark())),
         NORD(fx(new atlantafx.base.theme.NordLight()), fx(new atlantafx.base.theme.NordDark())),
         CUPERTINO(fx(new atlantafx.base.theme.CupertinoLight()), fx(new atlantafx.base.theme.CupertinoDark())),
-        DRACULA(fx(new atlantafx.base.theme.Dracula()), null),
+        DRACULA(null, fx(new atlantafx.base.theme.Dracula())),
         // DLSC themes
         SPRING(fx(new SpringLight()), fx(new SpringDark())),
         SUMMER(fx(new SummerLight()), fx(new SummerDark())),
@@ -31,7 +31,7 @@ public class AppStyle {
         GITHUB_TRITANOPIA(fx(new GithubLightTritanopia()), fx(new GithubDarkTritanopia())),
         // FX base themes
         MODENA(new Modena(), new ModenaDark()),
-        CASPIAN(new Caspian(), new Caspian());
+        CASPIAN(new Caspian(), null);
 
         @Getter
         final BaseTheme lightTheme;

@@ -82,8 +82,10 @@ public class PreferencesController extends BaseController<GeneralConfig> {
                         getModel().setDarkModeEnabled(false);
                         setDarkModeToggleDisabled(true);
                     } else {
-                        App.setAppTheme(newValue, getModel().isDarkModeEnabled());
+                        setDarkModeToggleDisabled(false);
                     }
+
+                    App.setAppTheme(newValue, getModel().isDarkModeEnabled());
                 });
 
         cmbLogType.setItems(FXCollections.observableList(Arrays.stream(LogManager.LogType.values()).toList()));
