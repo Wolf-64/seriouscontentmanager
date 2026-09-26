@@ -68,7 +68,7 @@
             <Label text="%logging.type" GridPane.rowIndex="7" />
             <ChoiceBox fx:id="cmbLogLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <ChoiceBox fx:id="cmbLogType" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <HBox fx:id="hbxLogFile" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+            <HBox fx:id="hbxLogFile" alignment="CENTER_LEFT" visible="${controller.logFileControlsVisible}" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
                <children>
                   <TextField maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="984.0" promptText="log file location" />
                   <Button mnemonicParsing="false">

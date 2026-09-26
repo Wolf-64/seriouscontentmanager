@@ -54,7 +54,7 @@ public final class FrameController extends BaseController<BaseModel> {
         height = getConfigManager().getGeneralConfig().getWindowHeight();
 
         if (getConfigManager().getGeneralConfig().isFullScreen()) {
-            stage.setFullScreen(true);
+            stage.setMaximized(true);
         } else if (width > 0 || height > 0 && getConfigManager().getGeneralConfig().isRestoreWindow()) {
             stage.setHeight(height);
             stage.setWidth(width);

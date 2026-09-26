@@ -190,6 +190,7 @@ public class App extends javafx.application.Application {
 
                 stage.getIcons().add(APP_ICON);
                 stage.setScene(scene);
+                stage.initModality(Modality.APPLICATION_MODAL);
 
                 stage.show();
             } catch (IOException exception) {

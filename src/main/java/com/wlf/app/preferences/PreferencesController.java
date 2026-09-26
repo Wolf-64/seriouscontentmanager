@@ -79,7 +79,6 @@ public class PreferencesController extends BaseController<BaseModel> {
     public void initialize() {
         warningIcon.setStyle("-fx-icon-color: red");
         darkModeToggleDisabled.set(getConfig().getGeneralConfig().getActiveTheme().isSingleMode());
-        btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
         btnDarkMode.selectedProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 iconDarkModeToggle.set(FontAwesomeRegular.MOON);
@@ -87,8 +86,7 @@ public class PreferencesController extends BaseController<BaseModel> {
                 iconDarkModeToggle.set(FontAwesomeSolid.SUN);
             }
         });
-        cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
-        cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
+        btnDarkMode.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().darkModeEnabledProperty());
         cbxRestoreWindow.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().restoreWindowProperty());
         cbxStartFullscreen.selectedProperty().bindBidirectional(getConfig().getGeneralConfig().fullScreenProperty());
         cmbLanguages.setItems(FXCollections.observableList(Arrays.stream(Language.values()).toList()));
